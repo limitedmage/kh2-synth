@@ -15,6 +15,29 @@ try {
   page.on("request", (request) => requests.push({ url: request.url(), method: request.method() }));
   await page.goto(new URL("index.html", root).href);
   assert.equal(await page.title(), "Synthesis Journal · Kingdom Hearts II Final Mix");
+  const quantityPixels = await page.evaluate(() => {
+    const column = document.createElement("canvas");
+    column.width = 1000; column.height = 100;
+    const ctx = column.getContext("2d");
+    const countInk = () => {
+      const quantity = KH2Recognition.quantityCanvas(column, { y0: 20, y1: 70 });
+      const pixels = quantity.getContext("2d").getImageData(0, 0, quantity.width, quantity.height).data;
+      let ink = 0;
+      for (let i = 0; i < pixels.length; i += 4) if (pixels[i] < 128) ink++;
+      return ink;
+    };
+    ctx.fillStyle = "#2046a0"; ctx.fillRect(0, 0, 1000, 100);
+    ctx.fillStyle = "#fff"; ctx.font = "bold 42px sans-serif"; ctx.fillText("26", 810, 63);
+    const baseline = countInk();
+    const badges = ["#fff", "#ffb0dd", "#50ffff", "#46b8f5"].map((color) => {
+      ctx.fillStyle = color; ctx.fillRect(900, 0, 100, 100);
+      ctx.fillStyle = "#fff"; ctx.fillText("8", 920, 63);
+      return countInk();
+    });
+    return { baseline, badges };
+  });
+  assert.ok(quantityPixels.baseline > 0, "Count recognition must preserve the quantity digits");
+  assert.deepEqual(quantityPixels.badges, Array(4).fill(quantityPixels.baseline), "White, pink and cyan grade badges must not contribute pixels to numeric OCR");
   await page.getByRole("button", { name: "Recipes", exact: true }).click();
   await page.locator("#recipe-search").fill("AP Boost");
   await page.locator("[data-add='AP Boost']").click();
@@ -47,6 +70,9 @@ try {
   await page.locator("#parse-text").click();
   assert.equal(await page.locator(".review-row").count(), 3);
   assert.equal(await page.locator("[data-review-qty]").count(), 0, "Recipe review contains names only, never inventory counts");
+  await page.locator("[data-review-check='0']").uncheck();
+  await page.locator("#check-all-import").click();
+  assert.equal(await page.locator("[data-review-check]:checked").count(), 3);
   await page.locator("#ocr-text").fill("Mythril Shard\nAcrisius\nPetite Ribbon");
   await page.locator("#parse-text").click();
   assert.equal(await page.locator(".review-row").count(), 5, "Both recipe lists combine without duplicate names");
@@ -64,14 +90,31 @@ try {
   assert.equal(await page.locator("[data-review-check='0']").isChecked(), false);
   assert.equal(await page.locator("[data-review-check='1']").isChecked(), true);
   assert.equal(await page.locator("[data-review-check='2']").isChecked(), false);
+  await page.locator("#check-all-import").click();
+  assert.equal(await page.locator("[data-review-check]:checked").count(), 3);
+  await page.locator("#apply-import").click();
+  assert.equal(await page.locator("#notice").innerText(), "Enter a valid quantity for every checked row.");
+  assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("kh2-final-mix-synthesis-v1")).inventory), saved.inventory, "An invalid import must not clear stock");
+  await page.locator("[data-review-check='2']").uncheck();
   await page.locator("[data-review-qty='0']").fill("4");
   await page.locator("[data-review-check='0']").check();
   await page.locator("#apply-import").click();
   const after = await page.evaluate(() => JSON.parse(localStorage.getItem("kh2-final-mix-synthesis-v1")));
   assert.equal(after.inventory["Orichalcum+"], 2);
   assert.equal(after.inventory["Dense Shard"], 4);
-  assert.equal(after.inventory["Power Crystal"], 4);
+  assert.equal(after.inventory["Power Crystal"], undefined, "Inventory imports clear omitted previous materials");
   assert.equal(after.goals["Save the King+"], 1);
+  await page.locator("#ocr-text").fill("Dense Shard 2\nOrichalcum + 0");
+  await page.locator("#parse-text").click();
+  await page.locator("[data-review-check='1']").uncheck();
+  await page.locator("#apply-import").click();
+  const replaced = await page.evaluate(() => JSON.parse(localStorage.getItem("kh2-final-mix-synthesis-v1")));
+  assert.deepEqual(replaced.inventory, { "Dense Shard": 2 }, "Reimport replaces totals and clears previously imported unchecked materials");
+  assert.deepEqual(replaced.goals, after.goals, "Inventory reimport preserves recipe goals");
+  await page.locator("[data-review-check='0']").uncheck();
+  await page.locator("#apply-import").click();
+  assert.equal(await page.locator("#notice").innerText(), "Check at least one row before applying.");
+  assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("kh2-final-mix-synthesis-v1")).inventory), replaced.inventory);
   assert.equal(requests.filter((r) => !r.url.startsWith("file:")).length, 0, "Manual workflows must not need a network request");
 
   const downloadPromise = page.waitForEvent("download");
@@ -133,12 +176,12 @@ try {
         assert.equal(rows.length, 10, "Both recipe photos must combine into all ten goals");
         assert.ok(rows.some((r) => r.name === "AP Boost") && rows.some((r) => r.name === "Mythril Shard"));
         assert.equal(await page.locator("[data-review-qty]").count(), 0);
-        for (const checkbox of await page.locator("[data-review-check]").all()) await checkbox.check();
+        await page.locator("#check-all-import").click();
         await page.locator("#apply-import").click();
         const combined = await page.evaluate(() => JSON.parse(localStorage.getItem("kh2-final-mix-synthesis-v1")));
         assert.equal(combined.goals["AP Boost"], 3);
         assert.equal(combined.goals.Acrisius, 1);
-        assert.deepEqual(combined.inventory, after.inventory);
+        assert.deepEqual(combined.inventory, replaced.inventory);
       }
       if (kind === "inventory") {
         assert.ok(rows.length >= 30, "Inventory video should recognize most of its material list");

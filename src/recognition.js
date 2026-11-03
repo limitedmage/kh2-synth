@@ -132,8 +132,20 @@ globalThis.KH2Recognition = (() => {
     ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(column, left, top, width, height, 16, 16, width, height);
     const image = ctx.getImageData(16, 16, Math.ceil(width), Math.ceil(height));
+    let end = image.width;
+    let badgeRun = 0;
+    // Counts sit on blue rows; stop at a neighboring grade badge's non-blue background.
+    for (let x = 0; x < image.width; x++) {
+      let blue = 0;
+      for (let y = 0; y < image.height; y++) {
+        const i = (y * image.width + x) * 4;
+        if (image.data[i + 2] > image.data[i] * 1.35 && image.data[i + 2] > image.data[i + 1] * 1.5) blue++;
+      }
+      badgeRun = blue / image.height < 0.04 ? badgeRun + 1 : 0;
+      if (badgeRun >= Math.max(3, Math.round(height * 0.06))) { end = x - badgeRun + 1; break; }
+    }
     for (let i = 0; i < image.data.length; i += 4) {
-      const value = Math.min(image.data[i], image.data[i + 1], image.data[i + 2]) > 150 ? 0 : 255;
+      const value = (i / 4) % image.width < end && Math.min(image.data[i], image.data[i + 1], image.data[i + 2]) > 150 ? 0 : 255;
       image.data[i] = image.data[i + 1] = image.data[i + 2] = value;
     }
     ctx.putImageData(image, 16, 16);

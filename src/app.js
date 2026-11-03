@@ -366,10 +366,11 @@
     $("review-rows").classList.toggle("recipe-review", recipes);
     $("review-instructions").textContent = recipes
       ? "Recipe names from Recipes and Free Development are combined. Unchecked names are ignored. No inventory counts are read from recipe photos."
-      : "Unchecked rows are ignored. Repeated video rows are not added together. Conflicting readings stay unchecked until reviewed. Names without a readable count are left blank.";
+      : "Applying replaces all previous stock. Omitted and unchecked materials become zero. Repeated video rows are not added together. Conflicting readings stay unchecked until reviewed. Names without a readable count are left blank.";
     $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select>${recipes ? "" : `<input type="number" min="0" max="9999" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?">`}<small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small></div>`).join("");
     $("review-message").textContent = `${review.length} ${recipes ? "combined recipe names from Recipes / Free Development" : "recognized materials"}. ${unmatched ? `${unmatched} unrecognized text line(s); inspect the raw text and add anything missing manually.` : ""}${!review.length ? " Adjust the crop or use pasted text / manual entry." : ""}`;
     $("apply-import").disabled = !review.length;
+    $("check-all-import").disabled = !review.length;
   }
   function combineReview(incoming) {
     if (reviewKind === "recipes") {
@@ -385,6 +386,10 @@
     if (el.dataset.reviewName !== undefined) review[Number(el.dataset.reviewName)].name = el.value;
     if (el.dataset.reviewQty !== undefined) review[Number(el.dataset.reviewQty)].quantity = el.value === "" ? null : P.count(el.value, reviewKind === "recipes" ? 99 : 9999);
   });
+  $("check-all-import").addEventListener("click", () => {
+    for (const row of review) row.checked = true;
+    for (const checkbox of $("review-rows").querySelectorAll("[data-review-check]")) checkbox.checked = true;
+  });
   $("parse-text").addEventListener("click", () => {
     reviewKind = $("import-kind").value;
     const parsed = R.parseLines($("ocr-text").value.split(/\r?\n/), reviewKind);
@@ -392,9 +397,11 @@
   });
   $("apply-import").addEventListener("click", () => {
     const checked = review.filter((row) => row.checked);
+    if (!checked.length) { notice("Check at least one row before applying."); return; }
     if (checked.some((r) => r.quantity === null || (reviewKind === "recipes" && !r.quantity))) { notice("Enter a valid quantity for every checked row."); return; }
     const names = checked.map((r) => r.name);
     if (new Set(names).size !== names.length) { notice("Duplicate names in review. Uncheck or rename duplicate rows before applying."); return; }
+    if (reviewKind === "inventory") state.inventory = {};
     for (const row of checked) {
       if (reviewKind === "recipes") state.goals[row.name] = state.goals[row.name] || 1;
       else state.inventory[row.name] = P.count(row.quantity);
@@ -402,7 +409,7 @@
     if (reviewKind === "recipes") recipeReview = [];
     else state.materialTypes = Math.max(state.materialTypes, Object.values(state.inventory).filter((n) => n > 0).length);
     save(); renderAll();
-    notice(reviewKind === "recipes" ? `${checked.length} recipe names combined with the wish list. Existing quantities and inventory were left unchanged.` : `${checked.length} material totals updated. Unrecognized / unchecked entries were left unchanged.`);
+    notice(reviewKind === "recipes" ? `${checked.length} recipe names combined with the wish list. Existing quantities and inventory were left unchanged.` : `Inventory replaced with ${checked.length} material totals. All previous stock was cleared.`);
   });
   function setImportBusy(busy) {
     importing = busy;

@@ -91,10 +91,11 @@
       <details class="panel"><summary>Paste or correct recognized text manually</summary><label><span id="paste-help">One recipe name per line, from either recipe list</span><textarea id="ocr-text" rows="8" placeholder="AP Boost&#10;Petite Ribbon&#10;Mythril Shard&#10;Acrisius"></textarea></label><button id="parse-text" class="quiet">Review this text</button></details>
       <div id="import-review" class="panel" hidden>
         <h3>Review recognition</h3><p id="review-instructions" class="muted">Recipe names from Recipes and Free Development are combined. Unchecked names are ignored. No inventory counts are read from recipe photos.</p>
+        <button id="check-all-import" class="quiet">Check all</button>
         <div id="review-rows"></div>
         <p id="review-message" class="muted"></p>
         <button id="apply-import" class="primary">Apply checked rows</button>
-        <p id="import-policy" class="muted">Recipe imports add missing goals with quantity 1 and preserve existing desired quantities. Stock comes only from the Materials list import or manual Materials entry.</p>
+        <p id="import-policy" class="muted">Recipe imports add missing goals with quantity 1 and preserve existing desired quantities. Applying a Materials import replaces all previous stock; omitted and unchecked materials become zero.</p>
       </div>
     </section>
     <footer>

@@ -96,10 +96,11 @@
       <details class="panel"><summary>Paste or correct recognized text manually</summary><label><span id="paste-help">One recipe name per line, from either recipe list</span><textarea id="ocr-text" rows="8" placeholder="AP Boost&#10;Petite Ribbon&#10;Mythril Shard&#10;Acrisius"></textarea></label><button id="parse-text" class="quiet">Review this text</button></details>
       <div id="import-review" class="panel" hidden>
         <h3>Review recognition</h3><p id="review-instructions" class="muted">Recipe names from Recipes and Free Development are combined. Unchecked names are ignored. No inventory counts are read from recipe photos.</p>
+        <button id="check-all-import" class="quiet">Check all</button>
         <div id="review-rows"></div>
         <p id="review-message" class="muted"></p>
         <button id="apply-import" class="primary">Apply checked rows</button>
-        <p id="import-policy" class="muted">Recipe imports add missing goals with quantity 1 and preserve existing desired quantities. Stock comes only from the Materials list import or manual Materials entry.</p>
+        <p id="import-policy" class="muted">Recipe imports add missing goals with quantity 1 and preserve existing desired quantities. Applying a Materials import replaces all previous stock; omitted and unchecked materials become zero.</p>
       </div>
     </section>
     <footer>
@@ -603,8 +604,20 @@ globalThis.KH2Recognition = (() => {
     ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(column, left, top, width, height, 16, 16, width, height);
     const image = ctx.getImageData(16, 16, Math.ceil(width), Math.ceil(height));
+    let end = image.width;
+    let badgeRun = 0;
+    // Counts sit on blue rows; stop at a neighboring grade badge's non-blue background.
+    for (let x = 0; x < image.width; x++) {
+      let blue = 0;
+      for (let y = 0; y < image.height; y++) {
+        const i = (y * image.width + x) * 4;
+        if (image.data[i + 2] > image.data[i] * 1.35 && image.data[i + 2] > image.data[i + 1] * 1.5) blue++;
+      }
+      badgeRun = blue / image.height < 0.04 ? badgeRun + 1 : 0;
+      if (badgeRun >= Math.max(3, Math.round(height * 0.06))) { end = x - badgeRun + 1; break; }
+    }
     for (let i = 0; i < image.data.length; i += 4) {
-      const value = Math.min(image.data[i], image.data[i + 1], image.data[i + 2]) > 150 ? 0 : 255;
+      const value = (i / 4) % image.width < end && Math.min(image.data[i], image.data[i + 1], image.data[i + 2]) > 150 ? 0 : 255;
       image.data[i] = image.data[i + 1] = image.data[i + 2] = value;
     }
     ctx.putImageData(image, 16, 16);
@@ -1045,10 +1058,11 @@ globalThis.KH2Recognition = (() => {
     $("review-rows").classList.toggle("recipe-review", recipes);
     $("review-instructions").textContent = recipes
       ? "Recipe names from Recipes and Free Development are combined. Unchecked names are ignored. No inventory counts are read from recipe photos."
-      : "Unchecked rows are ignored. Repeated video rows are not added together. Conflicting readings stay unchecked until reviewed. Names without a readable count are left blank.";
+      : "Applying replaces all previous stock. Omitted and unchecked materials become zero. Repeated video rows are not added together. Conflicting readings stay unchecked until reviewed. Names without a readable count are left blank.";
     $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select>${recipes ? "" : `<input type="number" min="0" max="9999" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?">`}<small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small></div>`).join("");
     $("review-message").textContent = `${review.length} ${recipes ? "combined recipe names from Recipes / Free Development" : "recognized materials"}. ${unmatched ? `${unmatched} unrecognized text line(s); inspect the raw text and add anything missing manually.` : ""}${!review.length ? " Adjust the crop or use pasted text / manual entry." : ""}`;
     $("apply-import").disabled = !review.length;
+    $("check-all-import").disabled = !review.length;
   }
   function combineReview(incoming) {
     if (reviewKind === "recipes") {
@@ -1064,6 +1078,10 @@ globalThis.KH2Recognition = (() => {
     if (el.dataset.reviewName !== undefined) review[Number(el.dataset.reviewName)].name = el.value;
     if (el.dataset.reviewQty !== undefined) review[Number(el.dataset.reviewQty)].quantity = el.value === "" ? null : P.count(el.value, reviewKind === "recipes" ? 99 : 9999);
   });
+  $("check-all-import").addEventListener("click", () => {
+    for (const row of review) row.checked = true;
+    for (const checkbox of $("review-rows").querySelectorAll("[data-review-check]")) checkbox.checked = true;
+  });
   $("parse-text").addEventListener("click", () => {
     reviewKind = $("import-kind").value;
     const parsed = R.parseLines($("ocr-text").value.split(/\r?\n/), reviewKind);
@@ -1071,9 +1089,11 @@ globalThis.KH2Recognition = (() => {
   });
   $("apply-import").addEventListener("click", () => {
     const checked = review.filter((row) => row.checked);
+    if (!checked.length) { notice("Check at least one row before applying."); return; }
     if (checked.some((r) => r.quantity === null || (reviewKind === "recipes" && !r.quantity))) { notice("Enter a valid quantity for every checked row."); return; }
     const names = checked.map((r) => r.name);
     if (new Set(names).size !== names.length) { notice("Duplicate names in review. Uncheck or rename duplicate rows before applying."); return; }
+    if (reviewKind === "inventory") state.inventory = {};
     for (const row of checked) {
       if (reviewKind === "recipes") state.goals[row.name] = state.goals[row.name] || 1;
       else state.inventory[row.name] = P.count(row.quantity);
@@ -1081,7 +1101,7 @@ globalThis.KH2Recognition = (() => {
     if (reviewKind === "recipes") recipeReview = [];
     else state.materialTypes = Math.max(state.materialTypes, Object.values(state.inventory).filter((n) => n > 0).length);
     save(); renderAll();
-    notice(reviewKind === "recipes" ? `${checked.length} recipe names combined with the wish list. Existing quantities and inventory were left unchanged.` : `${checked.length} material totals updated. Unrecognized / unchecked entries were left unchanged.`);
+    notice(reviewKind === "recipes" ? `${checked.length} recipe names combined with the wish list. Existing quantities and inventory were left unchanged.` : `Inventory replaced with ${checked.length} material totals. All previous stock was cleared.`);
   });
   function setImportBusy(busy) {
     importing = busy;
