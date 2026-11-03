@@ -3,7 +3,7 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#080f24">
+  <meta name="theme-color" content="#003713">
   <title>Synthesis Journal · Kingdom Hearts II Final Mix</title>
   <style>/* STYLES */</style>
 </head>
@@ -23,7 +23,7 @@
         </g>
       </svg>
     </div>
-    <div><p class="eyebrow">KINGDOM HEARTS II · FINAL MIX</p><h1>Synthesis Journal</h1></div>
+    <div><p class="eyebrow">KINGDOM HEARTS II · FINAL MIX</p><h1>Synthesis <span>Journal</span></h1></div>
     <div class="save-tools"><span id="save-status" role="status">Saved on this device</span><button id="export" class="quiet">Export save</button><label class="button quiet">Load save<input id="load-save" type="file" accept=".json,application/json" hidden></label></div>
   </header>
   <main>
@@ -37,15 +37,20 @@
     <div id="notice" role="status" hidden></div>
     <section id="tab-plan">
       <div class="section-title"><div><p class="eyebrow">SYNTHESIS MENU</p><h2>Farming plan</h2></div><button data-go="recipes" class="primary">Add a recipe</button></div>
-      <div class="settings panel">
-        <label>Moogle level<select id="moogle"></select></label>
-        <label>Energy materials<select id="energy"><option value="owned">Use owned stock</option><option value="none">Keep in reserve</option><option value="farm">Include in farming plan</option></select></label>
-        <label>Craftable materials<select id="expand"><option value="true">Plan missing ingredients</option><option value="false">Show missing material only</option></select></label>
-        <label>Lucky Lucky abilities<input id="lucky-lucky" type="number" min="0" step="1" value="0"></label>
-        <p id="moogle-perks" class="muted"></p>
+      <div class="plan-layout">
+        <aside class="plan-console" aria-label="Synthesis settings">
+          <div class="settings panel">
+            <h3>Moogle status</h3>
+            <label>Moogle level<select id="moogle"></select></label>
+            <label>Energy materials<select id="energy"><option value="owned">Use owned stock</option><option value="none">Keep in reserve</option><option value="farm">Include in farming plan</option></select></label>
+            <label>Craftable materials<select id="expand"><option value="true">Plan missing ingredients</option><option value="false">Show missing material only</option></select></label>
+            <label>Lucky Lucky abilities<input id="lucky-lucky" type="number" min="0" step="1" value="0"></label>
+            <p id="moogle-perks" class="muted"></p>
+          </div>
+          <div id="summary" class="summary"></div>
+        </aside>
+        <div id="goals" class="panel wishlist-panel"></div>
       </div>
-      <div id="summary" class="summary"></div>
-      <div id="goals" class="panel"></div>
       <div id="blockers"></div>
       <div class="section-title"><div><h2>Materials to collect</h2><p class="muted">Shared stock is counted once across all crafts.</p></div><label class="check"><input id="show-owned" type="checkbox"> Show covered materials</label></div>
       <div id="requirements"></div>
@@ -107,6 +112,7 @@
     </section>
     <footer>
       <p>For Kingdom Hearts II Final Mix, English HD release. Unofficial fan tool with original artwork; no game assets.</p>
+      <p class="ai-disclaimer">Developed with AI assistance. Recipe data, calculations, and OCR results may contain errors; verify them in-game.</p>
       <details>
         <summary>Sources &amp; data notes</summary>
         <p>Recipes, ranks, Moogle perks and drops follow <a href="https://www.khwiki.com/Synthesis" target="_blank" rel="noreferrer">Kingdom Hearts Wiki</a> and <a href="https://www.destinyislands.com/kh2-fm/synthesis/materials/" target="_blank" rel="noreferrer">Destiny Islands' Final Mix guides</a>. Recipes and routes link to their sources. Costs are before reductions; Mythril Crystal uses rank-B Serenity Stone. Serenity drops differ from original KH2.</p>

@@ -67,6 +67,16 @@ async function expectIngredientLayout(page) {
   if (page.viewportSize().width <= 390) assert.ok(rows.some((row) => row.lines > 1), "Phone ingredient chips must wrap onto distinct rows rather than overflow");
 }
 
+async function expectPlanLayout(page) {
+  const wishlist = await page.locator("#goals").boundingBox();
+  const moogle = await page.locator(".plan-console").boundingBox();
+  if (page.viewportSize().width > 1000) {
+    assert.ok(wishlist.x + wishlist.width <= moogle.x + 1, "Desktop wishlist and Moogle console must occupy separate columns");
+  } else {
+    assert.ok(moogle.y + moogle.height <= wishlist.y + 1, "Stacked controls must precede the wishlist without overlapping it");
+  }
+}
+
 async function expectTab(page, name, fragment) {
   await page.waitForURL(`${journal}#${fragment}`);
   await page.locator(`#tab-${name}`).waitFor({ state: "visible" });
@@ -104,7 +114,10 @@ async function expectMobileLayout(page, name) {
   });
   assert.ok(layout.scrollWidth <= layout.width + 1, `${name}: page must not overflow at 390px (${layout.scrollWidth}px)`);
   assert.deepEqual(layout.controls, [], `${name}: controls must fit the viewport; only navigation and material tables may scroll horizontally`);
-  if (name === "plan") await expectIngredientLayout(page);
+  if (name === "plan") {
+    await expectIngredientLayout(page);
+    await expectPlanLayout(page);
+  }
 }
 
 try {
@@ -140,6 +153,7 @@ try {
   assert.ok(await conflict.evaluate((details) => details.open), "Shared-stock warnings must expand by keyboard/touch-native details");
   await expectIngredient(wishlist, "Firaga Bangle", "Blazing Stone", 3, 1);
   await expectIngredientLayout(wishlist);
+  await expectPlanLayout(wishlist);
   assert.equal(await wishlist.locator(".wishlist-totals").count(), 0, "Wishlist must not duplicate the combined Materials to collect table");
   assert.deepEqual((await saved(wishlist)).goals, { "Firaga Bangle": 1, "Blizzaga Armlet": 1 }, "Legacy quantities must persist as one of each recipe");
   assert.equal(await wishlist.locator("input[data-goal]").count(), 0, "Wishlist must not expose quantity controls");
@@ -329,6 +343,23 @@ try {
     }), true, "Every farming route must be available after the endgame preset");
   }
   console.log("PASS endgame: world maxima, all areas/routes, chest/inventory preservation, persisted reload");
+  const accessible = await open("plan");
+  await accessible.emulateMedia({ forcedColors: "active", reducedMotion: "reduce" });
+  await accessible.setViewportSize({ width: 390, height: 844 });
+  await accessible.locator("#moogle").focus();
+  const focus = await accessible.locator("#moogle").evaluate((input) => {
+    const style = getComputedStyle(input);
+    const extent = parseFloat(style.outlineWidth) + parseFloat(style.outlineOffset);
+    const bounds = input.getBoundingClientRect();
+    const frame = input.closest(".settings").getBoundingClientRect();
+    return {
+      visible: input.matches(":focus-visible") && style.outlineStyle !== "none" && parseFloat(style.outlineWidth) > 0,
+      inside: bounds.left - extent > frame.left && bounds.right + extent < frame.right &&
+        bounds.top - extent > frame.top && bounds.bottom + extent < frame.bottom,
+    };
+  });
+  assert.ok(focus.visible && focus.inside, "The rounded Moogle panel must preserve visible keyboard focus without clipping its outline");
+  await expectPlanLayout(accessible);
   assert.deepEqual(errors, [], "UI workflows must not trigger browser errors");
 } finally {
   await Promise.all(contexts.map((context) => context.close()));

@@ -47,7 +47,7 @@ function ingredientChip(name, required, inventory) {
       data-material="${escape(name)}" data-owned="${owned}" data-required="${required}"
       role="img" aria-label="${escape(`${name}: ${owned} owned / ${required} required`)}">
       ${icon("material", name)}
-      <span aria-hidden="true">${escape(name)} <strong class="wishlist-ratio">${owned}/${required}</strong></span>
+      <span aria-hidden="true">${escape(name)} <strong class="wishlist-ratio"><span class="stock-count">${owned}</span><span class="ratio-divider">/</span><span class="need-count">${required}</span></strong></span>
     </span>`;
 }
 

@@ -24,3 +24,11 @@
 - [x] Give each screen ownership of its rendering and events.
 - [x] Separate crop alignment, OCR workers, and import review.
 - [x] Verify the refactor against standalone workflows and every supplied media sample.
+
+## Synthesis menu styling
+
+- [x] Use green chrome, purple recipe lists, black material cells, and gold stock values.
+- [x] Add a split wishlist / Moogle console layout that stacks on smaller screens.
+- [x] Fix the Moogle panel's rounded corners.
+- [x] Add a visible AI-assistance disclaimer.
+- [x] Verify desktop, phone, and high-contrast layouts.
