@@ -4935,7 +4935,8 @@ footer p + p { margin-top: .8rem; }
     }).join("")}`;
   }
   function supplyNote(row, state) {
-    let note = row.crafted ? `Synthesize ${row.crafted}` : row.missing ? "Collect" : "Covered by stock";
+    const enemies = [...new Set(data_default.materials[row.name].sources.filter((source) => source.enemy !== "One-time reward").map((source) => source.enemy))];
+    let note = row.crafted ? `Synthesize ${row.crafted}` : enemies.length ? enemies.join(", ") : row.missing ? "Collect" : "Covered by stock";
     if (row.locked) note = `Synthesis locked: ${data_default.byRecipe[row.name].unlock}`;
     if (row.name.startsWith("Mythril") && row.missing) {
       const allChests = data_default.worlds.filter((world) => world.id !== "at").every((world) => state.chests[world.id]);
@@ -4959,13 +4960,13 @@ footer p + p { margin-top: .8rem; }
     if (!requirements.length) return `<div class="empty">${plan.goals ? plan.warnings.length ? "Resolve the locked recipes above to calculate their ingredients." : "The entered stock covers the plan." : "Missing materials will appear here."}</div>`;
     return `
     <div class="table-wrap"><table>
-      <thead><tr><th>Material</th><th>Total need</th><th>Stock used</th><th>Shortfall</th><th>How to supply</th></tr></thead>
+      <thead><tr><th>Material</th><th>Needed</th><th>Stock</th><th>Missing</th><th>How to supply</th></tr></thead>
       <tbody>${requirements.map((row) => `
         <tr>
           <td><span class="icon-label">${icon("material", row.name)}${link(data_default.materials[row.name].url, row.name)}</span>
             ${row.bonus ? `<small>Includes ${row.bonus} from a base-recipe prerequisite</small>` : ""}</td>
           <td class="numeric">${row.required}</td>
-          <td class="numeric">${row.owned}</td>
+          <td class="numeric">${planner_default.count(state.inventory[row.name])}</td>
           <td class="numeric ${row.missing ? "warning" : "positive"}">${row.missing || "\u2014"}</td>
           <td>${escape(supplyNote(row, state))}${materialMethod(row, state)}</td>
         </tr>`).join("")}</tbody>

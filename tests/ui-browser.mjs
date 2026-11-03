@@ -200,6 +200,21 @@ async function wishlistSuite() {
   assert.equal(await wishlist.locator("input[data-goal]").count(), 0, "Wishlist must not expose quantity controls");
   await expectIcons(wishlist, "#goals .goal-name");
   await expectIcons(wishlist, "#requirements");
+  assert.deepEqual(await wishlist.locator("#requirements th").allTextContents(),
+    ["Material", "Needed", "Stock", "Missing", "How to supply"]);
+  await wishlist.locator("#show-owned").check();
+  const blazingStock = wishlist.locator("#requirements tbody tr").filter({
+    has: wishlist.getByRole("link", { name: "Blazing Stone", exact: true }),
+  });
+  assert.deepEqual(await blazingStock.locator("td.numeric").allTextContents(), ["1", "3", "—"],
+    "Stock must show the full inventory, not just the amount used by the plan");
+  assert.equal(await blazingStock.locator("td").nth(4).innerText(), "Tornado Step, Cannon Gun",
+    "Drop materials must list their enemies, including covered materials");
+  const mythrilSupply = wishlist.locator("#requirements tbody tr").filter({
+    has: wishlist.getByRole("link", { name: "Mythril Shard", exact: true }),
+  });
+  assert.ok((await mythrilSupply.locator("td").nth(4).innerText()).includes("No enemy drops"),
+    "Chest and synthesis notes must remain for Mythril");
   assert.deepEqual((await saved(wishlist)).inventory, stock, "Readiness must not consume shared stock");
   const beforeRowClick = await saved(wishlist);
   await goal(wishlist, "Firaga Bangle").locator(".goal-name").click();
@@ -220,6 +235,16 @@ async function wishlistSuite() {
   for (const name of ["plan", "recipes", "inventory", "progress"]) await expectMobileLayout(wishlist, name);
   assert.deepEqual((await saved(wishlist)).inventory, stock, "Navigation and responsive rendering must not change stock");
   console.log("PASS wishlist: one-of-each migration, shared stock, unchanged inventory, idempotent Add, icons, 390px layouts");
+
+  const modifier = await open("plan", {
+    goals: { "Save the King+": 1 }, crafted: { "Save the King": true },
+    moogle: 9, energy: "none", expand: false,
+  });
+  const serenitySupply = modifier.locator("#requirements tbody tr").filter({
+    has: modifier.getByRole("link", { name: "Serenity Crystal", exact: true }),
+  });
+  assert.equal(await serenitySupply.locator("td").nth(4).innerText(), "Bulky Vendor",
+    "An enemy dropping a material in several worlds must appear only once");
 }
 
 async function readinessSuite() {

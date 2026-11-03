@@ -110,7 +110,9 @@ function wishlistMarkup(state) {
 }
 
 function supplyNote(row, state) {
-  let note = row.crafted ? `Synthesize ${row.crafted}` : row.missing ? "Collect" : "Covered by stock";
+  const enemies = [...new Set(data.materials[row.name].sources
+    .filter((source) => source.enemy !== "One-time reward").map((source) => source.enemy))];
+  let note = row.crafted ? `Synthesize ${row.crafted}` : enemies.length ? enemies.join(", ") : row.missing ? "Collect" : "Covered by stock";
   if (row.locked) note = `Synthesis locked: ${data.byRecipe[row.name].unlock}`;
   if (row.name.startsWith("Mythril") && row.missing) {
     const allChests = data.worlds.filter((world) => world.id !== "at").every((world) => state.chests[world.id]);
@@ -140,13 +142,13 @@ function requirementsMarkup(state, plan, showOwned) {
     : "Missing materials will appear here."}</div>`;
   return `
     <div class="table-wrap"><table>
-      <thead><tr><th>Material</th><th>Total need</th><th>Stock used</th><th>Shortfall</th><th>How to supply</th></tr></thead>
+      <thead><tr><th>Material</th><th>Needed</th><th>Stock</th><th>Missing</th><th>How to supply</th></tr></thead>
       <tbody>${requirements.map((row) => `
         <tr>
           <td><span class="icon-label">${icon("material", row.name)}${link(data.materials[row.name].url, row.name)}</span>
             ${row.bonus ? `<small>Includes ${row.bonus} from a base-recipe prerequisite</small>` : ""}</td>
           <td class="numeric">${row.required}</td>
-          <td class="numeric">${row.owned}</td>
+          <td class="numeric">${planner.count(state.inventory[row.name])}</td>
           <td class="numeric ${row.missing ? "warning" : "positive"}">${row.missing || "—"}</td>
           <td>${escape(supplyNote(row, state))}${materialMethod(row, state)}</td>
         </tr>`).join("")}</tbody>
