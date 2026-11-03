@@ -121,6 +121,28 @@ test("video overlaps are not summed and conflicting quantities require review", 
   assert.equal(dense.conflict, true);
   assert.equal(merged.find((r) => r.name === "Frost Crystal").quantity, 1);
 });
+test("review images come from the best source matching the displayed count, even with conflicting readings", () => {
+  const parsed = R.parseLines(["Dense Shard 4", "Dense Shard 4", "Dense Shard 41"], "inventory");
+  for (const [i, reading] of parsed.rows.entries()) {
+    reading.confidence = [70, 80, 95][i];
+    reading.image = `image-${i}`;
+    reading.source = `frame-${i}`;
+  }
+  const [merged] = R.merge(parsed.rows);
+  assert.equal(merged.quantity, 4);
+  assert.equal(merged.image, "image-1");
+  assert.equal(merged.source, "frame-1");
+});
+test("unreadable counts keep a source image, while pasted text has no image", () => {
+  const parsed = R.parseLines(["Energy Crystal"], "inventory");
+  assert.equal(R.merge(parsed.rows)[0].image, undefined);
+  parsed.rows[0].image = "unreadable-count-image";
+  parsed.rows[0].source = "Photo, column 1";
+  const [merged] = R.merge(parsed.rows);
+  assert.equal(merged.quantity, null);
+  assert.equal(merged.image, "unreadable-count-image");
+  assert.equal(merged.source, "Photo, column 1");
+});
 test("unreadable counts and unrelated menu headings do not become stock", () => {
   const parsed = R.parseLines(["Materials", "SYNTHESIS", "Moogle LV 4", "Dense Shard"], "inventory");
   assert.equal(parsed.rows.length, 1);

@@ -19,6 +19,7 @@ The page saves locally in the browser. **Export save** downloads a JSON backup; 
 - Quantities are recognized separately from names, excluding adjacent grade badges. Video counts require repeated agreement before being preselected. Adjust **First column width %** if the preview separator clips the left counts or overlaps the right column.
 - Recipe review shows names only. Applying it adds missing goals at quantity 1 and preserves existing desired quantities; inventory never changes. Read inventory separately from the game's **Materials** list.
 - Inventory review includes quantities. Use **Check all** or select individual rows, then correct any unreadable counts before applying. Applying replaces all previous inventory: omitted and unchecked materials become zero. Selecting or scanning a file does not clear stock.
+- Each material recognized from media shows its original-color name/count row and photo or video timestamp for correction. Repeated readings use the clearest source matching the displayed count. These images stay local and are not included in exported saves.
 - OCR downloads pinned Tesseract.js 5.1.1 and its English model from public CDNs on first use. Manual entry, planning, and saved data work without internet. No API key is needed.
 - MOV playback depends on browser codec support. If unsupported, export the recording as H.264 MP4 or use screenshots. Short recordings with pauses produce better results.
 - Cancel keeps partial readings for review. Pasted text is also supported.

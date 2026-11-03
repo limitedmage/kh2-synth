@@ -74,11 +74,13 @@ globalThis.KH2Recognition = (() => {
       const votes = new Map();
       for (const row of valid) votes.set(row.quantity, (votes.get(row.quantity) || 0) + 1);
       const ranked = [...votes].sort((a, b) => b[1] - a[1]);
-      const best = readings.toSorted((a, b) => b.confidence * b.score - a.confidence * a.score)[0];
+      const byConfidence = readings.toSorted((a, b) => b.confidence * b.score - a.confidence * a.score);
+      const best = byConfidence[0];
       const quantity = ranked.length ? ranked[0][0] : null;
       const conflict = ranked.length > 1;
+      const source = byConfidence.find((r) => r.quantity === quantity && r.image);
       return { name, quantity, conflict, checked: quantity !== null && !conflict && valid.length >= minimumReadings && best.confidence >= 65 && best.score >= 0.82,
-        readings: readings.length, alternatives: ranked.map(([value]) => value), confidence: Math.round(best.confidence), raw: best.raw };
+        readings: readings.length, alternatives: ranked.map(([value]) => value), confidence: Math.round(best.confidence), raw: best.raw, image: source?.image, source: source?.source };
     });
   }
   let loading;
@@ -118,6 +120,15 @@ globalThis.KH2Recognition = (() => {
       image.data[i] = image.data[i + 1] = image.data[i + 2] = value;
     }
     ctx.putImageData(image, 0, 0);
+    return canvas;
+  }
+  function sourceCanvas(column, bounds) {
+    const top = Math.max(0, bounds.y0 - 8);
+    const height = Math.max(1, Math.min(column.height - top, bounds.y1 - bounds.y0 + 16));
+    const canvas = document.createElement("canvas");
+    canvas.width = Math.min(900, column.width);
+    canvas.height = Math.max(1, Math.round(height * canvas.width / column.width));
+    canvas.getContext("2d").drawImage(column, 0, top, column.width, height, 0, 0, canvas.width, canvas.height);
     return canvas;
   }
   function quantityCanvas(column, bounds) {
@@ -214,5 +225,5 @@ globalThis.KH2Recognition = (() => {
       video.currentTime = time;
     });
   }
-  return { normalize, matchName, parseLines, merge, loadEngine, quantityCanvas, cropCanvas, rectifyCanvas, seek };
+  return { normalize, matchName, parseLines, merge, loadEngine, sourceCanvas, quantityCanvas, cropCanvas, rectifyCanvas, seek };
 })();

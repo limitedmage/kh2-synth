@@ -69,6 +69,7 @@ try {
   await page.locator("#ocr-text").fill("AP Boost\nPetite Ribbon\nSave the King +\nMythril Gem 1 2");
   await page.locator("#parse-text").click();
   assert.equal(await page.locator(".review-row").count(), 3);
+  assert.equal(await page.locator(".review-source").count(), 0, "Pasted text must not show source images from an earlier import");
   assert.equal(await page.locator("[data-review-qty]").count(), 0, "Recipe review contains names only, never inventory counts");
   await page.locator("[data-review-check='0']").uncheck();
   await page.locator("#check-all-import").click();
@@ -187,6 +188,26 @@ try {
         assert.ok(rows.length >= 30, "Inventory video should recognize most of its material list");
         assert.ok(rows.some((r) => r.name === "Blazing Shard" && r.quantity === "26"));
         assert.ok(rows.some((r) => r.name === "Dense Shard" && r.quantity === "4"));
+        assert.equal(await page.locator(".review-source img").count(), rows.length, "Every material, including unreadable counts, must show its source row");
+        const firstImage = page.locator(".review-source img").first();
+        await firstImage.scrollIntoViewIfNeeded();
+        await firstImage.evaluate((img) => img.decode());
+        assert.equal(await firstImage.evaluate((img) => img.src.startsWith("data:image/jpeg;base64,") && img.naturalWidth > img.naturalHeight), true, "Source images must be local, decoded row crops rather than whole frames");
+        assert.match(await page.locator(".review-source figcaption").first().innerText(), /Video \d+\.\d+s, column [12]/);
+        const source = await firstImage.getAttribute("src");
+        await page.locator("#check-all-import").click();
+        await page.locator("[data-review-qty='0']").fill("27");
+        await page.locator("[data-review-qty='0']").blur();
+        assert.equal(await firstImage.getAttribute("src"), source, "Source images must remain unchanged while correcting quantities");
+        await page.locator(".review-row").first().screenshot({ path: fileURLToPath(new URL("material-source.png", artifacts)) });
+        await page.setViewportSize({ width: 390, height: 844 });
+        assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, "Source images must fit a phone viewport");
+        for (const checkbox of await page.locator("[data-review-check]").all()) await checkbox.uncheck();
+        await page.locator("[data-review-check='0']").check();
+        await page.locator("#apply-import").click();
+        const corrected = await page.evaluate(() => JSON.parse(localStorage.getItem("kh2-final-mix-synthesis-v1")));
+        assert.deepEqual(corrected.inventory, { [rows[0].name]: 27 }, "The source preview must not interfere with applying corrected counts");
+        assert.equal(JSON.stringify(corrected).includes("data:image"), false, "Source images must not be persisted in saved game state");
       }
     }
     assert.ok(requests.every((r) => r.method === "GET"), "OCR must not upload media");

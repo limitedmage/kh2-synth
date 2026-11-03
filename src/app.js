@@ -367,7 +367,7 @@
     $("review-instructions").textContent = recipes
       ? "Recipe names from Recipes and Free Development are combined. Unchecked names are ignored. No inventory counts are read from recipe photos."
       : "Applying replaces all previous stock. Omitted and unchecked materials become zero. Repeated video rows are not added together. Conflicting readings stay unchecked until reviewed. Names without a readable count are left blank.";
-    $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select>${recipes ? "" : `<input type="number" min="0" max="9999" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?">`}<small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small></div>`).join("");
+    $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select>${recipes ? "" : `<input type="number" min="0" max="9999" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?">`}<small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small>${!recipes && row.image ? `<figure class="review-source"><img src="${escape(row.image)}" alt="Original game row for ${escape(row.name)}" loading="lazy"><figcaption>${escape(row.source)} · Source for the OCR reading</figcaption></figure>` : ""}</div>`).join("");
     $("review-message").textContent = `${review.length} ${recipes ? "combined recipe names from Recipes / Free Development" : "recognized materials"}. ${unmatched ? `${unmatched} unrecognized text line(s); inspect the raw text and add anything missing manually.` : ""}${!review.length ? " Adjust the crop or use pasted text / manual entry." : ""}`;
     $("apply-import").disabled = !review.length;
     $("check-all-import").disabled = !review.length;
@@ -432,6 +432,7 @@
     observations = [];
     let unmatched = 0;
     const raw = [];
+    const sourceReadings = new Map();
     let done = 0;
     setImportBusy(true);
     $("import-review").hidden = true;
@@ -475,7 +476,7 @@
           if (reviewKind === "inventory") {
             await worker.setParameters({ tessedit_pageseg_mode: "7", tessedit_char_whitelist: "0123456789" });
             for (const line of lines) {
-              const parsed = R.parseLines([line], reviewKind, `Frame ${frame + 1}, column ${column + 1}`);
+              const parsed = R.parseLines([line], reviewKind, `${video ? `Video ${media.currentTime.toFixed(2)}s` : "Photo"}, column ${column + 1}`);
               unmatched += parsed.unmatched.length;
               if (!parsed.rows.length || !line.bbox) continue;
               if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
@@ -484,6 +485,13 @@
               for (const row of parsed.rows) {
                 row.quantity = /^\d{1,4}$/.test(text) ? Number(text) : null;
                 row.confidence = Math.min(row.confidence, digits.data.confidence);
+                const key = `${row.name}:${row.quantity}`;
+                const previous = sourceReadings.get(key);
+                if (!previous || row.confidence * row.score > previous.confidence * previous.score) {
+                  if (previous) delete previous.image;
+                  row.image = R.sourceCanvas(numberColumn, line.bbox).toDataURL("image/jpeg", 0.9);
+                  sourceReadings.set(key, row);
+                }
                 observations.push(row);
               }
             }
