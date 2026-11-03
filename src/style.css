@@ -114,7 +114,6 @@ nav button.active { border-color: #99ff2b; color: #fff; background: linear-gradi
 nav button.active::before { content: "◆"; font-size: .72em; color: var(--gold); text-shadow: 0 0 8px #ffe900; }
 .section-title { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin: 1.8rem 0 1rem; }
 .section-title p { margin-top: .35rem; }
-.section-title .eyebrow { margin-top: 0; }
 .panel, .card, .stat, .stock-row, .table-wrap {
   border: 2px solid var(--line);
   background: linear-gradient(135deg, #34228144, transparent 65%), var(--panel);

@@ -121,7 +121,6 @@ nav button.active { border-color: #99ff2b; color: #fff; background: linear-gradi
 nav button.active::before { content: "◆"; font-size: .72em; color: var(--gold); text-shadow: 0 0 8px #ffe900; }
 .section-title { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin: 1.8rem 0 1rem; }
 .section-title p { margin-top: .35rem; }
-.section-title .eyebrow { margin-top: 0; }
 .panel, .card, .stat, .stock-row, .table-wrap {
   border: 2px solid var(--line);
   background: linear-gradient(135deg, #34228144, transparent 65%), var(--panel);
@@ -359,7 +358,7 @@ footer p + p { margin-top: .8rem; }
     </nav>
     <div id="notice" role="status" hidden></div>
     <section id="tab-plan">
-      <div class="section-title"><div><p class="eyebrow">SYNTHESIS MENU</p><h2>Farming plan</h2></div><button data-go="recipes" class="primary">Add a recipe</button></div>
+      <div class="section-title"><div><h2>Farming plan</h2></div><button data-go="recipes" class="primary">Add a recipe</button></div>
       <div class="plan-layout">
         <aside class="plan-console" aria-label="Synthesis settings">
           <div class="settings panel">
@@ -381,17 +380,17 @@ footer p + p { margin-top: .8rem; }
       <div id="routes"></div>
     </section>
     <section id="tab-recipes" hidden>
-      <div class="section-title"><div><p class="eyebrow">RECIPE CATALOG</p><h2>Choose a craft</h2><p class="muted">Set quantities or import Recipes and Free Development photos.</p></div><button data-go="import" class="quiet">Import a photo</button></div>
+      <div class="section-title"><div><h2>Recipes</h2><p class="muted">Set quantities or import Recipes and Free Development photos.</p></div><button data-go="import" class="quiet">Import a photo</button></div>
       <div class="toolbar"><label class="search">Find a recipe<input id="recipe-search" type="search" placeholder="Ribbon, Mythril, Save the King…"></label><label>Category<select id="recipe-category"><option value="">All recipes</option><option>Recipes</option><option>Free Development</option><option>Materials</option></select></label></div>
       <div id="recipe-list" class="card-grid"></div>
     </section>
     <section id="tab-inventory" hidden>
-      <div class="section-title"><div><p class="eyebrow">MATERIAL INVENTORY</p><h2>Current stock</h2><p class="muted">Use counts from the Materials menu, not lifetime totals.</p></div><button data-go="import" class="quiet">Import inventory</button></div>
+      <div class="section-title"><div><h2>Materials</h2><p class="muted">Use counts from the Materials menu, not lifetime totals.</p></div><button data-go="import" class="quiet">Import inventory</button></div>
       <div class="toolbar"><label class="search">Find a material<input id="material-search" type="search" placeholder="Search materials…"></label><label class="check"><input id="stock-only" type="checkbox"> In stock only</label></div>
       <div id="inventory-list" class="inventory-grid"></div>
     </section>
     <section id="tab-progress" hidden>
-      <div class="section-title"><div><p class="eyebrow">WORLD MAP</p><h2>Progress &amp; treasure</h2><p class="muted">Set the furthest area reached. Chest tracking never changes stock.</p></div><button id="endgame-worlds" class="quiet">End-game preset</button></div>
+      <div class="section-title"><div><h2>World progress</h2><p class="muted">Set the furthest area reached. Chest tracking never changes stock.</p></div><button id="endgame-worlds" class="quiet">End-game preset</button></div>
       <div class="panel"><label class="check"><input id="all-chests" type="checkbox"> All chests collected</label><p class="muted">Toggle chest completion for every world.</p></div>
       <div class="panel optional"><h3>Optional areas</h3><div id="optional-unlocks" class="checks"></div></div>
       <div id="world-list" class="card-grid"></div>
@@ -399,7 +398,7 @@ footer p + p { margin-top: .8rem; }
       <details class="panel"><summary>Orichalcum+ rewards</summary><p>Only seven exist. Track the four non-chest rewards here; enter remaining stock under Materials.</p><div id="orichalcum-rewards" class="checks"></div></details>
     </section>
     <section id="tab-import" hidden>
-      <div class="section-title"><div><p class="eyebrow">MEDIA SCAN</p><h2>Import from the game</h2><p class="muted">Recognition stays on this device. Review results before applying.</p></div></div>
+      <div class="section-title"><div><h2>Import media</h2><p class="muted">Recognition stays on this device. Review results before applying.</p></div></div>
       <div class="panel">
         <div class="toolbar">
           <label>Read<select id="import-kind"><option value="recipes">Recipes / Free Development</option><option value="inventory">Materials stock</option></select></label>
