@@ -553,6 +553,30 @@ async function progressSuite() {
     }), true, "Every farming route must be available after the endgame preset");
   }
   console.log("PASS endgame: world maxima, all areas/routes, chest/inventory preservation, persisted reload");
+
+  const rewards = await open("world-progress", {
+    goals: { "Ultima Weapon": 1 }, inventory: { "Orichalcum+": 2 },
+    moogle: 9, expand: false, worlds: expected.worlds,
+  });
+  const atlantica = data.rewards.find((reward) => reward.world === "at");
+  const atlanticaRoute = rewards.locator(".route-item").filter({ hasText: atlantica.label });
+  assert.equal(await atlanticaRoute.count(), 1, "Uncollected Atlantica reward must be suggested");
+  const beforeReward = await saved(rewards);
+  await rewards.getByText("Orichalcum+ rewards", { exact: true }).click();
+  await rewards.locator(`[data-reward="${atlantica.id}"]`).check();
+  await rewards.locator('[data-tab="plan"]').click();
+  for (const reload of [false, true]) {
+    if (reload) await rewards.reload();
+    assert.equal(await atlanticaRoute.count(), 0, "Collected Atlantica reward must disappear immediately and after reload");
+    assert.equal(await rewards.locator(".route-item").filter({ hasText: "Collect once; never a repeatable enemy drop." }).count(), 3);
+    assert.deepEqual((await saved(rewards)).inventory, beforeReward.inventory, "Reward tracking must not add inventory");
+  }
+  await rewards.locator('[data-tab="progress"]').click();
+  await rewards.getByText("Orichalcum+ rewards", { exact: true }).click();
+  await rewards.locator(`[data-reward="${atlantica.id}"]`).uncheck();
+  await rewards.locator('[data-tab="plan"]').click();
+  assert.equal(await atlanticaRoute.count(), 1, "Unchecking the reward must restore its route");
+  console.log("PASS rewards: Atlantica collection hides its route, preserves other rewards and stock, persists, and can be undone");
 }
 
 async function routesSuite() {

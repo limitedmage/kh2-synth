@@ -218,6 +218,24 @@ test("chest completion never adds stock or creates chest routes", () => {
   const b = { ...a, chests: Object.fromEntries(D.worlds.map((w) => [w.id, true])) };
   assert.deepEqual(plain(P.plan(a)), plain(P.plan(b)));
 });
+test("collected Orichalcum+ rewards disappear from routes without changing stock or deficits", () => {
+  const original = state({ goals: { "Ultima Weapon": 1 }, moogle: 9, expand: false, inventory: { "Orichalcum+": 2 } });
+  const baseline = P.plan(original);
+  const rewards = D.rewards.slice(3);
+  assert.deepEqual(baseline.routes.filter((route) => route.rewardId).map((route) => route.rewardId), rewards.map((reward) => reward.id));
+  for (const reward of rewards) {
+    const collected = { ...original, rewards: { [reward.id]: true } };
+    const result = P.plan(collected);
+    assert.deepEqual(result.routes, baseline.routes.filter((route) => route.rewardId !== reward.id), reward.label);
+    assert.deepEqual(result.requirements, baseline.requirements);
+    assert.deepEqual(collected.inventory, { "Orichalcum+": 2 });
+    const restored = P.plan({ ...collected, rewards: { [reward.id]: false } });
+    assert.deepEqual(restored.routes, baseline.routes);
+  }
+  const complete = P.plan({ ...original, rewards: Object.fromEntries(rewards.map((reward) => [reward.id, true])) });
+  assert.equal(complete.routes.filter((route) => route.rewardId).length, 0);
+  assert.equal(row(complete, "Orichalcum+").missing, 5);
+});
 test("Final Mix Serenity Crystal sources exclude original KH2 Nobody drops", () => {
   assert.ok(D.materials["Serenity Crystal"].sources.every((s) => s.enemy === "Bulky Vendor"));
 });

@@ -32,8 +32,8 @@ const data = (() => {
     name, sources: [],
     url: wiki(materialPages[name] || materialPages[name.split(" ")[0]] || name.split(" ")[0]),
   }]));
-  const source = (material, world, stage, enemy, room, rate, unlock = "", note = "") => {
-    materials[material].sources.push({ world, stage, enemy, room, rate, unlock, note, url: wiki(enemy) });
+  const source = (material, world, stage, enemy, room, rate, unlock = "", note = "", rewardId = "") => {
+    materials[material].sources.push({ world, stage, enemy, room, rate, unlock, note, rewardId, url: wiki(enemy) });
   };
   const drops = (family, rows) => rows.forEach(([tier, world, stage, enemy, room, rate]) => source(`${family} ${tier}`, world, stage, enemy, room, rate));
   drops("Blazing", [
@@ -174,7 +174,7 @@ const data = (() => {
     ["oc", "Win Goddess of Fate Cup (after Xemnas's first battle)", 2],
     ["hb", "Hand in all 60 Final Mix material types to a Moogle", 1],
   ].map(([world, label, stage], i) => ({ id: `plus-${i}`, world, label, stage }));
-  for (const reward of rewards.slice(3)) source("Orichalcum+", reward.world, reward.stage, "One-time reward", reward.label, null, "", "Collect once; never a repeatable enemy drop.");
+  for (const reward of rewards.slice(3)) source("Orichalcum+", reward.world, reward.stage, "One-time reward", reward.label, null, "", "Collect once; never a repeatable enemy drop.", reward.id);
   const recipes = [];
   function recipe(name, rank, ingredients, upgrade, modifier, category = "Recipes", unlock = "", minLevel = 1, types = 0) {
     const base = { name, rank, ingredients, category, unlock, minLevel, types, url: wiki(name), base: "", modifier: "" };

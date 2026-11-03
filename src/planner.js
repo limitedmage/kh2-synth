@@ -132,6 +132,7 @@ const planner = (() => {
     for (const row of routeMaterials) {
       if (!row.crafted) {
         for (const route of D.materials[row.name].sources) {
+          if (route.rewardId && state.rewards[route.rewardId]) continue;
           const key = `${route.world}|${route.stage}|${route.enemy}|${route.room}|${route.unlock}`;
           if (!routes.has(key)) routes.set(key, { ...route, ...availability(route, state), materials: [] });
           routes.get(key).materials.push({ name: row.name, missing: row.missing, rate: route.rate, effectiveRate: effectiveDropRate(route.rate, state.luckyLuckyCount), note: route.note });
