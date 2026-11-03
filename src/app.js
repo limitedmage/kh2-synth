@@ -71,7 +71,7 @@
       if (row.locked) note = `Synthesis locked: ${D.byRecipe[row.name].unlock}`;
       if (row.name.startsWith("Mythril") && row.missing) note += allChests ? " · All chests marked collected; synthesis is the remaining source." : " · No enemy drops. Chests may supply some; only entered stock is budgeted.";
       if (row.name === "Orichalcum+" && row.missing) note += " · Seven total in the game; chest completion is tracked under World progress.";
-      return `<tr><td>${link(D.materials[row.name].url, row.name)}${row.bonus ? `<small>Includes ${row.bonus} from a base-recipe prerequisite</small>` : ""}</td><td class="numeric">${row.required}</td><td class="numeric">${row.owned}</td><td class="numeric ${row.missing ? "warning" : "positive"}">${row.missing || "—"}</td><td>${escape(note)}${craftable && row.missing && state.expand ? `<label class="check"><input type="checkbox" data-method="${escape(row.name)}" ${(state.methods[row.name] ? state.methods[row.name] === "craft" : row.name.startsWith("Mythril")) ? "checked" : ""}> Plan synthesis for this material</label>` : ""}</td></tr>`;
+      return `<tr><td>${link(D.materials[row.name].url, row.name)}${row.bonus ? `<small>Includes ${row.bonus} from a base-recipe prerequisite</small>` : ""}</td><td class="numeric">${row.required}</td><td class="numeric">${row.owned}</td><td class="numeric ${row.missing ? "warning" : "positive"}">${row.missing || "—"}</td><td>${escape(note)}${craftable && row.missing && state.expand ? `<label class="check"><input type="checkbox" data-method="${escape(row.name)}" ${(state.methods[row.name] ? state.methods[row.name] === "craft" : row.name.startsWith("Mythril")) ? "checked" : ""}> Plan synthesis for this material</label>${craftable.base ? `<label class="check"><input type="checkbox" data-crafted="${escape(craftable.base)}" ${state.crafted[craftable.base] ? "checked" : ""}> ${escape(craftable.base)} already made once</label>` : ""}` : ""}</td></tr>`;
     }).join("")}</tbody></table></div>` : `<div class="empty">${plan.goals ? (plan.warnings.length ? "Resolve the locked recipes above to calculate their ingredients." : "The entered stock covers the plan. Open the crafting notes for the recipe breakdown.") : "Missing materials will appear here."}</div>`;
     const groups = new Map();
     for (const route of plan.routes.toSorted((a, b) => Number(b.available) - Number(a.available))) {
@@ -192,6 +192,9 @@
   let reviewKind = "recipes";
   let currentKind = "recipes";
   let observations = [];
+  let alignment = null;
+  let aligning = false;
+  let cornerPoints = [];
   const cropIds = ["crop-x", "crop-y", "crop-w", "crop-h"];
   function crop() {
     const x = P.count($("crop-x").value, 99);
@@ -203,7 +206,10 @@
     drawPreview();
   }
   function resetCrop() {
-    setCrop($("import-kind").value === "recipes" ? { x: 21, y: 28, w: 32, h: 40 } : { x: 26, y: 28, w: 44, h: 49 });
+    alignment = null; aligning = false; cornerPoints = [];
+    $("align-screen").textContent = "Align four corners";
+    $("alignment-status").textContent = "Drag to crop, or align four corners to correct camera perspective.";
+    setCrop($("import-kind").value === "recipes" ? { x: 25, y: 23, w: 26, h: 40 } : { x: 26, y: 28, w: 44, h: 49 });
   }
   function drawPreview() {
     if (!mediaReady) return;
@@ -214,6 +220,21 @@
     canvas.height = Math.round(canvas.width * height / width);
     const ctx = canvas.getContext("2d");
     ctx.drawImage(media, 0, 0, canvas.width, canvas.height);
+    if (alignment || aligning) {
+      const points = alignment || cornerPoints;
+      ctx.strokeStyle = "#8be2c9"; ctx.lineWidth = 2; ctx.fillStyle = "#8be2c9";
+      if (points.length) {
+        ctx.beginPath(); ctx.moveTo(points[0].x / 100 * canvas.width, points[0].y / 100 * canvas.height);
+        for (const point of points.slice(1)) ctx.lineTo(point.x / 100 * canvas.width, point.y / 100 * canvas.height);
+        if (alignment) ctx.closePath();
+        ctx.stroke();
+        for (const [i, point] of points.entries()) {
+          ctx.beginPath(); ctx.arc(point.x / 100 * canvas.width, point.y / 100 * canvas.height, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.font = "bold 18px system-ui"; ctx.fillText(String(i + 1), point.x / 100 * canvas.width + 10, point.y / 100 * canvas.height - 8);
+        }
+      }
+      return;
+    }
     const c = crop();
     const x = c.x / 100 * canvas.width, y = c.y / 100 * canvas.height, w = c.w / 100 * canvas.width, h = c.h / 100 * canvas.height;
     ctx.fillStyle = "#0008";
@@ -222,7 +243,8 @@
     ctx.strokeStyle = "#8be2c9"; ctx.lineWidth = 2;
     ctx.strokeRect(x, y, w, h);
     if ($("import-kind").value === "inventory" && $("two-columns").checked) {
-      ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.moveTo(x + w / 2, y); ctx.lineTo(x + w / 2, y + h); ctx.stroke();
+      const split = Math.max(35, Math.min(65, Number($("column-split").value) || 52)) / 100;
+      ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.moveTo(x + w * split, y); ctx.lineTo(x + w * split, y + h); ctx.stroke();
     }
   }
   let dragStart;
@@ -232,6 +254,26 @@
   }
   $("preview").addEventListener("pointerdown", (event) => {
     if (importing) return;
+    if (aligning) {
+      cornerPoints.push(position(event));
+      if (cornerPoints.length === 4) {
+        const crosses = cornerPoints.map((point, i, all) => {
+          const b = all[(i + 1) % 4], c = all[(i + 2) % 4];
+          return (b.x - point.x) * (c.y - b.y) - (b.y - point.y) * (c.x - b.x);
+        });
+        if (crosses.some((cross) => cross < 1)) {
+          cornerPoints = [];
+          $("alignment-status").textContent = "Corners crossed or too close. Start again: top-left, top-right, bottom-right, bottom-left.";
+        } else {
+          alignment = cornerPoints; aligning = false;
+          $("align-screen").textContent = "Realign four corners";
+          $("alignment-status").textContent = "Perspective alignment set. The same table shape will be straightened in each frame. Reset crop removes alignment.";
+        }
+      } else $("alignment-status").textContent = `Click the ${["top-left", "top-right", "bottom-right", "bottom-left"][cornerPoints.length]} corner of the table.`;
+      drawPreview();
+      return;
+    }
+    alignment = null;
     dragStart = position(event); $("preview").setPointerCapture(event.pointerId);
   });
   $("preview").addEventListener("pointermove", (event) => {
@@ -240,9 +282,17 @@
     setCrop({ x: Math.round(Math.min(dragStart.x, end.x)), y: Math.round(Math.min(dragStart.y, end.y)), w: Math.max(1, Math.round(Math.abs(end.x - dragStart.x))), h: Math.max(1, Math.round(Math.abs(end.y - dragStart.y))) });
   });
   for (const type of ["pointerup", "pointercancel"]) $("preview").addEventListener(type, () => { dragStart = null; });
-  for (const id of cropIds) $(id).addEventListener("input", drawPreview);
+  for (const id of cropIds) $(id).addEventListener("input", () => { alignment = null; drawPreview(); });
   $("crop-reset").addEventListener("click", resetCrop);
+  $("align-screen").addEventListener("click", () => {
+    if (!mediaReady || importing) return;
+    aligning = !aligning; cornerPoints = [];
+    $("align-screen").textContent = aligning ? "Cancel alignment" : alignment ? "Realign four corners" : "Align four corners";
+    $("alignment-status").textContent = aligning ? "Click the top-left corner of the table (include names and counts)." : "Alignment selection cancelled.";
+    drawPreview();
+  });
   $("two-columns").addEventListener("change", drawPreview);
+  $("column-split").addEventListener("input", drawPreview);
   $("import-kind").addEventListener("change", () => {
     currentKind = $("import-kind").value;
     resetCrop();
@@ -324,7 +374,7 @@
   });
   function setImportBusy(busy) {
     importing = busy;
-    for (const id of ["media-file", "import-kind", "two-columns", "sampling", "parse-text", "crop-reset", ...cropIds]) $(id).disabled = busy;
+    for (const id of ["media-file", "import-kind", "two-columns", "column-split", "sampling", "parse-text", "crop-reset", "align-screen", ...cropIds]) $(id).disabled = busy;
     $("recognize").disabled = busy || !mediaReady;
     $("cancel-ocr").hidden = !busy;
     $("ocr-progress").hidden = !busy;
@@ -368,19 +418,41 @@
       const columns = reviewKind === "inventory" && $("two-columns").checked ? 2 : 1;
       const total = frames * columns;
       const selectedCrop = crop();
+      const selectedAlignment = alignment?.map((point) => ({ ...point }));
+      if (aligning) throw new Error("Finish selecting all four corners, or cancel alignment before reading");
       for (let frame = 0; frame < frames; frame++) {
         if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
         if (video) await R.seek(media, Math.min(frame * interval, media.duration - 0.01), signal);
         drawPreview();
+        const frameMedia = selectedAlignment ? R.rectifyCanvas(media, selectedAlignment) : media;
         for (let column = 0; column < columns; column++) {
           if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
           $("ocr-status").textContent = `Reading ${video ? `frame ${frame + 1}/${frames}, ` : ""}column ${column + 1}/${columns}. ${Math.round(done / total * 100)}% complete.`;
-          const canvas = R.cropCanvas(media, selectedCrop, column, columns);
+          const canvas = R.cropCanvas(frameMedia, selectedAlignment ? { x: 0, y: 0, w: 100, h: 100 } : selectedCrop, column, columns, Number($("column-split").value) || 52);
+          const numberColumn = reviewKind === "inventory" ? R.cropCanvas(frameMedia, selectedAlignment ? { x: 0, y: 0, w: 100, h: 100 } : selectedCrop, column, columns, Number($("column-split").value) || 52, false) : null;
+          await worker.setParameters({ tessedit_pageseg_mode: "6", tessedit_char_whitelist: "" });
           const result = await worker.recognize(canvas);
           const lines = result.data.lines || result.data.text.split(/\r?\n/).map((text) => ({ text, confidence: result.data.confidence }));
-          const parsed = R.parseLines(lines, reviewKind, `Frame ${frame + 1}, column ${column + 1}`);
-          observations.push(...parsed.rows);
-          unmatched += parsed.unmatched.length;
+          if (reviewKind === "inventory") {
+            await worker.setParameters({ tessedit_pageseg_mode: "7", tessedit_char_whitelist: "0123456789" });
+            for (const line of lines) {
+              const parsed = R.parseLines([line], reviewKind, `Frame ${frame + 1}, column ${column + 1}`);
+              unmatched += parsed.unmatched.length;
+              if (!parsed.rows.length || !line.bbox) continue;
+              if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
+              const digits = await worker.recognize(R.quantityCanvas(numberColumn, line.bbox));
+              const text = digits.data.text.trim();
+              for (const row of parsed.rows) {
+                row.quantity = /^\d{1,4}$/.test(text) ? Number(text) : null;
+                row.confidence = Math.min(row.confidence, digits.data.confidence);
+                observations.push(row);
+              }
+            }
+          } else {
+            const parsed = R.parseLines(lines, reviewKind, `Frame ${frame + 1}, column ${column + 1}`);
+            observations.push(...parsed.rows);
+            unmatched += parsed.unmatched.length;
+          }
           raw.push(result.data.text);
           done++; $("ocr-progress").value = done / total;
         }
@@ -391,7 +463,7 @@
     } finally {
       if (worker) { await worker.terminate().catch(() => {}); worker = null; }
       $("ocr-text").value = raw.join("\n");
-      review = R.merge(observations); renderReview(unmatched);
+      review = R.merge(observations, media === $("video") ? 2 : 1); renderReview(unmatched);
       setImportBusy(false);
     }
   });

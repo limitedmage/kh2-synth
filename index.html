@@ -71,17 +71,20 @@
           <label class="button primary">Choose photo / video<input id="media-file" type="file" accept="image/*,video/*" hidden></label>
           <span id="media-name" class="muted">No file selected</span>
         </div>
-        <p class="muted">For recipe photos, select only the left-hand list (including dim names). For materials, select both columns with their quantities. Drag over the preview to change the reading area. Cropping helps with photos of a TV.</p>
+        <p class="muted">For recipe photos, select only the left-hand list (including dim names). For materials, select both columns with their quantities. Drag to crop. If the screen is crooked, use four-corner alignment to straighten the table.</p>
         <div id="media-preview" hidden><canvas id="preview" aria-label="Media preview. Drag to select reading area."></canvas><video id="video" muted playsinline hidden></video></div>
         <div class="toolbar crop-fields">
-          <label>Left %<input id="crop-x" type="number" min="0" max="99" value="21"></label>
-          <label>Top %<input id="crop-y" type="number" min="0" max="99" value="28"></label>
-          <label>Width %<input id="crop-w" type="number" min="1" max="100" value="32"></label>
+          <label>Left %<input id="crop-x" type="number" min="0" max="99" value="25"></label>
+          <label>Top %<input id="crop-y" type="number" min="0" max="99" value="23"></label>
+          <label>Width %<input id="crop-w" type="number" min="1" max="100" value="26"></label>
           <label>Height %<input id="crop-h" type="number" min="1" max="100" value="40"></label>
           <button id="crop-reset" class="quiet">Reset crop</button>
+          <button id="align-screen" class="quiet">Align four corners</button>
         </div>
+        <p id="alignment-status" class="muted">For camera recordings: click Align four corners, then the table's top-left, top-right, bottom-right, and bottom-left corners. Keep the camera still while scrolling.</p>
         <div class="toolbar">
           <label class="check"><input id="two-columns" type="checkbox" checked> Inventory has two columns</label>
+          <label>First column width %<input id="column-split" type="number" min="35" max="65" value="52" step="0.5"></label>
           <label>Video sampling<select id="sampling"><option value="0.2">Every 0.2 seconds (fast scroll)</option><option value="0.5">Every 0.5 seconds</option><option value="1">Every 1 second</option></select></label>
           <button id="recognize" class="primary" disabled>Read selected area</button><button id="cancel-ocr" class="quiet" hidden>Cancel</button>
         </div>
@@ -98,7 +101,14 @@
         <p class="muted">Recipe imports set desired quantities (do not duplicate existing goals). Inventory imports replace only checked material totals; materials not detected are left unchanged.</p>
       </div>
     </section>
-    <footer><p>Built for the English HD release of Kingdom Hearts II Final Mix. Unofficial fan tool; no game assets included.</p><details><summary>Sources &amp; data notes</summary><p>Recipe quantities, ranks, Moogle perks, enemy drops and treasure locations are based on <a href="https://www.khwiki.com/Synthesis" target="_blank" rel="noreferrer">Kingdom Hearts Wiki</a>, its linked item/material pages, and <a href="https://www.destinyislands.com/kh2-fm/synthesis/materials/" target="_blank" rel="noreferrer">Destiny Islands' Final Mix guides</a>. Source links accompany recipes and routes. Numbers are base costs, before reductions; Mythril Crystal uses the rank-B Serenity Stone modifier. Final Mix Serenity drops differ from original KH2.</p><p>World stages are conservative farming gates, not a walkthrough. Some encounters change during story events; finish the current world episode to restore normal spawns. Potential chest locations are not a count of remaining treasure. Per-world completion includes late-access areas; Cavern treasure has its own switch. Optional boss / reward sources are labeled separately from repeatable enemy drops. Drop rates are base rates, before Lucky Lucky. No estimated kill count assumes guaranteed drops.</p></details></footer>
+    <footer>
+      <p>Built for the English HD release of Kingdom Hearts II Final Mix. Unofficial fan tool; no game assets included.</p>
+      <details>
+        <summary>Sources &amp; data notes</summary>
+        <p>Recipe quantities, ranks, Moogle perks and enemy drops are based on <a href="https://www.khwiki.com/Synthesis" target="_blank" rel="noreferrer">Kingdom Hearts Wiki</a>, its linked item/material pages, and <a href="https://www.destinyislands.com/kh2-fm/synthesis/materials/" target="_blank" rel="noreferrer">Destiny Islands' Final Mix guides</a>. Source links accompany recipes and routes. Numbers are base costs, before reductions; Mythril Crystal uses the rank-B Serenity Stone modifier. Final Mix Serenity drops differ from original KH2.</p>
+        <p>World stages are conservative farming gates, not a walkthrough. Some encounters change during story events; finish the current world episode to restore normal spawns. Chest completion is tracked only with global and per-world switches, including a separate Cavern switch. No chest routes are planned. Optional boss / reward sources are labeled separately from repeatable enemy drops. Drop rates are base rates, before Lucky Lucky.</p>
+      </details>
+    </footer>
   </main>
   <noscript>This guide requires JavaScript enabled. No server is needed.</noscript>
   <script>globalThis.KH2Data = (() => {
@@ -132,7 +142,7 @@
   const materialNames = families.flatMap((f) => tiers.map((t) => `${f} ${t}`)).concat(["Orichalcum", "Orichalcum+", "Manifest Illusion", "Lost Illusion"]);
   const materialPages = { Power: "Pulsing", Dark: "Writhing", Dense: "Betwixt", Bright: "Soothing", Energy: "Wellspring", Serenity: "Hungry", "Manifest Illusion": "Illusion", "Lost Illusion": "Illusion", "Orichalcum+": "Orichalcum" };
   const materials = Object.fromEntries(materialNames.map((name) => [name, {
-    name, sources: [], chests: [],
+    name, sources: [],
     url: wiki(materialPages[name] || materialPages[name.split(" ")[0]] || name.split(" ")[0]),
   }]));
   const source = (material, world, stage, enemy, room, rate, unlock = "", note = "") => {
@@ -268,74 +278,6 @@
   source("Lost Illusion", "hb", 2, "Absent Silhouette", "Vexen, Lexaeus, Zexion, Marluxia or Larxene", null, "silhouettes", "One-time reward from each silhouette. Not repeatable; use data battles for further copies.");
   source("Lost Illusion", "co", 3, "Organization XIII's Replica Data", "Garden of Assemblage", null, "data", "Repeat Vexen, Lexaeus, Zexion, Marluxia or Larxene for more copies.");
   source("Manifest Illusion", "dc", 1, "Lingering Will", "Hall of the Cornerstone portal", null, "clear", "Repeatable postgame boss reward.");
-  const chest = (name, world, stage, rooms) => {
-    for (const room of rooms.split(";")) materials[name].chests.push({ world, stage, room: room.trim(), url: materials[name].url });
-  };
-  chest("Mythril Shard", "tt", 1, "The Old Mansion;The Woods;Market Street: Tram Common;Central Station;Tower: Entryway;Sunset Terrace");
-  chest("Mythril Shard", "hb", 1, "Borough");
-  chest("Mythril Shard", "ld", 1, "Bamboo Grove;Checkpoint;Mountain Trail");
-  chest("Mythril Shard", "bc", 1, "The East Wing;The West Hall;Secret Passage;The West Wing;Courtyard");
-  chest("Mythril Shard", "oc", 1, "Cave of the Dead: Passage;Cave of the Dead: Inner Chamber;Underworld Caverns: Entrance;Underworld Caverns: The Lost Road;The Lock");
-  chest("Mythril Shard", "dc", 1, "Courtyard");
-  chest("Mythril Shard", "pr", 1, "Pier;Town;Isla de Muerta: Cave Mouth;Isla de Muerta: Moonlight Nook");
-  chest("Mythril Shard", "ag", 1, "Agrabah;Bazaar;Cave of Wonders: Entrance;Cave of Wonders: Valley of Stone");
-  chest("Mythril Shard", "ht", 1, "Graveyard");
-  chest("Mythril Shard", "pl", 1, "Elephant Graveyard;Wastelands");
-  chest("Mythril Stone", "tt", 1, "Tower: Wardrobe");
-  chest("Mythril Stone", "tt", 3, "Mansion: Foyer;Mansion: Dining Room");
-  chest("Mythril Stone", "hb", 2, "Corridors");
-  chest("Mythril Stone", "oc", 1, "Cave of the Dead: Passage;Underworld Caverns: The Lost Road");
-  chest("Mythril Stone", "dc", 1, "Courtyard");
-  chest("Mythril Stone", "tr", 1, "Waterway");
-  chest("Mythril Stone", "pr", 1, "Rampart");
-  chest("Mythril Stone", "ag", 1, "Agrabah;Palace Walls;Cave of Wonders: Valley of Stone");
-  chest("Mythril Stone", "ht", 1, "Halloween Town Square;Hinterlands;Candy Cane Lane");
-  chest("Mythril Stone", "pl", 1, "Gorge;Elephant Graveyard;Pride Rock;Wildebeest Valley;Wastelands;Jungle");
-  chest("Mythril Stone", "sp", 1, "Canyon");
-  chest("Mythril Stone", "aw", 1, "Pooh Bear's House");
-  chest("Mythril Stone", "tw", 1, "Fragment Crossing;Memory's Skyscraper");
-  chest("Mythril Stone", "tw", 3, "Ruin and Creation's Passage");
-  chest("Mythril Gem", "tt", 3, "Underground Concourse");
-  chest("Mythril Gem", "hb", 2, "Postern;Corridors");
-  chest("Mythril Gem", "pr", 1, "Town");
-  chest("Mythril Gem", "ag", 1, "Bazaar");
-  chest("Mythril Gem", "ht", 1, "Candy Cane Lane");
-  chest("Mythril Gem", "pl", 1, "Wildebeest Valley");
-  chest("Mythril Gem", "sp", 1, "Canyon");
-  chest("Mythril Gem", "aw", 1, "Piglet's House");
-  chest("Mythril Gem", "aw", 3, "The Spooky Cave");
-  chest("Mythril Gem", "tw", 2, "Nothing's Call;Naught's Skyway");
-  chest("Mythril Crystal", "tt", 3, "Underground Concourse;Tunnelway;Sunset Terrace;Mansion: Foyer;Mansion: Dining Room");
-  chest("Mythril Crystal", "hb", 2, "Corridors");
-  chest("Mythril Crystal", "ld", 2, "Throne Room");
-  chest("Mythril Crystal", "pr", 2, "Ship Graveyard: Seadrift Row");
-  chest("Mythril Crystal", "sp", 1, "Pit Cell");
-  chest("Mythril Crystal", "aw", 2, "Rabbit's House");
-  chest("Mythril Crystal", "aw", 3, "The Spooky Cave");
-  chest("Mythril Crystal", "tw", 1, "Fragment Crossing;Memory's Skyscraper");
-  chest("Mythril Crystal", "tw", 3, "Naught's Skyway;Ruin and Creation's Passage");
-  chest("Orichalcum", "aw", 2, "Kanga's House");
-  chest("Orichalcum", "aw", 3, "The Spooky Cave");
-  chest("Orichalcum", "ld", 2, "Throne Room");
-  chest("Orichalcum", "pr", 2, "Ship Graveyard: Seadrift Keep");
-  chest("Orichalcum", "tt", 3, "Underground Concourse;Tunnelway;Mansion: Library");
-  chest("Orichalcum", "tw", 1, "Fragment Crossing");
-  chest("Orichalcum", "tw", 3, "Nothing's Call;Naught's Skyway;Ruin and Creation's Passage");
-  chest("Orichalcum+", "sp", 2, "Central Computer Mesa");
-  chest("Orichalcum+", "tt", 3, "Sunset Terrace");
-  chest("Orichalcum+", "tw", 1, "The Brink of Despair");
-  chest("Manifest Illusion", "co", 1, "Depths");
-  chest("Manifest Illusion", "co", 2, "Mining Area;Engine Chamber");
-  chest("Lost Illusion", "co", 3, "Garden of Assemblage");
-  chest("Serenity Crystal", "tt", 3, "Mansion: Foyer");
-  chest("Serenity Crystal", "co", 2, "Mining Area;Engine Chamber");
-  chest("Serenity Crystal", "pl", 1, "Pride Rock;Jungle");
-  chest("Serenity Gem", "co", 2, "Mining Area");
-  chest("Serenity Gem", "pr", 1, "Isla de Muerta: Moonlight Nook");
-  chest("Serenity Gem", "pr", 2, "Ship Graveyard: Seadrift Row");
-  chest("Serenity Gem", "ag", 1, "Cave of Wonders: Treasure Room");
-  chest("Serenity Gem", "ht", 1, "Graveyard");
-  chest("Serenity Gem", "pl", 1, "Wastelands;Jungle");
   const rewards = [
     ["sp", "Central Computer Mesa chest", 2],
     ["tt", "Sunset Terrace chest (Sora)", 3],
@@ -398,7 +340,8 @@ globalThis.KH2Planner = (() => {
     if (!raw || typeof raw !== "object" || Array.isArray(raw) || raw.version !== 1) throw new Error("Not a supported Synthesis Journal save (version 1).");
     const state = defaults();
     for (const [field, names] of [["goals", D.recipes.map((r) => r.name)], ["inventory", D.materialNames]]) {
-      for (const name of names) if (raw[field]?.[name] !== undefined) state[field][name] = count(raw[field][name], field === "goals" ? 99 : 9999);
+      const keys = field === "goals" ? Object.keys(raw[field] || {}).filter((name) => names.includes(name)) : names;
+      for (const name of keys) if (raw[field]?.[name] !== undefined) state[field][name] = count(raw[field][name], field === "goals" ? (name === "Ultima Weapon" ? 1 : 99) : 9999);
     }
     for (const [field, names] of [["crafted", D.recipes.map((r) => r.name)], ["chests", D.worlds.map((w) => w.id)], ["optional", D.optional.map(([id]) => id)], ["rewards", D.rewards.map((r) => r.id)]]) {
       for (const name of names) state[field][name] = raw[field]?.[name] === true;
@@ -418,7 +361,7 @@ globalThis.KH2Planner = (() => {
     const levelDiscount = state.moogle >= threshold[recipe.rank] ? 2 : 1;
     const divisor = levelDiscount * (energy ? 2 : 1);
     const result = Object.fromEntries(Object.entries(recipe.ingredients).map(([name, qty]) => [
-      name, recipe.name === "Ultima Weapon" && name === "Orichalcum+" ? Math.ceil(qty / 2) : Math.ceil(qty / divisor),
+      name, recipe.name === "Ultima Weapon" && name === "Orichalcum+" ? Math.ceil(qty / Math.min(divisor, 2)) : Math.ceil(qty / divisor),
     ]));
     if (recipe.modifier) result[recipe.modifier] = (result[recipe.modifier] || 0) + 1;
     if (energy) result[energyName(recipe)] = (result[energyName(recipe)] || 0) + 1;
@@ -431,9 +374,6 @@ globalThis.KH2Planner = (() => {
     if (route.world === "co" && (state.worlds.hb || 0) < 2) conditions.push("Complete Hollow Bastion's 1000 Heartless battle");
     if (route.unlock && !state.optional[route.unlock]) conditions.push(D.optional.find(([id]) => id === route.unlock)?.[1] || route.unlock);
     return { available: !conditions.length, reason: conditions.join("; ") };
-  }
-  function chestSources(name, state) {
-    return D.materials[name].chests.filter((route) => !state.chests[route.world]).map((route) => ({ ...route, ...availability(route, state) }));
   }
   function plan(state) {
     const demand = {};
@@ -524,7 +464,7 @@ globalThis.KH2Planner = (() => {
     }
     return { requirements, needed, routes: [...routes.values()], steps, warnings: [...new Set(warnings)], goals: Object.values(requested).reduce((a, b) => a + b, 0) };
   }
-  return { count, defaults, sanitize, costs, unlocked, availability, chestSources, energyName, plan };
+  return { count, defaults, sanitize, costs, unlocked, availability, energyName, plan };
 })();
 
 
@@ -589,7 +529,7 @@ globalThis.KH2Recognition = (() => {
     }
     return { rows, unmatched };
   }
-  function merge(observations) {
+  function merge(observations, minimumReadings = 1) {
     const groups = new Map();
     for (const row of observations) {
       if (!groups.has(row.name)) groups.set(row.name, []);
@@ -603,7 +543,7 @@ globalThis.KH2Recognition = (() => {
       const best = readings.toSorted((a, b) => b.confidence * b.score - a.confidence * a.score)[0];
       const quantity = ranked.length ? ranked[0][0] : null;
       const conflict = ranked.length > 1;
-      return { name, quantity, conflict, checked: quantity !== null && !conflict && best.confidence >= 55 && best.score >= 0.82,
+      return { name, quantity, conflict, checked: quantity !== null && !conflict && valid.length >= minimumReadings && best.confidence >= 65 && best.score >= 0.82,
         readings: readings.length, alternatives: ranked.map(([value]) => value), confidence: Math.round(best.confidence), raw: best.raw };
     });
   }
@@ -620,7 +560,7 @@ globalThis.KH2Recognition = (() => {
     });
     return loading;
   }
-  function cropCanvas(media, crop, column = 0, columns = 1) {
+  function cropCanvas(media, crop, column = 0, columns = 1, split = 50, preprocess = true) {
     const width = media.videoWidth || media.naturalWidth || media.width;
     const height = media.videoHeight || media.naturalHeight || media.height;
     const x = width * crop.x / 100;
@@ -628,20 +568,84 @@ globalThis.KH2Recognition = (() => {
     const w = Math.min(width - x, width * crop.w / 100);
     const h = Math.min(height - y, height * crop.h / 100);
     const canvas = document.createElement("canvas");
-    const part = w / columns;
+    const fraction = Math.max(0.35, Math.min(0.65, split / 100));
+    const part = columns === 1 ? w : w * (column === 0 ? fraction : 1 - fraction);
+    const offset = columns === 1 || column === 0 ? 0 : w * fraction;
     const scale = Math.min(3, 1500 / part);
     canvas.width = Math.round(part * scale);
     canvas.height = Math.round(h * scale);
     const ctx = canvas.getContext("2d", { willReadFrequently: true });
-    ctx.drawImage(media, x + column * part, y, part, h, 0, 0, canvas.width, canvas.height);
+    ctx.drawImage(media, x + offset, y, part, h, 0, 0, canvas.width, canvas.height);
+    if (!preprocess) return canvas;
     const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
     for (let i = 0; i < image.data.length; i += 4) {
-      const luminance = image.data[i] * 0.2 + image.data[i + 1] * 0.65 + image.data[i + 2] * 0.15;
-      const value = 255 - Math.max(0, Math.min(255, (luminance - 30) * 1.5));
+      // Blue menu backgrounds and dim blue text separate best in the green channel.
+      const value = 255 - Math.max(0, Math.min(255, (image.data[i + 1] - 12) * 3));
       image.data[i] = image.data[i + 1] = image.data[i + 2] = value;
     }
     ctx.putImageData(image, 0, 0);
     return canvas;
+  }
+  function quantityCanvas(column, bounds) {
+    const canvas = document.createElement("canvas");
+    const top = Math.max(0, bounds.y0 - 4);
+    const height = Math.min(column.height - top, bounds.y1 - bounds.y0 + 8);
+    const left = column.width * 0.79;
+    const width = column.width * 0.185;
+    canvas.width = Math.ceil(width) + 32;
+    canvas.height = Math.ceil(height) + 32;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    ctx.drawImage(column, left, top, width, height, 16, 16, width, height);
+    const image = ctx.getImageData(16, 16, Math.ceil(width), Math.ceil(height));
+    for (let i = 0; i < image.data.length; i += 4) {
+      const value = Math.min(image.data[i], image.data[i + 1], image.data[i + 2]) > 150 ? 0 : 255;
+      image.data[i] = image.data[i + 1] = image.data[i + 2] = value;
+    }
+    ctx.putImageData(image, 16, 16);
+    return canvas;
+  }
+  function rectifyCanvas(media, corners) {
+    const width = media.videoWidth || media.naturalWidth || media.width;
+    const height = media.videoHeight || media.naturalHeight || media.height;
+    const points = corners.map((p) => ({ x: p.x / 100 * width, y: p.y / 100 * height }));
+    const [p0, p1, p2, p3] = points;
+    const length = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
+    const output = document.createElement("canvas");
+    output.width = Math.max(1, Math.round((length(p0, p1) + length(p3, p2)) / 2));
+    output.height = Math.max(1, Math.round((length(p0, p3) + length(p1, p2)) / 2));
+    const input = document.createElement("canvas");
+    input.width = width; input.height = height;
+    const sourceContext = input.getContext("2d", { willReadFrequently: true });
+    sourceContext.drawImage(media, 0, 0, width, height);
+    const source = sourceContext.getImageData(0, 0, width, height).data;
+    const ctx = output.getContext("2d");
+    const target = ctx.createImageData(output.width, output.height);
+    const dx1 = p1.x - p2.x, dx2 = p3.x - p2.x, dx3 = p0.x - p1.x + p2.x - p3.x;
+    const dy1 = p1.y - p2.y, dy2 = p3.y - p2.y, dy3 = p0.y - p1.y + p2.y - p3.y;
+    const determinant = dx1 * dy2 - dx2 * dy1;
+    if (Math.abs(determinant) < 0.001) throw new Error("Alignment corners are too close or crossed. Select four corners clockwise around the table.");
+    const g = (dx3 * dy2 - dx2 * dy3) / determinant;
+    const h = (dx1 * dy3 - dx3 * dy1) / determinant;
+    const a = p1.x - p0.x + g * p1.x, b = p3.x - p0.x + h * p3.x;
+    const d = p1.y - p0.y + g * p1.y, e = p3.y - p0.y + h * p3.y;
+    // Inverse mapping samples the camera image through a square-to-quadrilateral homography.
+    for (let y = 0; y < output.height; y++) for (let x = 0; x < output.width; x++) {
+      const u = x / output.width, v = y / output.height, denominator = g * u + h * v + 1;
+      const sx = Math.max(0, Math.min(width - 1.001, (a * u + b * v + p0.x) / denominator));
+      const sy = Math.max(0, Math.min(height - 1.001, (d * u + e * v + p0.y) / denominator));
+      const ix = Math.floor(sx), iy = Math.floor(sy), fx = sx - ix, fy = sy - iy;
+      const offset = (iy * width + ix) * 4, out = (y * output.width + x) * 4;
+      for (let channel = 0; channel < 3; channel++) {
+        target.data[out + channel] = source[offset + channel] * (1 - fx) * (1 - fy) +
+          source[offset + 4 + channel] * fx * (1 - fy) +
+          source[offset + width * 4 + channel] * (1 - fx) * fy +
+          source[offset + width * 4 + 4 + channel] * fx * fy;
+      }
+      target.data[out + 3] = 255;
+    }
+    ctx.putImageData(target, 0, 0);
+    return output;
   }
   function seek(video, time, signal) {
     return new Promise((resolve, reject) => {
@@ -664,7 +668,7 @@ globalThis.KH2Recognition = (() => {
       video.currentTime = time;
     });
   }
-  return { normalize, matchName, parseLines, merge, loadEngine, cropCanvas, seek };
+  return { normalize, matchName, parseLines, merge, loadEngine, quantityCanvas, cropCanvas, rectifyCanvas, seek };
 })();
 
 
@@ -741,7 +745,7 @@ globalThis.KH2Recognition = (() => {
       if (row.locked) note = `Synthesis locked: ${D.byRecipe[row.name].unlock}`;
       if (row.name.startsWith("Mythril") && row.missing) note += allChests ? " · All chests marked collected; synthesis is the remaining source." : " · No enemy drops. Chests may supply some; only entered stock is budgeted.";
       if (row.name === "Orichalcum+" && row.missing) note += " · Seven total in the game; chest completion is tracked under World progress.";
-      return `<tr><td>${link(D.materials[row.name].url, row.name)}${row.bonus ? `<small>Includes ${row.bonus} from a base-recipe prerequisite</small>` : ""}</td><td class="numeric">${row.required}</td><td class="numeric">${row.owned}</td><td class="numeric ${row.missing ? "warning" : "positive"}">${row.missing || "—"}</td><td>${escape(note)}${craftable && row.missing && state.expand ? `<label class="check"><input type="checkbox" data-method="${escape(row.name)}" ${(state.methods[row.name] ? state.methods[row.name] === "craft" : row.name.startsWith("Mythril")) ? "checked" : ""}> Plan synthesis for this material</label>` : ""}</td></tr>`;
+      return `<tr><td>${link(D.materials[row.name].url, row.name)}${row.bonus ? `<small>Includes ${row.bonus} from a base-recipe prerequisite</small>` : ""}</td><td class="numeric">${row.required}</td><td class="numeric">${row.owned}</td><td class="numeric ${row.missing ? "warning" : "positive"}">${row.missing || "—"}</td><td>${escape(note)}${craftable && row.missing && state.expand ? `<label class="check"><input type="checkbox" data-method="${escape(row.name)}" ${(state.methods[row.name] ? state.methods[row.name] === "craft" : row.name.startsWith("Mythril")) ? "checked" : ""}> Plan synthesis for this material</label>${craftable.base ? `<label class="check"><input type="checkbox" data-crafted="${escape(craftable.base)}" ${state.crafted[craftable.base] ? "checked" : ""}> ${escape(craftable.base)} already made once</label>` : ""}` : ""}</td></tr>`;
     }).join("")}</tbody></table></div>` : `<div class="empty">${plan.goals ? (plan.warnings.length ? "Resolve the locked recipes above to calculate their ingredients." : "The entered stock covers the plan. Open the crafting notes for the recipe breakdown.") : "Missing materials will appear here."}</div>`;
     const groups = new Map();
     for (const route of plan.routes.toSorted((a, b) => Number(b.available) - Number(a.available))) {
@@ -862,6 +866,9 @@ globalThis.KH2Recognition = (() => {
   let reviewKind = "recipes";
   let currentKind = "recipes";
   let observations = [];
+  let alignment = null;
+  let aligning = false;
+  let cornerPoints = [];
   const cropIds = ["crop-x", "crop-y", "crop-w", "crop-h"];
   function crop() {
     const x = P.count($("crop-x").value, 99);
@@ -873,7 +880,10 @@ globalThis.KH2Recognition = (() => {
     drawPreview();
   }
   function resetCrop() {
-    setCrop($("import-kind").value === "recipes" ? { x: 21, y: 28, w: 32, h: 40 } : { x: 26, y: 28, w: 44, h: 49 });
+    alignment = null; aligning = false; cornerPoints = [];
+    $("align-screen").textContent = "Align four corners";
+    $("alignment-status").textContent = "Drag to crop, or align four corners to correct camera perspective.";
+    setCrop($("import-kind").value === "recipes" ? { x: 25, y: 23, w: 26, h: 40 } : { x: 26, y: 28, w: 44, h: 49 });
   }
   function drawPreview() {
     if (!mediaReady) return;
@@ -884,6 +894,21 @@ globalThis.KH2Recognition = (() => {
     canvas.height = Math.round(canvas.width * height / width);
     const ctx = canvas.getContext("2d");
     ctx.drawImage(media, 0, 0, canvas.width, canvas.height);
+    if (alignment || aligning) {
+      const points = alignment || cornerPoints;
+      ctx.strokeStyle = "#8be2c9"; ctx.lineWidth = 2; ctx.fillStyle = "#8be2c9";
+      if (points.length) {
+        ctx.beginPath(); ctx.moveTo(points[0].x / 100 * canvas.width, points[0].y / 100 * canvas.height);
+        for (const point of points.slice(1)) ctx.lineTo(point.x / 100 * canvas.width, point.y / 100 * canvas.height);
+        if (alignment) ctx.closePath();
+        ctx.stroke();
+        for (const [i, point] of points.entries()) {
+          ctx.beginPath(); ctx.arc(point.x / 100 * canvas.width, point.y / 100 * canvas.height, 5, 0, Math.PI * 2); ctx.fill();
+          ctx.font = "bold 18px system-ui"; ctx.fillText(String(i + 1), point.x / 100 * canvas.width + 10, point.y / 100 * canvas.height - 8);
+        }
+      }
+      return;
+    }
     const c = crop();
     const x = c.x / 100 * canvas.width, y = c.y / 100 * canvas.height, w = c.w / 100 * canvas.width, h = c.h / 100 * canvas.height;
     ctx.fillStyle = "#0008";
@@ -892,7 +917,8 @@ globalThis.KH2Recognition = (() => {
     ctx.strokeStyle = "#8be2c9"; ctx.lineWidth = 2;
     ctx.strokeRect(x, y, w, h);
     if ($("import-kind").value === "inventory" && $("two-columns").checked) {
-      ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.moveTo(x + w / 2, y); ctx.lineTo(x + w / 2, y + h); ctx.stroke();
+      const split = Math.max(35, Math.min(65, Number($("column-split").value) || 52)) / 100;
+      ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.moveTo(x + w * split, y); ctx.lineTo(x + w * split, y + h); ctx.stroke();
     }
   }
   let dragStart;
@@ -902,6 +928,26 @@ globalThis.KH2Recognition = (() => {
   }
   $("preview").addEventListener("pointerdown", (event) => {
     if (importing) return;
+    if (aligning) {
+      cornerPoints.push(position(event));
+      if (cornerPoints.length === 4) {
+        const crosses = cornerPoints.map((point, i, all) => {
+          const b = all[(i + 1) % 4], c = all[(i + 2) % 4];
+          return (b.x - point.x) * (c.y - b.y) - (b.y - point.y) * (c.x - b.x);
+        });
+        if (crosses.some((cross) => cross < 1)) {
+          cornerPoints = [];
+          $("alignment-status").textContent = "Corners crossed or too close. Start again: top-left, top-right, bottom-right, bottom-left.";
+        } else {
+          alignment = cornerPoints; aligning = false;
+          $("align-screen").textContent = "Realign four corners";
+          $("alignment-status").textContent = "Perspective alignment set. The same table shape will be straightened in each frame. Reset crop removes alignment.";
+        }
+      } else $("alignment-status").textContent = `Click the ${["top-left", "top-right", "bottom-right", "bottom-left"][cornerPoints.length]} corner of the table.`;
+      drawPreview();
+      return;
+    }
+    alignment = null;
     dragStart = position(event); $("preview").setPointerCapture(event.pointerId);
   });
   $("preview").addEventListener("pointermove", (event) => {
@@ -910,9 +956,17 @@ globalThis.KH2Recognition = (() => {
     setCrop({ x: Math.round(Math.min(dragStart.x, end.x)), y: Math.round(Math.min(dragStart.y, end.y)), w: Math.max(1, Math.round(Math.abs(end.x - dragStart.x))), h: Math.max(1, Math.round(Math.abs(end.y - dragStart.y))) });
   });
   for (const type of ["pointerup", "pointercancel"]) $("preview").addEventListener(type, () => { dragStart = null; });
-  for (const id of cropIds) $(id).addEventListener("input", drawPreview);
+  for (const id of cropIds) $(id).addEventListener("input", () => { alignment = null; drawPreview(); });
   $("crop-reset").addEventListener("click", resetCrop);
+  $("align-screen").addEventListener("click", () => {
+    if (!mediaReady || importing) return;
+    aligning = !aligning; cornerPoints = [];
+    $("align-screen").textContent = aligning ? "Cancel alignment" : alignment ? "Realign four corners" : "Align four corners";
+    $("alignment-status").textContent = aligning ? "Click the top-left corner of the table (include names and counts)." : "Alignment selection cancelled.";
+    drawPreview();
+  });
   $("two-columns").addEventListener("change", drawPreview);
+  $("column-split").addEventListener("input", drawPreview);
   $("import-kind").addEventListener("change", () => {
     currentKind = $("import-kind").value;
     resetCrop();
@@ -994,7 +1048,7 @@ globalThis.KH2Recognition = (() => {
   });
   function setImportBusy(busy) {
     importing = busy;
-    for (const id of ["media-file", "import-kind", "two-columns", "sampling", "parse-text", "crop-reset", ...cropIds]) $(id).disabled = busy;
+    for (const id of ["media-file", "import-kind", "two-columns", "column-split", "sampling", "parse-text", "crop-reset", "align-screen", ...cropIds]) $(id).disabled = busy;
     $("recognize").disabled = busy || !mediaReady;
     $("cancel-ocr").hidden = !busy;
     $("ocr-progress").hidden = !busy;
@@ -1038,19 +1092,41 @@ globalThis.KH2Recognition = (() => {
       const columns = reviewKind === "inventory" && $("two-columns").checked ? 2 : 1;
       const total = frames * columns;
       const selectedCrop = crop();
+      const selectedAlignment = alignment?.map((point) => ({ ...point }));
+      if (aligning) throw new Error("Finish selecting all four corners, or cancel alignment before reading");
       for (let frame = 0; frame < frames; frame++) {
         if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
         if (video) await R.seek(media, Math.min(frame * interval, media.duration - 0.01), signal);
         drawPreview();
+        const frameMedia = selectedAlignment ? R.rectifyCanvas(media, selectedAlignment) : media;
         for (let column = 0; column < columns; column++) {
           if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
           $("ocr-status").textContent = `Reading ${video ? `frame ${frame + 1}/${frames}, ` : ""}column ${column + 1}/${columns}. ${Math.round(done / total * 100)}% complete.`;
-          const canvas = R.cropCanvas(media, selectedCrop, column, columns);
+          const canvas = R.cropCanvas(frameMedia, selectedAlignment ? { x: 0, y: 0, w: 100, h: 100 } : selectedCrop, column, columns, Number($("column-split").value) || 52);
+          const numberColumn = reviewKind === "inventory" ? R.cropCanvas(frameMedia, selectedAlignment ? { x: 0, y: 0, w: 100, h: 100 } : selectedCrop, column, columns, Number($("column-split").value) || 52, false) : null;
+          await worker.setParameters({ tessedit_pageseg_mode: "6", tessedit_char_whitelist: "" });
           const result = await worker.recognize(canvas);
           const lines = result.data.lines || result.data.text.split(/\r?\n/).map((text) => ({ text, confidence: result.data.confidence }));
-          const parsed = R.parseLines(lines, reviewKind, `Frame ${frame + 1}, column ${column + 1}`);
-          observations.push(...parsed.rows);
-          unmatched += parsed.unmatched.length;
+          if (reviewKind === "inventory") {
+            await worker.setParameters({ tessedit_pageseg_mode: "7", tessedit_char_whitelist: "0123456789" });
+            for (const line of lines) {
+              const parsed = R.parseLines([line], reviewKind, `Frame ${frame + 1}, column ${column + 1}`);
+              unmatched += parsed.unmatched.length;
+              if (!parsed.rows.length || !line.bbox) continue;
+              if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
+              const digits = await worker.recognize(R.quantityCanvas(numberColumn, line.bbox));
+              const text = digits.data.text.trim();
+              for (const row of parsed.rows) {
+                row.quantity = /^\d{1,4}$/.test(text) ? Number(text) : null;
+                row.confidence = Math.min(row.confidence, digits.data.confidence);
+                observations.push(row);
+              }
+            }
+          } else {
+            const parsed = R.parseLines(lines, reviewKind, `Frame ${frame + 1}, column ${column + 1}`);
+            observations.push(...parsed.rows);
+            unmatched += parsed.unmatched.length;
+          }
           raw.push(result.data.text);
           done++; $("ocr-progress").value = done / total;
         }
@@ -1061,7 +1137,7 @@ globalThis.KH2Recognition = (() => {
     } finally {
       if (worker) { await worker.terminate().catch(() => {}); worker = null; }
       $("ocr-text").value = raw.join("\n");
-      review = R.merge(observations); renderReview(unmatched);
+      review = R.merge(observations, media === $("video") ? 2 : 1); renderReview(unmatched);
       setImportBusy(false);
     }
   });

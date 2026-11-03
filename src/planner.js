@@ -9,7 +9,8 @@ globalThis.KH2Planner = (() => {
     if (!raw || typeof raw !== "object" || Array.isArray(raw) || raw.version !== 1) throw new Error("Not a supported Synthesis Journal save (version 1).");
     const state = defaults();
     for (const [field, names] of [["goals", D.recipes.map((r) => r.name)], ["inventory", D.materialNames]]) {
-      for (const name of names) if (raw[field]?.[name] !== undefined) state[field][name] = count(raw[field][name], field === "goals" ? 99 : 9999);
+      const keys = field === "goals" ? Object.keys(raw[field] || {}).filter((name) => names.includes(name)) : names;
+      for (const name of keys) if (raw[field]?.[name] !== undefined) state[field][name] = count(raw[field][name], field === "goals" ? (name === "Ultima Weapon" ? 1 : 99) : 9999);
     }
     for (const [field, names] of [["crafted", D.recipes.map((r) => r.name)], ["chests", D.worlds.map((w) => w.id)], ["optional", D.optional.map(([id]) => id)], ["rewards", D.rewards.map((r) => r.id)]]) {
       for (const name of names) state[field][name] = raw[field]?.[name] === true;
@@ -29,7 +30,7 @@ globalThis.KH2Planner = (() => {
     const levelDiscount = state.moogle >= threshold[recipe.rank] ? 2 : 1;
     const divisor = levelDiscount * (energy ? 2 : 1);
     const result = Object.fromEntries(Object.entries(recipe.ingredients).map(([name, qty]) => [
-      name, recipe.name === "Ultima Weapon" && name === "Orichalcum+" ? Math.ceil(qty / 2) : Math.ceil(qty / divisor),
+      name, recipe.name === "Ultima Weapon" && name === "Orichalcum+" ? Math.ceil(qty / Math.min(divisor, 2)) : Math.ceil(qty / divisor),
     ]));
     if (recipe.modifier) result[recipe.modifier] = (result[recipe.modifier] || 0) + 1;
     if (energy) result[energyName(recipe)] = (result[energyName(recipe)] || 0) + 1;
@@ -42,9 +43,6 @@ globalThis.KH2Planner = (() => {
     if (route.world === "co" && (state.worlds.hb || 0) < 2) conditions.push("Complete Hollow Bastion's 1000 Heartless battle");
     if (route.unlock && !state.optional[route.unlock]) conditions.push(D.optional.find(([id]) => id === route.unlock)?.[1] || route.unlock);
     return { available: !conditions.length, reason: conditions.join("; ") };
-  }
-  function chestSources(name, state) {
-    return D.materials[name].chests.filter((route) => !state.chests[route.world]).map((route) => ({ ...route, ...availability(route, state) }));
   }
   function plan(state) {
     const demand = {};
@@ -135,5 +133,5 @@ globalThis.KH2Planner = (() => {
     }
     return { requirements, needed, routes: [...routes.values()], steps, warnings: [...new Set(warnings)], goals: Object.values(requested).reduce((a, b) => a + b, 0) };
   }
-  return { count, defaults, sanitize, costs, unlocked, availability, chestSources, energyName, plan };
+  return { count, defaults, sanitize, costs, unlocked, availability, energyName, plan };
 })();

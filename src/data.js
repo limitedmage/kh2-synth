@@ -29,7 +29,7 @@ globalThis.KH2Data = (() => {
   const materialNames = families.flatMap((f) => tiers.map((t) => `${f} ${t}`)).concat(["Orichalcum", "Orichalcum+", "Manifest Illusion", "Lost Illusion"]);
   const materialPages = { Power: "Pulsing", Dark: "Writhing", Dense: "Betwixt", Bright: "Soothing", Energy: "Wellspring", Serenity: "Hungry", "Manifest Illusion": "Illusion", "Lost Illusion": "Illusion", "Orichalcum+": "Orichalcum" };
   const materials = Object.fromEntries(materialNames.map((name) => [name, {
-    name, sources: [], chests: [],
+    name, sources: [],
     url: wiki(materialPages[name] || materialPages[name.split(" ")[0]] || name.split(" ")[0]),
   }]));
   const source = (material, world, stage, enemy, room, rate, unlock = "", note = "") => {
@@ -165,74 +165,6 @@ globalThis.KH2Data = (() => {
   source("Lost Illusion", "hb", 2, "Absent Silhouette", "Vexen, Lexaeus, Zexion, Marluxia or Larxene", null, "silhouettes", "One-time reward from each silhouette. Not repeatable; use data battles for further copies.");
   source("Lost Illusion", "co", 3, "Organization XIII's Replica Data", "Garden of Assemblage", null, "data", "Repeat Vexen, Lexaeus, Zexion, Marluxia or Larxene for more copies.");
   source("Manifest Illusion", "dc", 1, "Lingering Will", "Hall of the Cornerstone portal", null, "clear", "Repeatable postgame boss reward.");
-  const chest = (name, world, stage, rooms) => {
-    for (const room of rooms.split(";")) materials[name].chests.push({ world, stage, room: room.trim(), url: materials[name].url });
-  };
-  chest("Mythril Shard", "tt", 1, "The Old Mansion;The Woods;Market Street: Tram Common;Central Station;Tower: Entryway;Sunset Terrace");
-  chest("Mythril Shard", "hb", 1, "Borough");
-  chest("Mythril Shard", "ld", 1, "Bamboo Grove;Checkpoint;Mountain Trail");
-  chest("Mythril Shard", "bc", 1, "The East Wing;The West Hall;Secret Passage;The West Wing;Courtyard");
-  chest("Mythril Shard", "oc", 1, "Cave of the Dead: Passage;Cave of the Dead: Inner Chamber;Underworld Caverns: Entrance;Underworld Caverns: The Lost Road;The Lock");
-  chest("Mythril Shard", "dc", 1, "Courtyard");
-  chest("Mythril Shard", "pr", 1, "Pier;Town;Isla de Muerta: Cave Mouth;Isla de Muerta: Moonlight Nook");
-  chest("Mythril Shard", "ag", 1, "Agrabah;Bazaar;Cave of Wonders: Entrance;Cave of Wonders: Valley of Stone");
-  chest("Mythril Shard", "ht", 1, "Graveyard");
-  chest("Mythril Shard", "pl", 1, "Elephant Graveyard;Wastelands");
-  chest("Mythril Stone", "tt", 1, "Tower: Wardrobe");
-  chest("Mythril Stone", "tt", 3, "Mansion: Foyer;Mansion: Dining Room");
-  chest("Mythril Stone", "hb", 2, "Corridors");
-  chest("Mythril Stone", "oc", 1, "Cave of the Dead: Passage;Underworld Caverns: The Lost Road");
-  chest("Mythril Stone", "dc", 1, "Courtyard");
-  chest("Mythril Stone", "tr", 1, "Waterway");
-  chest("Mythril Stone", "pr", 1, "Rampart");
-  chest("Mythril Stone", "ag", 1, "Agrabah;Palace Walls;Cave of Wonders: Valley of Stone");
-  chest("Mythril Stone", "ht", 1, "Halloween Town Square;Hinterlands;Candy Cane Lane");
-  chest("Mythril Stone", "pl", 1, "Gorge;Elephant Graveyard;Pride Rock;Wildebeest Valley;Wastelands;Jungle");
-  chest("Mythril Stone", "sp", 1, "Canyon");
-  chest("Mythril Stone", "aw", 1, "Pooh Bear's House");
-  chest("Mythril Stone", "tw", 1, "Fragment Crossing;Memory's Skyscraper");
-  chest("Mythril Stone", "tw", 3, "Ruin and Creation's Passage");
-  chest("Mythril Gem", "tt", 3, "Underground Concourse");
-  chest("Mythril Gem", "hb", 2, "Postern;Corridors");
-  chest("Mythril Gem", "pr", 1, "Town");
-  chest("Mythril Gem", "ag", 1, "Bazaar");
-  chest("Mythril Gem", "ht", 1, "Candy Cane Lane");
-  chest("Mythril Gem", "pl", 1, "Wildebeest Valley");
-  chest("Mythril Gem", "sp", 1, "Canyon");
-  chest("Mythril Gem", "aw", 1, "Piglet's House");
-  chest("Mythril Gem", "aw", 3, "The Spooky Cave");
-  chest("Mythril Gem", "tw", 2, "Nothing's Call;Naught's Skyway");
-  chest("Mythril Crystal", "tt", 3, "Underground Concourse;Tunnelway;Sunset Terrace;Mansion: Foyer;Mansion: Dining Room");
-  chest("Mythril Crystal", "hb", 2, "Corridors");
-  chest("Mythril Crystal", "ld", 2, "Throne Room");
-  chest("Mythril Crystal", "pr", 2, "Ship Graveyard: Seadrift Row");
-  chest("Mythril Crystal", "sp", 1, "Pit Cell");
-  chest("Mythril Crystal", "aw", 2, "Rabbit's House");
-  chest("Mythril Crystal", "aw", 3, "The Spooky Cave");
-  chest("Mythril Crystal", "tw", 1, "Fragment Crossing;Memory's Skyscraper");
-  chest("Mythril Crystal", "tw", 3, "Naught's Skyway;Ruin and Creation's Passage");
-  chest("Orichalcum", "aw", 2, "Kanga's House");
-  chest("Orichalcum", "aw", 3, "The Spooky Cave");
-  chest("Orichalcum", "ld", 2, "Throne Room");
-  chest("Orichalcum", "pr", 2, "Ship Graveyard: Seadrift Keep");
-  chest("Orichalcum", "tt", 3, "Underground Concourse;Tunnelway;Mansion: Library");
-  chest("Orichalcum", "tw", 1, "Fragment Crossing");
-  chest("Orichalcum", "tw", 3, "Nothing's Call;Naught's Skyway;Ruin and Creation's Passage");
-  chest("Orichalcum+", "sp", 2, "Central Computer Mesa");
-  chest("Orichalcum+", "tt", 3, "Sunset Terrace");
-  chest("Orichalcum+", "tw", 1, "The Brink of Despair");
-  chest("Manifest Illusion", "co", 1, "Depths");
-  chest("Manifest Illusion", "co", 2, "Mining Area;Engine Chamber");
-  chest("Lost Illusion", "co", 3, "Garden of Assemblage");
-  chest("Serenity Crystal", "tt", 3, "Mansion: Foyer");
-  chest("Serenity Crystal", "co", 2, "Mining Area;Engine Chamber");
-  chest("Serenity Crystal", "pl", 1, "Pride Rock;Jungle");
-  chest("Serenity Gem", "co", 2, "Mining Area");
-  chest("Serenity Gem", "pr", 1, "Isla de Muerta: Moonlight Nook");
-  chest("Serenity Gem", "pr", 2, "Ship Graveyard: Seadrift Row");
-  chest("Serenity Gem", "ag", 1, "Cave of Wonders: Treasure Room");
-  chest("Serenity Gem", "ht", 1, "Graveyard");
-  chest("Serenity Gem", "pl", 1, "Wastelands;Jungle");
   const rewards = [
     ["sp", "Central Computer Mesa chest", 2],
     ["tt", "Sunset Terrace chest (Sora)", 3],

@@ -126,3 +126,15 @@ test("unreadable counts and unrelated menu headings do not become stock", () => 
   assert.equal(parsed.rows.length, 1);
   assert.equal(R.merge(parsed.rows)[0].checked, false);
 });
+test("loading a save preserves goal priority and finite Energy allocation", () => {
+  const original = state({ goals: { "Save the King": 1, "AP Boost": 1 }, moogle: 4, inventory: { "Energy Crystal": 1 }, expand: false });
+  const restored = P.sanitize(plain(original));
+  assert.deepEqual(Object.keys(restored.goals), ["Save the King", "AP Boost"]);
+  assert.deepEqual(plain(P.plan(restored).requirements), plain(P.plan(original).requirements));
+});
+test("one isolated video count is not preselected; repeated agreement can be", () => {
+  const parsed = R.parseLines(["Dense Shard 4", "Dense Shard 4", "Frost Crystal 1"], "inventory");
+  const merged = R.merge(parsed.rows, 2);
+  assert.equal(merged.find((r) => r.name === "Dense Shard").checked, true);
+  assert.equal(merged.find((r) => r.name === "Frost Crystal").checked, false);
+});
