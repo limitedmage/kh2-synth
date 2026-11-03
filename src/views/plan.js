@@ -26,18 +26,31 @@ function readinessIndicator(ready) {
 
 function conflictWarning(name, conflict) {
   if (!conflict) return "";
-  const materials = conflict.materials.map((material) => `${material.name}: ${material.before} → ${material.after} missing`).join("; ");
-  const text = escape(`Shared materials warning: crafting ${name} increases shortfalls for ${conflict.items.join(", ")}. ${materials}.`);
+  const id = `conflict-${encodeURIComponent(name)}`;
   return `
-    <details class="craft-conflict">
-      <summary aria-label="${text}" title="${text}">
+    <div class="craft-conflict">
+      <button class="conflict-trigger" type="button" popovertarget="${id}" aria-label="${escape(`Shared materials warning for ${name}`)}">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"
           stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false">
           <path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5m0 3v.1"/>
         </svg>
-      </summary>
-      <small class="craftability-detail">${text}</small>
-    </details>`;
+      </button>
+      <div id="${id}" class="craftability-detail conflict-detail" popover="auto">
+        <h4>Shared materials</h4>
+        <p>Crafting <strong>${escape(name)}</strong> increases shortages for:</p>
+        <ul class="conflict-items">${conflict.items.map((item) => `<li>${escape(item)}</li>`).join("")}</ul>
+        <table class="conflict-materials">
+          <caption>Missing materials for these recipes</caption>
+          <thead><tr><th>Material</th><th class="numeric">Now</th><th class="numeric">After craft</th></tr></thead>
+          <tbody>${conflict.materials.map((material) => `
+            <tr>
+              <td><span class="icon-label">${icon("material", material.name)}<span>${escape(material.name)}</span></span></td>
+              <td class="numeric">${material.before}</td>
+              <td class="numeric">${material.after}</td>
+            </tr>`).join("")}</tbody>
+        </table>
+      </div>
+    </div>`;
 }
 
 function ingredientChip(name, required, inventory) {
@@ -181,6 +194,21 @@ function mooglePerks(state) {
 
 export function mountPlan(root, store) {
   const $ = (id) => root.querySelector(`#${id}`);
+  function positionWarning(panel) {
+    const row = panel.closest(".goal").getBoundingClientRect();
+    const bounds = panel.getBoundingClientRect();
+    panel.style.left = `${Math.max(16, Math.min(row.right - bounds.width, window.innerWidth - bounds.width - 16))}px`;
+    panel.style.top = `${Math.max(12, Math.min(row.bottom + 4, window.innerHeight - bounds.height - 12))}px`;
+  }
+  root.addEventListener("toggle", (event) => {
+    if (event.newState === "open" && event.target.matches(".conflict-detail")) positionWarning(event.target);
+  }, true);
+  const positionOpenWarning = () => {
+    const panel = root.querySelector(".conflict-detail:popover-open");
+    if (panel) positionWarning(panel);
+  };
+  window.addEventListener("resize", positionOpenWarning);
+  window.addEventListener("scroll", positionOpenWarning, { passive: true });
   $("moogle").innerHTML = data.levels.map((name, index) => `<option value="${index + 1}">${index + 1} · ${name} Moogle</option>`).join("");
   function render(state) {
     const plan = planner.plan(state);

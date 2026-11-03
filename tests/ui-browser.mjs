@@ -145,13 +145,37 @@ try {
   await expectReady(wishlist, "Firaga Bangle", 1, "ready");
   await expectReady(wishlist, "Blizzaga Armlet", 1, "ready");
   assert.equal(await wishlist.locator("#goals .craft-conflict").count(), 2, "Both independently ready items must warn when their materials conflict");
-  const warningLabel = await goal(wishlist, "Firaga Bangle").locator(".craft-conflict > summary").getAttribute("aria-label");
-  for (const text of ["Shared materials warning", "Firaga Bangle", "Blizzaga Armlet", "Mythril Shard"]) {
-    assert.ok(warningLabel.includes(text), `Ready recipe conflict warning must describe ${text}`);
-  }
   const conflict = goal(wishlist, "Firaga Bangle").locator(".craft-conflict");
-  await conflict.locator("summary").click();
-  assert.ok(await conflict.evaluate((details) => details.open), "Shared-stock warnings must expand by keyboard/touch-native details");
+  assert.equal(await conflict.locator(".conflict-trigger").getAttribute("aria-label"), "Shared materials warning for Firaga Bangle");
+  assert.equal(await conflict.locator(".conflict-trigger").getAttribute("title"), null, "A native text tooltip must not obscure the structured warning");
+  await conflict.locator(".conflict-trigger").click();
+  const warning = conflict.locator(".conflict-detail");
+  assert.ok(await warning.evaluate((panel) => panel.matches(":popover-open")), "Shared-stock warnings must open by click or tap");
+  assert.equal(await warning.locator("h4").innerText(), "Shared materials");
+  await warning.locator("h4").click();
+  assert.ok(await warning.evaluate((panel) => panel.matches(":popover-open")), "Interacting inside the warning must not dismiss it");
+  assert.deepEqual(await warning.locator(".conflict-items li").allTextContents(), ["Blizzaga Armlet"]);
+  assert.deepEqual(await warning.locator("tbody td.numeric").allTextContents(), ["0", "5"]);
+  assert.ok((await warning.innerText()).includes("Mythril Shard"));
+  await wishlist.setViewportSize({ width: 390, height: 844 });
+  await warning.scrollIntoViewIfNeeded();
+  const warningLayout = await warning.evaluate((panel) => {
+    const bounds = panel.getBoundingClientRect();
+    return {
+      fits: bounds.left >= 0 && bounds.right <= document.documentElement.clientWidth,
+      readable: panel.scrollWidth <= panel.clientWidth + 1,
+    };
+  });
+  assert.ok(warningLayout.fits && warningLayout.readable, "The expanded warning and its material columns must fit a phone without horizontal scrolling");
+  await wishlist.setViewportSize({ width: 1440, height: 1000 });
+  await wishlist.getByRole("heading", { name: "Farming plan", exact: true }).click();
+  assert.ok(!(await warning.evaluate((panel) => panel.matches(":popover-open"))), "Clicking outside the warning must dismiss it");
+  await conflict.locator(".conflict-trigger").focus();
+  await wishlist.keyboard.press("Enter");
+  assert.ok(await warning.evaluate((panel) => panel.matches(":popover-open")), "The warning must open from the keyboard");
+  await wishlist.keyboard.press("Escape");
+  assert.ok(!(await warning.evaluate((panel) => panel.matches(":popover-open"))), "Escape must dismiss the warning");
+  assert.ok(await conflict.locator(".conflict-trigger").evaluate((button) => button === document.activeElement), "Escape must return focus to the warning button");
   await expectIngredient(wishlist, "Firaga Bangle", "Blazing Stone", 3, 1);
   await expectIngredientLayout(wishlist);
   await expectPlanLayout(wishlist);
@@ -196,8 +220,10 @@ try {
   await expectReady(peers, "Firaga Bangle", 1, "ready");
   await expectReady(peers, "Blizzaga Armlet", 0, "missing");
   await expectReady(peers, "Thundaga Trinket", 1, "ready");
-  const peersWarning = await goal(peers, "Firaga Bangle").locator(".craft-conflict > summary").getAttribute("aria-label");
+  await goal(peers, "Firaga Bangle").locator(".conflict-trigger").click();
+  const peersWarning = await goal(peers, "Firaga Bangle").locator(".conflict-detail").innerText();
   assert.ok(peersWarning.includes("Thundaga Trinket") && !peersWarning.includes("Blizzaga Armlet"), "Warnings must name only other ready-to-craft items");
+  await peers.keyboard.press("Escape");
   await peers.locator('[data-remove="Thundaga Trinket"]').click();
   assert.equal(await peers.locator("#goals .craft-conflict").count(), 0, "A missing peer alone must not trigger a shared-material warning");
   console.log("PASS wishlist: advisory only on ready conflicting recipes; none on missing/locked or sufficient stock");
