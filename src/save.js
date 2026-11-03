@@ -35,10 +35,12 @@ export function mountSaveTools(store, notice) {
   const menu = byId("save-export");
   const link = byId("save-url");
   const createLink = byId("export-link");
+  const copyStatus = byId("save-copy-status");
   menu.addEventListener("beforetoggle", (event) => {
     if (event.newState === "open") {
       byId("save-link-result").hidden = true;
       link.value = "";
+      copyStatus.textContent = "";
     }
   });
   byId("export-file").addEventListener("click", () => {
@@ -50,6 +52,7 @@ export function mountSaveTools(store, notice) {
   });
   createLink.addEventListener("click", async () => {
     createLink.disabled = true;
+    copyStatus.textContent = "";
     try {
       link.value = await encodeSaveURL(store.getState(), location.href);
       byId("save-link-result").hidden = false;
@@ -62,13 +65,14 @@ export function mountSaveTools(store, notice) {
     }
   });
   byId("copy-save-url").addEventListener("click", async () => {
+    copyStatus.textContent = "";
     try {
       await navigator.clipboard.writeText(link.value);
-      notice("Save URL copied.");
+      copyStatus.textContent = "Save URL copied.";
     } catch {
       link.focus();
       link.select();
-      notice("Copy the selected URL to share this save.");
+      copyStatus.textContent = "Copy the selected URL to share this save.";
     }
   });
   byId("load-save").addEventListener("change", async (event) => {

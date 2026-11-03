@@ -358,6 +358,10 @@ try {
   });
   await sharing.locator("#copy-save-url").click();
   assert.equal(await sharing.evaluate(() => window.copiedSaveURL), magicURL);
+  const copyStatus = sharing.locator("#save-export [role='status']");
+  assert.equal(await copyStatus.innerText(), "Save URL copied.");
+  assert.ok(await copyStatus.isVisible(), "Copy confirmation must appear inside the open export dialog");
+  assert.ok(!(await sharing.locator("#notice").isVisible()), "Copy confirmation must not use the page-level notice");
   await sharing.evaluate(() => {
     navigator.clipboard.writeText = async () => { throw new Error("Clipboard unavailable"); };
   });
@@ -365,6 +369,10 @@ try {
   assert.ok(await sharing.locator("#save-url").evaluate((input) =>
     input.selectionStart === 0 && input.selectionEnd === input.value.length,
   ), "When clipboard access fails, the whole URL must be selected for manual copying");
+  assert.equal(await copyStatus.innerText(), "Copy the selected URL to share this save.");
+  await sharing.keyboard.press("Escape");
+  await sharing.locator("#export").click();
+  assert.equal(await copyStatus.textContent(), "", "Reopening export must clear stale copy feedback");
   await sharing.keyboard.press("Escape");
 
   const device = await browser.newContext({ viewport: { width: 390, height: 844 } });

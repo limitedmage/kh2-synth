@@ -371,6 +371,7 @@ footer p + p { margin-top: .8rem; }
       <label>Magic save URL<textarea id="save-url" rows="4" readonly spellcheck="false"></textarea></label>
       <p class="muted">Open this URL on another device to import the complete save.</p>
       <button id="copy-save-url" class="primary">Copy URL</button>
+      <p id="save-copy-status" class="muted" role="status"></p>
     </div>
   </div>
   <main>
@@ -1707,10 +1708,12 @@ footer p + p { margin-top: .8rem; }
     const menu = byId("save-export");
     const link2 = byId("save-url");
     const createLink = byId("export-link");
+    const copyStatus = byId("save-copy-status");
     menu.addEventListener("beforetoggle", (event) => {
       if (event.newState === "open") {
         byId("save-link-result").hidden = true;
         link2.value = "";
+        copyStatus.textContent = "";
       }
     });
     byId("export-file").addEventListener("click", () => {
@@ -1724,6 +1727,7 @@ footer p + p { margin-top: .8rem; }
     });
     createLink.addEventListener("click", async () => {
       createLink.disabled = true;
+      copyStatus.textContent = "";
       try {
         link2.value = await encodeSaveURL(store2.getState(), location.href);
         byId("save-link-result").hidden = false;
@@ -1736,13 +1740,14 @@ footer p + p { margin-top: .8rem; }
       }
     });
     byId("copy-save-url").addEventListener("click", async () => {
+      copyStatus.textContent = "";
       try {
         await navigator.clipboard.writeText(link2.value);
-        notice2("Save URL copied.");
+        copyStatus.textContent = "Save URL copied.";
       } catch {
         link2.focus();
         link2.select();
-        notice2("Copy the selected URL to share this save.");
+        copyStatus.textContent = "Copy the selected URL to share this save.";
       }
     });
     byId("load-save").addEventListener("change", async (event) => {
