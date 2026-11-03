@@ -340,12 +340,17 @@ try {
     moogle: 8, energy: "farm", expand: false, materialTypes: 60, luckyLuckyCount: 7,
     methods: { "Mythril Shard": "collect" },
   });
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  const sharedPageURL = "https://example.test/custom/guide/index.html?source=shared";
+  await sharing.route("https://example.test/custom/guide/**", (route) =>
+    route.fulfill({ contentType: "text/html", body: html }));
+  await sharing.goto(`${sharedPageURL}#world-progress`);
   const sharedSave = await sharing.evaluate((key) => KH2Planner.sanitize(JSON.parse(localStorage.getItem(key))), storageKey);
   await sharing.locator("#export").click();
   await sharing.locator("#export-link").click();
   await sharing.locator("#save-link-result").waitFor({ state: "visible" });
   const magicURL = await sharing.locator("#save-url").inputValue();
-  assert.ok(magicURL.startsWith("https://limitedmage.github.io/kh2-synth/#save="), "Local-file exports must produce portable hosted URLs");
+  assert.ok(magicURL.startsWith(`${sharedPageURL}#save=`), "Magic URLs must keep the current host, custom path and query parameters");
   await sharing.evaluate(() => {
     Object.defineProperty(navigator, "clipboard", { configurable: true, value: {
       writeText: async (text) => { window.copiedSaveURL = text; },
@@ -364,8 +369,7 @@ try {
 
   const device = await browser.newContext({ viewport: { width: 390, height: 844 } });
   contexts.push(device);
-  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
-  await device.route("https://limitedmage.github.io/kh2-synth/**", (route) =>
+  await device.route("https://example.test/custom/guide/**", (route) =>
     route.fulfill({ contentType: "text/html", body: html }));
   const receiver = await device.newPage();
   receiver.on("pageerror", (error) => errors.push(error.message));
@@ -398,7 +402,9 @@ try {
   await receiver.reload();
   assert.deepEqual(await saved(receiver), sharedSave);
   assert.equal(prompts.length, 2, "Reloading must not import or prompt again");
-  await receiver.goto("https://limitedmage.github.io/kh2-synth/#save=not-a-save");
+  const invalidURL = new URL(magicURL);
+  invalidURL.hash = "save=not-a-save";
+  await receiver.goto(invalidURL.href);
   await receiver.locator("#notice").filter({ hasText: "Could not load save URL:" }).waitFor();
   assert.deepEqual(await saved(receiver), sharedSave, "Invalid URLs must not change existing data");
   assert.equal(prompts.length, 2, "Invalid URLs must not offer to replace valid data");

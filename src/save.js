@@ -2,7 +2,6 @@ import planner from "./planner.js";
 import { byId } from "./dom.js";
 
 const maxSaveBytes = 1000000;
-const hostedURL = "https://limitedmage.github.io/kh2-synth/";
 
 export async function encodeSaveURL(state, href) {
   const json = new TextEncoder().encode(JSON.stringify(planner.sanitize(state)));
@@ -12,9 +11,8 @@ export async function encodeSaveURL(state, href) {
   const payload = btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join(""))
     .replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
   const url = new URL(href);
-  const portable = ["http:", "https:"].includes(url.protocol) ? url : new URL(hostedURL);
-  portable.hash = `save=${payload}`;
-  return portable.href;
+  url.hash = `save=${payload}`;
+  return url.href;
 }
 
 export async function decodeSaveURL(payload) {

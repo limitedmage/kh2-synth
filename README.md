@@ -7,7 +7,7 @@
 3. Set **World progress**, optional unlocks, chest completion, and the Moogle level.
 4. Open **Farming plan** for readiness checkmarks, ingredient counts, missing materials, and farming locations.
 
-The page saves locally in the browser. **Export save** offers a JSON backup or a **magic URL** containing a compressed snapshot of the complete save. Open that URL on another device to import it; an existing save requires confirmation before replacement. The payload is removed from the address bar after opening, so reloading does not import it again. Links created from a local HTML file open the GitHub Pages version. Save data stays in the URL fragment, not a server upload.
+The page saves locally in the browser. **Export save** offers a JSON backup or a **magic URL** containing a compressed snapshot of the complete save. Open that URL on another device to import it; an existing save requires confirmation before replacement. The payload is removed from the address bar after opening, so reloading does not import it again. Magic URLs preserve the current page address, including custom hosting paths. Save data stays in the URL fragment, not a server upload.
 
 **Load save** restores JSON backups. Keep the HTML at the same path for consistent browser storage. Browser restrictions/private mode may prevent saving; JSON backups work independently. Ordinary URL fragments keep the current tab.
 
