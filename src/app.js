@@ -196,21 +196,24 @@
   let alignment = null;
   let aligning = false;
   let cornerPoints = [];
-  const cropIds = ["crop-x", "crop-y", "crop-w", "crop-h"];
-  function crop() {
-    const x = P.count($("crop-x").value, 99);
-    const y = P.count($("crop-y").value, 99);
-    return { x, y, w: Math.max(1, Math.min(100 - x, P.count($("crop-w").value, 100))), h: Math.max(1, Math.min(100 - y, P.count($("crop-h").value, 100))) };
-  }
+  let cropArea = { x: 25, y: 23, w: 26, h: 40 };
   function setCrop(value) {
-    for (const [key, val] of Object.entries(value)) $(`crop-${key}`).value = val;
+    cropArea = value;
     drawPreview();
   }
   function resetCrop() {
-    alignment = null; aligning = false; cornerPoints = [];
+    alignment = null; aligning = false; cornerPoints = []; dragStart = null;
     $("align-screen").textContent = "Align four corners";
-    $("alignment-status").textContent = "Drag to crop, or align four corners to correct camera perspective.";
+    $("alignment-status").textContent = media === $("video")
+      ? "Click the table's top-left, top-right, bottom-right, and bottom-left corners. Keep the camera still while scrolling."
+      : "Drag to crop, or align four corners to correct camera perspective.";
     setCrop($("import-kind").value === "recipes" ? { x: 25, y: 23, w: 26, h: 40 } : { x: 26, y: 28, w: 44, h: 49 });
+  }
+  function startAlignment() {
+    aligning = true; cornerPoints = []; dragStart = null;
+    $("align-screen").textContent = "Cancel alignment";
+    $("alignment-status").textContent = "Click the top-left corner of the table (include names and counts).";
+    drawPreview();
   }
   function drawPreview() {
     if (!mediaReady) return;
@@ -222,12 +225,12 @@
     const ctx = canvas.getContext("2d");
     ctx.drawImage(media, 0, 0, canvas.width, canvas.height);
     if (alignment || aligning) {
-      const points = alignment || cornerPoints;
+      const points = aligning ? cornerPoints : alignment;
       ctx.strokeStyle = "#8be2c9"; ctx.lineWidth = 2; ctx.fillStyle = "#8be2c9";
       if (points.length) {
         ctx.beginPath(); ctx.moveTo(points[0].x / 100 * canvas.width, points[0].y / 100 * canvas.height);
         for (const point of points.slice(1)) ctx.lineTo(point.x / 100 * canvas.width, point.y / 100 * canvas.height);
-        if (alignment) ctx.closePath();
+        if (!aligning) ctx.closePath();
         ctx.stroke();
         for (const [i, point] of points.entries()) {
           ctx.beginPath(); ctx.arc(point.x / 100 * canvas.width, point.y / 100 * canvas.height, 5, 0, Math.PI * 2); ctx.fill();
@@ -236,7 +239,7 @@
       }
       return;
     }
-    const c = crop();
+    const c = cropArea;
     const x = c.x / 100 * canvas.width, y = c.y / 100 * canvas.height, w = c.w / 100 * canvas.width, h = c.h / 100 * canvas.height;
     ctx.fillStyle = "#0008";
     ctx.fillRect(0, 0, canvas.width, y); ctx.fillRect(0, y + h, canvas.width, canvas.height - y - h);
@@ -254,7 +257,8 @@
     return { x: Math.max(0, Math.min(99, (event.clientX - rect.left) / rect.width * 100)), y: Math.max(0, Math.min(99, (event.clientY - rect.top) / rect.height * 100)) };
   }
   $("preview").addEventListener("pointerdown", (event) => {
-    if (importing) return;
+    if (importing || !mediaReady) return;
+    if (media === $("video") && !aligning) startAlignment();
     if (aligning) {
       cornerPoints.push(position(event));
       if (cornerPoints.length === 4) {
@@ -283,13 +287,13 @@
     setCrop({ x: Math.round(Math.min(dragStart.x, end.x)), y: Math.round(Math.min(dragStart.y, end.y)), w: Math.max(1, Math.round(Math.abs(end.x - dragStart.x))), h: Math.max(1, Math.round(Math.abs(end.y - dragStart.y))) });
   });
   for (const type of ["pointerup", "pointercancel"]) $("preview").addEventListener(type, () => { dragStart = null; });
-  for (const id of cropIds) $(id).addEventListener("input", () => { alignment = null; drawPreview(); });
   $("crop-reset").addEventListener("click", resetCrop);
   $("align-screen").addEventListener("click", () => {
     if (!mediaReady || importing) return;
-    aligning = !aligning; cornerPoints = [];
-    $("align-screen").textContent = aligning ? "Cancel alignment" : alignment ? "Realign four corners" : "Align four corners";
-    $("alignment-status").textContent = aligning ? "Click the top-left corner of the table (include names and counts)." : "Alignment selection cancelled.";
+    if (!aligning) { startAlignment(); return; }
+    aligning = false; cornerPoints = [];
+    $("align-screen").textContent = alignment ? "Realign four corners" : "Align four corners";
+    $("alignment-status").textContent = "Alignment selection cancelled.";
     drawPreview();
   });
   $("two-columns").addEventListener("change", drawPreview);
@@ -300,12 +304,12 @@
     $("inventory-video-help").hidden = recipes;
     $("import-instructions").textContent = recipes
       ? "Read the left-hand recipe names only, including dim names. Scan both Recipes and Free Development: their results combine below. The right-hand ingredients / stock panel is not used. Import stock separately from the Materials list."
-      : "Read stock from the game's Materials list, including names and quantities in both columns. Recipe photos are never used as inventory. Drag to crop, or align four corners if the screen is crooked.";
+      : "Read stock from the game's Materials list, including names and quantities in both columns. Click four corners on a video to align the table. For photos, drag to crop or choose Align four corners. Recipe photos are never used as inventory.";
     $("paste-help").textContent = recipes ? "One recipe name per line, from either recipe list" : "One material and current count per line";
     $("ocr-text").placeholder = recipes ? "AP Boost\nPetite Ribbon\nMythril Shard\nAcrisius" : "Dense Shard 4\nEnergy Crystal 3";
     $("import-policy").textContent = recipes
       ? "Recipe imports add missing goals with quantity 1 and preserve existing desired quantities. Stock comes only from the Materials list import or manual Materials entry."
-      : "Inventory imports replace only checked material totals; materials not detected are left unchanged.";
+      : "Applying a Materials import replaces all previous stock; omitted and unchecked materials become zero.";
   }
   $("import-kind").addEventListener("change", () => {
     currentKind = $("import-kind").value;
@@ -367,7 +371,7 @@
     $("review-instructions").textContent = recipes
       ? "Recipe names from Recipes and Free Development are combined. Unchecked names are ignored. No inventory counts are read from recipe photos."
       : "Applying replaces all previous stock. Omitted and unchecked materials become zero. Repeated video rows are not added together. Conflicting readings stay unchecked until reviewed. Names without a readable count are left blank.";
-    $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select>${recipes ? "" : `<input type="number" min="0" max="9999" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?">`}<small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small>${!recipes && row.image ? `<figure class="review-source"><img src="${escape(row.image)}" alt="Original game row for ${escape(row.name)}" loading="lazy"><figcaption>${escape(row.source)} · Source for the OCR reading</figcaption></figure>` : ""}</div>`).join("");
+    $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row${!recipes && row.image ? " has-source" : ""}"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select>${recipes ? "" : `<input type="number" min="0" max="9999" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?">`}<small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small>${!recipes && row.image ? `<figure class="review-source"><img src="${escape(row.image)}" alt="Original game row for ${escape(row.name)}" title="${escape(row.source)}" loading="lazy"></figure>` : ""}</div>`).join("");
     $("review-message").textContent = `${review.length} ${recipes ? "combined recipe names from Recipes / Free Development" : "recognized materials"}. ${unmatched ? `${unmatched} unrecognized text line(s); inspect the raw text and add anything missing manually.` : ""}${!review.length ? " Adjust the crop or use pasted text / manual entry." : ""}`;
     $("apply-import").disabled = !review.length;
     $("check-all-import").disabled = !review.length;
@@ -413,7 +417,7 @@
   });
   function setImportBusy(busy) {
     importing = busy;
-    for (const id of ["media-file", "import-kind", "two-columns", "column-split", "sampling", "parse-text", "crop-reset", "align-screen", ...cropIds]) $(id).disabled = busy;
+    for (const id of ["media-file", "import-kind", "two-columns", "column-split", "sampling", "parse-text", "crop-reset", "align-screen"]) $(id).disabled = busy;
     $("recognize").disabled = busy || !mediaReady;
     $("cancel-ocr").hidden = !busy;
     $("ocr-progress").hidden = !busy;
@@ -457,7 +461,7 @@
       if (frames > 1200) throw new Error("This recording would need more than 1200 frames. Choose a slower sampling interval or trim the recording.");
       const columns = reviewKind === "inventory" && $("two-columns").checked ? 2 : 1;
       const total = frames * columns;
-      const selectedCrop = crop();
+      const selectedCrop = { ...cropArea };
       const selectedAlignment = alignment?.map((point) => ({ ...point }));
       if (aligning) throw new Error("Finish selecting all four corners, or cancel alignment before reading");
       for (let frame = 0; frame < frames; frame++) {

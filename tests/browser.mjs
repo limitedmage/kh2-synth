@@ -63,6 +63,7 @@ try {
   assert.equal(await page.locator("#all-chests").evaluate((el) => el.indeterminate), true);
   await page.locator("[data-world='ld']").selectOption("2");
   await page.getByRole("button", { name: "Photo & video import", exact: true }).click();
+  assert.equal(await page.locator("#crop-x, #crop-y, #crop-w, #crop-h").count(), 0, "Crop percentages must not require manual inputs");
   assert.equal(await page.locator("#two-columns").isVisible(), false);
   assert.equal(await page.locator("#column-split").isVisible(), false);
   await page.getByText("Paste or correct recognized text manually").click();
@@ -152,13 +153,22 @@ try {
           return visible / (pixels.length / 4);
         });
         assert.ok(visiblePixels > 0.25, "Video selection must show the decoded game frame, not a black canvas with crop outlines");
-        await page.locator("#align-screen").click();
         await page.locator("#preview").scrollIntoViewIfNeeded();
         const bounds = await page.locator("#preview").boundingBox();
-        for (const [x, y] of [[500, 302], [1318, 310], [1342, 800], [520, 830]]) {
-          await page.mouse.click(bounds.x + x / 1920 * bounds.width, bounds.y + y / 1080 * bounds.height);
+        for (let selection = 0; selection < 2; selection++) {
+          for (const [i, [x, y]] of [[500, 302], [1318, 310], [1342, 800], [520, 830]].entries()) {
+            await page.mouse.click(bounds.x + x / 1920 * bounds.width, bounds.y + y / 1080 * bounds.height);
+            if (i === 0) assert.match(await page.locator("#alignment-status").innerText(), /Click the top-right/, "Video clicks must start four-corner selection without a mode button, including realignment");
+          }
+          assert.match(await page.locator("#alignment-status").innerText(), /alignment set/);
         }
-        assert.match(await page.locator("#alignment-status").innerText(), /alignment set/);
+      } else if (file === "recipes.jpeg") {
+        await page.locator("#preview").scrollIntoViewIfNeeded();
+        const bounds = await page.locator("#preview").boundingBox();
+        await page.mouse.move(bounds.x + bounds.width * 0.25, bounds.y + bounds.height * 0.23);
+        await page.mouse.down();
+        await page.mouse.move(bounds.x + bounds.width * 0.51, bounds.y + bounds.height * 0.63);
+        await page.mouse.up();
       }
       await page.locator("#recognize").click();
       await page.waitForFunction(() => !document.getElementById("recognize").disabled, null, { timeout: 240000 });
@@ -193,7 +203,11 @@ try {
         await firstImage.scrollIntoViewIfNeeded();
         await firstImage.evaluate((img) => img.decode());
         assert.equal(await firstImage.evaluate((img) => img.src.startsWith("data:image/jpeg;base64,") && img.naturalWidth > img.naturalHeight), true, "Source images must be local, decoded row crops rather than whole frames");
-        assert.match(await page.locator(".review-source figcaption").first().innerText(), /Video \d+\.\d+s, column [12]/);
+        assert.equal(await page.locator(".review-source figcaption").count(), 0, "Source images must not have text underneath");
+        assert.match(await firstImage.getAttribute("title"), /Video \d+\.\d+s, column [12]/);
+        const imageBounds = await firstImage.boundingBox();
+        const quantityBounds = await page.locator("[data-review-qty='0']").boundingBox();
+        assert.ok(imageBounds.width <= 320 && imageBounds.x >= quantityBounds.x + quantityBounds.width, "Compact source images must sit to the right of the editable fields");
         const source = await firstImage.getAttribute("src");
         await page.locator("#check-all-import").click();
         await page.locator("[data-review-qty='0']").fill("27");
@@ -202,6 +216,9 @@ try {
         await page.locator(".review-row").first().screenshot({ path: fileURLToPath(new URL("material-source.png", artifacts)) });
         await page.setViewportSize({ width: 390, height: 844 });
         assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, "Source images must fit a phone viewport");
+        const mobileImageBounds = await firstImage.boundingBox();
+        const mobileQuantityBounds = await page.locator("[data-review-qty='0']").boundingBox();
+        assert.ok(mobileImageBounds.x >= mobileQuantityBounds.x + mobileQuantityBounds.width, "Source images must remain to the right on phones");
         for (const checkbox of await page.locator("[data-review-check]").all()) await checkbox.uncheck();
         await page.locator("[data-review-check='0']").check();
         await page.locator("#apply-import").click();

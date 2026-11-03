@@ -68,16 +68,12 @@
           <span id="media-name" class="muted">No file selected</span>
         </div>
         <p id="import-instructions" class="muted">Read the left-hand recipe names only, including dim names. Scan both Recipes and Free Development: their results combine below. The right-hand ingredients / stock panel is not used. Import stock separately from the Materials list.</p>
-        <div id="media-preview" hidden><canvas id="preview" aria-label="Media preview. Drag to select reading area."></canvas><video id="video" muted playsinline hidden></video></div>
-        <div class="toolbar crop-fields">
-          <label>Left %<input id="crop-x" type="number" min="0" max="99" value="25"></label>
-          <label>Top %<input id="crop-y" type="number" min="0" max="99" value="23"></label>
-          <label>Width %<input id="crop-w" type="number" min="1" max="100" value="26"></label>
-          <label>Height %<input id="crop-h" type="number" min="1" max="100" value="40"></label>
+        <div id="media-preview" hidden><canvas id="preview" aria-label="Media preview. Click four corners on videos; drag to crop photos."></canvas><video id="video" muted playsinline hidden></video></div>
+        <div class="toolbar">
           <button id="crop-reset" class="quiet">Reset crop</button>
           <button id="align-screen" class="quiet">Align four corners</button>
         </div>
-        <p id="alignment-status" class="muted">For camera recordings: click Align four corners, then the table's top-left, top-right, bottom-right, and bottom-left corners. Keep the camera still while scrolling.</p>
+        <p id="alignment-status" class="muted">Click a video's table corners in order: top-left, top-right, bottom-right, bottom-left. For photos, drag to crop or choose Align four corners.</p>
         <div class="toolbar">
           <label class="check" hidden><input id="two-columns" type="checkbox" checked> Inventory has two columns</label>
           <label hidden>First column width %<input id="column-split" type="number" min="35" max="65" value="52" step="0.5"></label>
