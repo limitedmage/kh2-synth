@@ -365,12 +365,11 @@ footer p + p { margin-top: .8rem; }
     <h2>Export save</h2>
     <div class="save-export-actions">
       <button id="export-file" class="quiet">Download JSON</button>
-      <button id="export-link" class="primary">Create magic URL</button>
     </div>
-    <div id="save-link-result" hidden>
-      <label>Magic save URL<textarea id="save-url" rows="4" readonly spellcheck="false"></textarea></label>
+    <div id="save-link-result">
+      <label>Magic save URL<textarea id="save-url" rows="4" readonly spellcheck="false" placeholder="Creating save URL..."></textarea></label>
       <p class="muted">Open this URL on another device to import the complete save.</p>
-      <button id="copy-save-url" class="primary">Copy URL</button>
+      <button id="copy-save-url" class="primary" disabled>Copy URL</button>
       <p id="save-copy-status" class="muted" role="status"></p>
     </div>
   </div>
@@ -1707,13 +1706,22 @@ footer p + p { margin-top: .8rem; }
   function mountSaveTools(store2, notice2) {
     const menu = byId("save-export");
     const link2 = byId("save-url");
-    const createLink = byId("export-link");
+    const copyLink = byId("copy-save-url");
     const copyStatus = byId("save-copy-status");
-    menu.addEventListener("beforetoggle", (event) => {
-      if (event.newState === "open") {
-        byId("save-link-result").hidden = true;
-        link2.value = "";
-        copyStatus.textContent = "";
+    let generation = 0;
+    menu.addEventListener("beforetoggle", async (event) => {
+      const request = ++generation;
+      if (event.newState !== "open") return;
+      copyLink.disabled = true;
+      link2.value = "";
+      copyStatus.textContent = "";
+      try {
+        const url = await encodeSaveURL(store2.getState(), location.href);
+        if (request !== generation) return;
+        link2.value = url;
+        copyLink.disabled = false;
+      } catch (error) {
+        if (request === generation) copyStatus.textContent = `Could not create save URL: ${error.message}`;
       }
     });
     byId("export-file").addEventListener("click", () => {
@@ -1725,21 +1733,7 @@ footer p + p { margin-top: .8rem; }
       setTimeout(() => URL.revokeObjectURL(url), 1e3);
       menu.hidePopover();
     });
-    createLink.addEventListener("click", async () => {
-      createLink.disabled = true;
-      copyStatus.textContent = "";
-      try {
-        link2.value = await encodeSaveURL(store2.getState(), location.href);
-        byId("save-link-result").hidden = false;
-        link2.focus();
-        link2.select();
-      } catch (error) {
-        notice2(`Could not create save URL: ${error.message}`);
-      } finally {
-        createLink.disabled = false;
-      }
-    });
-    byId("copy-save-url").addEventListener("click", async () => {
+    copyLink.addEventListener("click", async () => {
       copyStatus.textContent = "";
       try {
         await navigator.clipboard.writeText(link2.value);

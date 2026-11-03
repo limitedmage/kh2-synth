@@ -34,13 +34,22 @@ export async function decodeSaveURL(payload) {
 export function mountSaveTools(store, notice) {
   const menu = byId("save-export");
   const link = byId("save-url");
-  const createLink = byId("export-link");
+  const copyLink = byId("copy-save-url");
   const copyStatus = byId("save-copy-status");
-  menu.addEventListener("beforetoggle", (event) => {
-    if (event.newState === "open") {
-      byId("save-link-result").hidden = true;
-      link.value = "";
-      copyStatus.textContent = "";
+  let generation = 0;
+  menu.addEventListener("beforetoggle", async (event) => {
+    const request = ++generation;
+    if (event.newState !== "open") return;
+    copyLink.disabled = true;
+    link.value = "";
+    copyStatus.textContent = "";
+    try {
+      const url = await encodeSaveURL(store.getState(), location.href);
+      if (request !== generation) return;
+      link.value = url;
+      copyLink.disabled = false;
+    } catch (error) {
+      if (request === generation) copyStatus.textContent = `Could not create save URL: ${error.message}`;
     }
   });
   byId("export-file").addEventListener("click", () => {
@@ -50,21 +59,7 @@ export function mountSaveTools(store, notice) {
     setTimeout(() => URL.revokeObjectURL(url), 1000);
     menu.hidePopover();
   });
-  createLink.addEventListener("click", async () => {
-    createLink.disabled = true;
-    copyStatus.textContent = "";
-    try {
-      link.value = await encodeSaveURL(store.getState(), location.href);
-      byId("save-link-result").hidden = false;
-      link.focus();
-      link.select();
-    } catch (error) {
-      notice(`Could not create save URL: ${error.message}`);
-    } finally {
-      createLink.disabled = false;
-    }
-  });
-  byId("copy-save-url").addEventListener("click", async () => {
+  copyLink.addEventListener("click", async () => {
     copyStatus.textContent = "";
     try {
       await navigator.clipboard.writeText(link.value);

@@ -347,8 +347,8 @@ try {
   await sharing.goto(`${sharedPageURL}#world-progress`);
   const sharedSave = await sharing.evaluate((key) => KH2Planner.sanitize(JSON.parse(localStorage.getItem(key))), storageKey);
   await sharing.locator("#export").click();
-  await sharing.locator("#export-link").click();
-  await sharing.locator("#save-link-result").waitFor({ state: "visible" });
+  await sharing.waitForFunction(() => !document.getElementById("copy-save-url").disabled);
+  assert.equal(await sharing.locator("#save-export button").count(), 2, "Export must offer only JSON download and URL copy, without a generation button");
   const magicURL = await sharing.locator("#save-url").inputValue();
   assert.ok(magicURL.startsWith(`${sharedPageURL}#save=`), "Magic URLs must keep the current host, custom path and query parameters");
   await sharing.evaluate(() => {
@@ -371,8 +371,12 @@ try {
   ), "When clipboard access fails, the whole URL must be selected for manual copying");
   assert.equal(await copyStatus.innerText(), "Copy the selected URL to share this save.");
   await sharing.keyboard.press("Escape");
+  await sharing.locator('[data-tab="inventory"]').click();
+  await sharing.getByRole("button", { name: "Increase Dark Shard stock", exact: true }).click();
   await sharing.locator("#export").click();
   assert.equal(await copyStatus.textContent(), "", "Reopening export must clear stale copy feedback");
+  await sharing.waitForFunction(() => !document.getElementById("copy-save-url").disabled);
+  assert.notEqual(await sharing.locator("#save-url").inputValue(), magicURL, "Reopening export must automatically generate a URL containing the latest save");
   await sharing.keyboard.press("Escape");
 
   const device = await browser.newContext({ viewport: { width: 390, height: 844 } });
@@ -417,8 +421,7 @@ try {
   assert.deepEqual(await saved(receiver), sharedSave, "Invalid URLs must not change existing data");
   assert.equal(prompts.length, 2, "Invalid URLs must not offer to replace valid data");
   await receiver.locator("#export").click();
-  await receiver.locator("#export-link").click();
-  await receiver.locator("#save-link-result").waitFor({ state: "visible" });
+  await receiver.waitForFunction(() => !document.getElementById("copy-save-url").disabled);
   const exportLayout = await receiver.locator("#save-export").evaluate((panel) => {
     const bounds = panel.getBoundingClientRect();
     return bounds.left >= 0 && bounds.right <= innerWidth && panel.scrollWidth <= panel.clientWidth;
