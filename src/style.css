@@ -153,9 +153,6 @@ nav button.active::before { content: "◆"; font-size: .72em; color: var(--gold)
 .card h3 .kh-icon { width: 1.9em; height: 1.9em; }
 .goal { position: relative; min-width: 0; padding: .3rem .5rem; margin-top: .5rem; border: 1px solid #5545a6; border-left: 3px solid #7765d0; border-radius: 8px 3px 12px 3px; background: linear-gradient(90deg, #261b74, #17104c); }
 .goal-main { display: flex; align-items: center; flex-wrap: nowrap; gap: .4rem; min-width: 0; text-shadow: 1px 2px #000; }
-.goal:is(:hover, :focus-within) { border-color: #ff6845; box-shadow: inset 0 0 0 1px #ff5b2a, 0 0 12px #ff4d2333; background: linear-gradient(90deg, #3c2997, #26166b); }
-.goal:is(:hover, :focus-within)::before { content: ""; position: absolute; z-index: 1; pointer-events: none; left: -9px; top: 16px; width: 12px; height: 14px; background: linear-gradient(135deg, #fff, #8e98bd); clip-path: polygon(0 0, 100% 50%, 0 100%); filter: drop-shadow(1px 2px 1px #000); }
-.goal:is(:hover, :focus-within)::after { content: ""; position: absolute; pointer-events: none; right: -5px; top: -6px; width: 14px; height: 14px; background: radial-gradient(circle, #fff 12%, #ffff4d 35%, #ff6300 70%); clip-path: polygon(50% 0, 62% 35%, 100% 50%, 62% 62%, 50% 100%, 38% 62%, 0 50%, 38% 35%); filter: drop-shadow(0 0 5px #ff8100); }
 .goal .goal-name { display: flex; align-items: center; gap: .8rem; flex: 1; min-width: 0; }
 .goal-name .icon-label { min-width: 0; }
 .goal-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
@@ -188,7 +185,6 @@ nav button.active::before { content: "◆"; font-size: .72em; color: var(--gold)
 .craft-conflict[open] > summary { margin: 0; }
 .craft-conflict svg { width: 22px; height: 22px; }
 .goal.craftability-ready { border-left-color: var(--mint); background: linear-gradient(90deg, #1d3962, #17104c); }
-.goal.craftability-ready:is(:hover, :focus-within) { border-color: #ff6845; border-left-color: var(--mint); background: linear-gradient(90deg, #304a81, #26166b); }
 .craftability-ready .craftability { color: var(--mint); }
 .goal.craftability-locked { border-left-color: var(--gold); }
 .craftability-locked .craftability { color: var(--gold); }
@@ -309,14 +305,11 @@ footer p + p { margin-top: .8rem; }
 }
 @media (prefers-reduced-motion: no-preference) {
   button, .button { transition: background .15s, border-color .15s; }
-  .goal { transition: border-color .15s, box-shadow .15s; }
 }
 @media (forced-colors: active) {
   select { -webkit-appearance: auto; appearance: auto; background-image: none; }
   .panel, .card, .stat, .stock-row, .table-wrap, .craftability { border-color: CanvasText; }
   nav button.active { outline: 2px solid Highlight; outline-offset: -4px; }
-  .goal:is(:hover, :focus-within) { outline: 2px solid Highlight; }
-  .goal::before, .goal::after { display: none; }
   h1, h2, h3, button, .button, .goal-main, #notice { text-shadow: none; }
   .kh-icon { filter: none; }
 }
