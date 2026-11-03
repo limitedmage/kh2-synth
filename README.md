@@ -12,8 +12,8 @@ The page saves locally in the browser. **Export save** downloads a JSON backup; 
 ## Media import
 
 - Choose **Photo & video import** and select a photo or video. Media never leaves the device.
-- Drag a reading area over a photo's recipe list or inventory table. Default crops fit the supplied TV photos/video, but other captures may need adjustment.
-- On a video, click the table's top-left, top-right, bottom-right, and bottom-left corners directly to correct perspective. Click again to start realigning. Photos can also use **Align four corners**. Keep the camera still while scrolling; align again if it moves.
+- Four perspective corners are preselected when a photo or video opens. Drag individual corners to fit the recipe list or inventory table. Defaults fit the supplied TV photos/video approximately, but other captures may need adjustment.
+- To select new corners, choose **Realign four corners**, then click top-left, top-right, bottom-right, and bottom-left. **Reset corners** restores the preselected defaults. Keep the camera still while scrolling; adjust again if it moves.
 - Recipe photos read names from the left list only, never ingredients or stock from the right panel. Scan **Recipes** and **Free Development** one after another: both lists accumulate into one deduplicated review before applying. Dim unmade items can be harder to recognize.
 - Inventory is read column-by-column, sampling every 0.2 seconds by default. Overlapping rows are not summed. Conflicting counts require review.
 - Quantities are recognized separately from names, excluding adjacent grade badges. Video counts require repeated agreement before being preselected. Adjust **First column width %** if the preview separator clips the left counts or overlaps the right column.

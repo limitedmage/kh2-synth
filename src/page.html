@@ -68,12 +68,12 @@
           <span id="media-name" class="muted">No file selected</span>
         </div>
         <p id="import-instructions" class="muted">Read the left-hand recipe names only, including dim names. Scan both Recipes and Free Development: their results combine below. The right-hand ingredients / stock panel is not used. Import stock separately from the Materials list.</p>
-        <div id="media-preview" hidden><canvas id="preview" aria-label="Media preview. Click four corners on videos; drag to crop photos."></canvas><video id="video" muted playsinline hidden></video></div>
+        <div id="media-preview" hidden><canvas id="preview" aria-label="Media preview. Four corners are preselected; drag each corner to adjust."></canvas><video id="video" muted playsinline hidden></video></div>
         <div class="toolbar">
-          <button id="crop-reset" class="quiet">Reset crop</button>
-          <button id="align-screen" class="quiet">Align four corners</button>
+          <button id="crop-reset" class="quiet">Reset corners</button>
+          <button id="align-screen" class="quiet">Realign four corners</button>
         </div>
-        <p id="alignment-status" class="muted">Click a video's table corners in order: top-left, top-right, bottom-right, bottom-left. For photos, drag to crop or choose Align four corners.</p>
+        <p id="alignment-status" class="muted">Four corners are preselected when media opens. Drag them to fit the recipe list or inventory table.</p>
         <div class="toolbar">
           <label class="check" hidden><input id="two-columns" type="checkbox" checked> Inventory has two columns</label>
           <label hidden>First column width %<input id="column-split" type="number" min="35" max="65" value="52" step="0.5"></label>

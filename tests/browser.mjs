@@ -119,6 +119,44 @@ try {
   assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("kh2-final-mix-synthesis-v1")).inventory), replaced.inventory);
   assert.equal(requests.filter((r) => !r.url.startsWith("file:")).length, 0, "Manual workflows must not need a network request");
 
+  await page.locator("#import-kind").selectOption("recipes");
+  const cornerPhoto = await page.evaluate(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 800; canvas.height = 600;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#123456"; ctx.fillRect(0, 0, canvas.width, canvas.height);
+    return canvas.toDataURL();
+  });
+  await page.locator("#media-file").setInputFiles({ name: "corners.png", mimeType: "image/png", buffer: Buffer.from(cornerPhoto.split(",")[1], "base64") });
+  await page.waitForFunction(() => !document.getElementById("recognize").disabled);
+  assert.match(await page.locator("#alignment-status").innerText(), /Four corners preselected/);
+  const defaultCorners = [[25, 23], [51, 23], [51, 63], [25, 63]];
+  const expectCornerHandles = async (points) => {
+    const handles = await page.locator("#preview").evaluate((canvas, corners) => corners.map(([x, y]) => {
+      const pixel = canvas.getContext("2d").getImageData(Math.round(x / 100 * canvas.width) + 2, Math.round(y / 100 * canvas.height) + 2, 1, 1).data;
+      return pixel[0] === 139 && pixel[1] === 226 && pixel[2] === 201;
+    }), points);
+    assert.deepEqual(handles, [true, true, true, true], "Four filled corner handles must be visible instead of a plain crop rectangle");
+  };
+  await expectCornerHandles(defaultCorners);
+  await page.locator("#preview").scrollIntoViewIfNeeded();
+  const cornerBounds = await page.locator("#preview").boundingBox();
+  const moveCorner = async (from, to) => {
+    await page.mouse.move(cornerBounds.x + from[0] / 100 * cornerBounds.width, cornerBounds.y + from[1] / 100 * cornerBounds.height);
+    await page.mouse.down();
+    await page.mouse.move(cornerBounds.x + to[0] / 100 * cornerBounds.width, cornerBounds.y + to[1] / 100 * cornerBounds.height);
+    await page.mouse.up();
+  };
+  await moveCorner([25, 23], [22, 20]);
+  await expectCornerHandles([[22, 20], ...defaultCorners.slice(1)]);
+  await moveCorner([22, 20], [70, 70]);
+  await expectCornerHandles([[22, 20], ...defaultCorners.slice(1)]);
+  await page.locator("#crop-reset").click();
+  await expectCornerHandles(defaultCorners);
+  await page.locator("#align-screen").click();
+  await page.locator("#align-screen").click();
+  await expectCornerHandles(defaultCorners);
+
   const downloadPromise = page.waitForEvent("download");
   await page.locator("#export").click();
   const download = await downloadPromise;
@@ -145,6 +183,7 @@ try {
       await page.locator("#media-file").setInputFiles(path);
       await page.waitForFunction(() => !document.getElementById("recognize").disabled || /codec|could not|unsupported/i.test(document.getElementById("ocr-status").textContent));
       assert.equal(await page.locator("#recognize").isEnabled(), true, await page.locator("#ocr-status").innerText());
+      assert.match(await page.locator("#alignment-status").innerText(), /Four corners preselected/, "Every media import must start with four selected corners");
       if (kind === "inventory") {
         const visiblePixels = await page.locator("#preview").evaluate((canvas) => {
           const pixels = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
@@ -155,20 +194,14 @@ try {
         assert.ok(visiblePixels > 0.25, "Video selection must show the decoded game frame, not a black canvas with crop outlines");
         await page.locator("#preview").scrollIntoViewIfNeeded();
         const bounds = await page.locator("#preview").boundingBox();
-        for (let selection = 0; selection < 2; selection++) {
-          for (const [i, [x, y]] of [[500, 302], [1318, 310], [1342, 800], [520, 830]].entries()) {
-            await page.mouse.click(bounds.x + x / 1920 * bounds.width, bounds.y + y / 1080 * bounds.height);
-            if (i === 0) assert.match(await page.locator("#alignment-status").innerText(), /Click the top-right/, "Video clicks must start four-corner selection without a mode button, including realignment");
-          }
-          assert.match(await page.locator("#alignment-status").innerText(), /alignment set/);
+        const defaults = [[26, 28], [70, 28], [70, 77], [26, 77]];
+        for (const [i, [x, y]] of [[500, 302], [1318, 310], [1342, 800], [520, 830]].entries()) {
+          await page.mouse.move(bounds.x + defaults[i][0] / 100 * bounds.width, bounds.y + defaults[i][1] / 100 * bounds.height);
+          await page.mouse.down();
+          await page.mouse.move(bounds.x + x / 1920 * bounds.width, bounds.y + y / 1080 * bounds.height);
+          await page.mouse.up();
         }
-      } else if (file === "recipes.jpeg") {
-        await page.locator("#preview").scrollIntoViewIfNeeded();
-        const bounds = await page.locator("#preview").boundingBox();
-        await page.mouse.move(bounds.x + bounds.width * 0.25, bounds.y + bounds.height * 0.23);
-        await page.mouse.down();
-        await page.mouse.move(bounds.x + bounds.width * 0.51, bounds.y + bounds.height * 0.63);
-        await page.mouse.up();
+        assert.match(await page.locator("#alignment-status").innerText(), /corners updated/);
       }
       await page.locator("#recognize").click();
       await page.waitForFunction(() => !document.getElementById("recognize").disabled, null, { timeout: 240000 });
