@@ -13,7 +13,7 @@ The magic URL is generated automatically whenever **Export save** opens. Choose 
 
 **Load save** restores JSON backups. Keep the HTML at the same path for consistent browser storage. Browser restrictions/private mode may prevent saving; JSON backups work independently. Ordinary URL fragments keep the current tab.
 
-Ready checkmarks and ingredient costs are calculated independently for each wishlist item using the full current inventory, without reserving materials for other items. Ingredient chips show owned/needed counts and retain surplus; combined totals appear only under **Materials to collect**. Shared-material warnings flag conflicts only between items that are independently ready to craft; missing and locked items are excluded. **End-game preset** unlocks every world and optional area without marking chests collected or adding inventory. Menu styling and item/material icons are original artwork.
+Ready checkmarks and ingredient costs are calculated independently for each wishlist item using the full current inventory, without reserving materials for other items. Ingredient chips show owned/needed counts and retain surplus; combined totals appear only under **Materials to collect**. Shared-material warnings flag conflicts only between items that are independently ready to craft; missing and locked items are excluded. **End-game preset** unlocks every world and optional area without marking chests collected or adding inventory. Menu styling and fallback item/material icons are original artwork.
 
 ## Media import
 
@@ -39,7 +39,7 @@ Moogle rank discounts and Energy reductions stack, rounding up per ingredient pe
 
 Recipe selections assume their recipe documents have been collected. Free Development checks the lifetime number of material types discovered, independently of current stock. World stages conservatively gate farming locations; temporary story encounters can differ. Chest switches do not alter world progress. Orichalcum+ is finite, with non-chest reward tracking separate from inventory.
 
-Recipe, material, and enemy source links are included in the page. Final Mix data is used rather than original KH2 data, notably Petite Ribbon quantities and Serenity drop sources. Principal references: [Kingdom Hearts Wiki](https://www.khwiki.com/Synthesis) and [Destiny Islands](https://www.destinyislands.com/kh2-fm/synthesis/materials/). This unofficial fan tool contains no game assets.
+Recipe, material, and enemy source links are included in the page. Final Mix data is used rather than original KH2 data, notably Petite Ribbon quantities and Serenity drop sources. Principal references: [Kingdom Hearts Wiki](https://www.khwiki.com/Synthesis) and [Destiny Islands](https://www.destinyislands.com/kh2-fm/synthesis/materials/). The guide embeds low-resolution, non-free KH Wiki artwork for enemies, all 60 materials, and all 59 recipes, with per-image sources and credits in the footer; those images are not freely licensed assets. Images work offline. The illustrated header Moogle and vector fallbacks for unknown names are original artwork.
 
 The Farming plan's **Lucky Lucky abilities** setting counts equipped copies across the active party, including equipment, and is saved/exported with the journal (default: 0). Final Mix stacks additively: `effective % = min(100, base % × (1 + 0.5 × count))`, per [KH Wiki's mechanics section](https://www.khwiki.com/Lucky_Strike#Mechanics), corroborated by the [Final Mix explanation](https://kingdomhearts.fandom.com/wiki/Lucky_Strike). Route rates show effective and unchanged base percentages; display values are rounded to two decimal places, not whole percentages. Unknown rates remain unknown. The input accepts nonnegative integers without assuming a mode/form-dependent game cap.
 
@@ -73,7 +73,7 @@ npm run test:browser
 npm run test:ui
 ```
 
-For a small change, run `npm run check:quick -- save` (or the relevant UI groups) instead of every browser workflow. This rebuilds the standalone page, runs the fast Node tests, and checks only the selected UI groups. Groups: `wishlist`, `readiness`, `energy`, `lucky`, `save`, `materials`, `navigation`, `progress`, `accessibility`. Multiple groups can be combined, for example `npm run check:quick -- save materials`.
+For a small change, run `npm run check:quick -- save` (or the relevant UI groups) instead of every browser workflow. This rebuilds the standalone page, runs the fast Node tests, and checks only the selected UI groups. Groups: `wishlist`, `readiness`, `energy`, `lucky`, `save`, `materials`, `navigation`, `progress`, `routes`, `images`, `accessibility`. Multiple groups can be combined, for example `npm run check:quick -- save materials`.
 
 `npm run check` still rebuilds and runs every regression suite. Default browser checks do not run media OCR or capture diagnostic screenshots. Use `npm run test:browser -- --screenshots` when desktop/mobile images are needed. Browser checks use `file://`, not a development server; the save URL test also simulates custom hosting locally. Sample media in `samples/` stays local and is ignored by Git.
 

@@ -2,6 +2,7 @@ import data from "../data.js";
 import planner from "../planner.js";
 import { escape, icon, link, on } from "../dom.js";
 import { groupRoutes, wishlistAvailability } from "../selectors.js";
+import { enemyImageMarkup } from "../enemy-images.js";
 
 function readinessIndicator(ready) {
   const label = ready.status === "ready" ? "Ready to craft" : ready.status === "locked" ? "Locked" : "Needs materials";
@@ -153,6 +154,7 @@ function requirementsMarkup(state, plan, showOwned) {
 }
 
 function routeMarkup(route) {
+  const enemyImage = enemyImageMarkup(route.enemy, route.url);
   const materials = route.materials.map((material) => `
     <span class="drop-material icon-label">${icon("material", material.name)}
       <span>${escape(material.name)} ×${material.missing}
@@ -161,23 +163,28 @@ function routeMarkup(route) {
     </span>`).join(" · ");
   const notes = [...new Set(route.materials.map((material) => material.note).filter(Boolean))];
   return `
-    <div class="route-item">
-      <strong>${link(route.url, route.enemy)}</strong> <span class="muted">· ${escape(route.room)}</span>
-      <p>${materials}</p>
-      ${notes.map((note) => `<p class="muted">${escape(note)}</p>`).join("")}
-      ${route.available ? "" : `<p class="warning">Unlock: ${escape(route.reason)}</p>`}
+    <div class="route-item${enemyImage ? " route-with-enemy-image" : ""}">
+      ${enemyImage}
+      <div class="route-enemy-information">
+        <strong>${link(route.url, route.enemy)}</strong> <span class="muted">· ${escape(route.room)}</span>
+        <p>${materials}</p>
+        ${notes.map((note) => `<p class="muted">${escape(note)}</p>`).join("")}
+        ${route.available ? "" : `<p class="warning">Unlock: ${escape(route.reason)}</p>`}
+      </div>
     </div>`;
 }
 
 function routesMarkup(plan) {
-  return groupRoutes(plan.routes).map((routes) => {
+  const routes = groupRoutes(plan.routes).map((routes) => {
     const world = data.worlds.find((world) => world.id === routes[0].world);
     return `
       <div class="panel route-world ${routes[0].available ? "" : "locked"}">
         <h3>${escape(world.name)} <span class="tag">${routes[0].available ? "AVAILABLE" : "LOCKED"}</span></h3>
         ${routes.map(routeMarkup).join("")}
       </div>`;
-  }).join("") || `<div class="empty">${plan.goals
+  }).join("");
+  if (routes) return routes;
+  return `<div class="empty">${plan.goals
     ? "No enemy farming sources needed yet. Mythril is chest / synthesis only; resolve any locked recipes above."
     : "Farming locations will follow the wish list and world progress."}</div>`;
 }

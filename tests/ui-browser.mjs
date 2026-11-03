@@ -97,8 +97,8 @@ async function expectIcons(page, selector) {
   assert.ok(await icons.evaluateAll((items) => items.every((svg) =>
     svg.getAttribute("aria-hidden") === "true" &&
     svg.getAttribute("focusable") === "false" &&
-    svg.querySelector("path, polygon, rect, circle, ellipse, line, polyline"),
-  )), `Icons in ${selector} must have geometry and remain decorative`);
+    svg.querySelector("image, path, polygon, rect, circle, ellipse, line, polyline"),
+  )), `Icons in ${selector} must have artwork and remain decorative`);
 }
 
 async function expectExportActions(page) {
@@ -555,6 +555,92 @@ async function progressSuite() {
   console.log("PASS endgame: world maxima, all areas/routes, chest/inventory preservation, persisted reload");
 }
 
+async function routesSuite() {
+  const routes = await open("plan", {
+    goals: Object.fromEntries(data.recipes.map((recipe) => [recipe.name, 1])),
+    worlds: Object.fromEntries(data.worlds.map((world) => [world.id, world.stages.length - 1])),
+    optional: Object.fromEntries(data.optional.map(([id]) => [id, true])),
+    moogle: 9, energy: "none", expand: false,
+  });
+  const images = routes.locator(".route-item img");
+  assert.ok(await images.count() > 0, "Farming routes must show enemy thumbnails");
+  const decoded = await images.evaluateAll(async (items) => Promise.all(items.map(async (image) => {
+    try {
+      await image.decode();
+      return image.src.startsWith("data:image/") && image.naturalWidth > 0 && image.naturalHeight > 0;
+    } catch {
+      return false;
+    }
+  })));
+  assert.ok(decoded.every(Boolean), "Every rendered enemy image must decode from embedded data without a network download");
+  const rows = await routes.locator(".route-item").evaluateAll((items) => items.map((row) => ({
+    name: row.querySelector("strong a")?.textContent,
+    materials: !!row.querySelector(".drop-material"),
+    image: !!row.querySelector("img"),
+  })));
+  assert.ok(rows.every((row) => row.name && row.materials), "Enemy images must preserve enemy links and material drops");
+  assert.ok(rows.filter((row) => !row.image).every((row) =>
+    /Absent Silhouette|Replica Data|One-time reward/.test(row.name),
+  ), "Only generic boss/reward routes may use text-only fallbacks");
+  assert.ok(await routes.locator(".route-item").evaluateAll((items) => items.every((row) => {
+    const thumbnail = row.querySelector(".route-enemy-image");
+    return !thumbnail || thumbnail.href === row.querySelector("strong a").href &&
+      !thumbnail.hasAttribute("title") && !thumbnail.querySelector("[title], small");
+  })), "Thumbnails must link to enemy articles without title tooltips or credit labels");
+  assert.equal(await routes.locator(".route-enemy-notice").count(), 0, "Enemy disclaimer must not appear in farming routes");
+  assert.ok((await routes.locator("footer").innerText()).includes("non-free enemy, material, and item"));
+  assert.ok(await routes.locator("footer #image-credits a").count() > 0, "Image sources and credits must remain available in the footer");
+  await routes.getByText("Image sources & credits", { exact: true }).click();
+  for (const width of [1280, 390, 320]) {
+    await routes.setViewportSize({ width, height: 844 });
+    assert.ok(await routes.evaluate(() => document.documentElement.scrollWidth <= innerWidth + 1),
+      `Enemy route images must fit a ${width}px viewport`);
+  }
+  console.log("PASS routes: embedded enemy images decode, source links and drops remain, phone layouts fit");
+}
+
+async function imagesSuite() {
+  const images = await open("materials");
+  const downloads = [];
+  images.on("request", (request) => {
+    if (/^https?:/.test(request.url())) downloads.push(request.url());
+  });
+  await images.context().setOffline(true);
+  await images.reload();
+  assert.equal(await images.locator("#inventory-list svg.kh-icon image").count(), data.materialNames.length);
+  assert.equal(await images.locator("#recipe-list h3 svg.kh-icon image").count(), data.recipes.length);
+  assert.equal(await images.locator(".brand-mark svg image").count(), 0);
+  assert.equal(await images.locator(".brand-mark .brand-mark-pom").count(), 1);
+  assert.equal(await images.locator(".brand-mark .brand-mark-wing").count(), 1);
+  const decoded = await images.locator("svg.kh-icon image").evaluateAll(async (items) => {
+    const sources = [...new Set(items.map((item) => item.href.baseVal))];
+    return Promise.all(sources.map(async (source) => {
+      const image = new Image();
+      image.src = source;
+      await image.decode();
+      return source.startsWith("data:image/webp;base64,") && image.naturalWidth > 0 &&
+        image.naturalHeight > 0 && Math.max(image.naturalWidth, image.naturalHeight) <= 96;
+    }));
+  });
+  assert.ok(decoded.every(Boolean), "All material and item artwork must decode offline from compact embedded images");
+  assert.deepEqual(downloads, [], "Displaying artwork must not download external assets");
+  for (const name of ["Blazing Shard", "Ultima Weapon"]) {
+    assert.equal(await images.locator("#image-credits a").getByText(name, { exact: true }).count(), 1);
+  }
+  for (const width of [1440, 390, 320]) {
+    await images.setViewportSize({ width, height: 844 });
+    for (const tab of ["inventory", "recipes"]) {
+      await expectMobileLayout(images, tab);
+      await expectIcons(images, tab === "inventory" ? "#inventory-list" : "#recipe-list");
+      assert.ok(await images.locator("svg.kh-icon:visible").evaluateAll((icons) => icons.every((icon) => {
+        const box = icon.getBoundingClientRect();
+        return box.width > 0 && box.height > 0 && box.left >= 0 && box.right <= innerWidth;
+      })), `Artwork must remain visible and fit at ${width}px`);
+    }
+  }
+  console.log("PASS images: all materials and recipes decode offline; illustrated Moogle, credits, and responsive sizes remain");
+}
+
 async function accessibilitySuite() {
   const accessible = await open("plan");
   await accessible.emulateMedia({ forcedColors: "active", reducedMotion: "reduce" });
@@ -584,6 +670,8 @@ const suites = {
   materials: materialsSuite,
   navigation: navigationSuite,
   progress: progressSuite,
+  routes: routesSuite,
+  images: imagesSuite,
   accessibility: accessibilitySuite,
 };
 

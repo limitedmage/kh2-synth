@@ -1,5 +1,9 @@
+import thumbnails from "./wiki-thumbnails.json" with { type: "json" };
+
 const icons = (() => {
-  // Original vector artwork; KHII colors and grade silhouettes referenced from
+  const image = (name) => typeof name === "string" && Object.hasOwn(thumbnails, name) ?
+    `<svg class="kh-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" aria-hidden="true" focusable="false"><image href="${thumbnails[name].src}" width="32" height="32" preserveAspectRatio="xMidYMid meet"/></svg>` : "";
+  // Original vector fallbacks; KHII colors and grade silhouettes referenced from
   // https://www.khwiki.com/Synthesis_material and the linked material design notes.
   const palettes = {
     Blazing: ["#ff493c", "#a61d39", "#ffae42", "#fff3ad"],
@@ -59,9 +63,11 @@ const icons = (() => {
     `<path d="m13 24 3-3 3 3-3 3Z" fill="${p[1]}" stroke="none"/>` +
     gleam("m13 18 1 0m4 0 1 0", p[3]);
   const material = (name) => {
+    const artwork = image(name);
+    if (artwork) return artwork;
     const text = typeof name === "string" ? name : "";
     const family = text.split(" ")[0].replace("+", "");
-    const p = palettes[family] || fallback;
+    const p = Object.hasOwn(palettes, family) ? palettes[family] : fallback;
     const tier = text.split(" ").at(-1);
     if (/Illusion$/.test(text)) {
       const p = palettes.Illusion;
@@ -97,7 +103,7 @@ const icons = (() => {
       return svg((modifiers[tier] || modifiers.Gem) +
         `<path d="M12 12q-2 8 4 12l4-9-4 3Z" fill="${p[1]}" stroke="none"/>` + motif, p);
     }
-    return svg((facets[tier] || facets.Gem)(p), p);
+    return svg((Object.hasOwn(facets, tier) ? facets[tier] : facets.Gem)(p), p);
   };
   const shapes = {
     ring: (p) => `<ellipse cx="16" cy="21" rx="8" ry="8" fill="none" stroke="${p[1]}" stroke-width="5"/><path d="M9 22a7 7 0 0 1 14 0" fill="none" stroke="${p[2]}" stroke-width="3"/><path d="m16 2 7 6-7 8-7-8Z"/><path d="m16 2 0 14 7-8Z" fill="${p[1]}" stroke="none"/>`,
@@ -132,6 +138,8 @@ const icons = (() => {
     armor: ["#5eafff", "#36569c", "#ffe064", "#ffffff"],
   };
   const item = (recipeName) => {
+    const artwork = image(recipeName);
+    if (artwork) return artwork;
     const name = typeof recipeName === "string" ? recipeName : "";
     if (/\b(Shard|Stone|Gem|Crystal|Illusion)$/.test(name) || /^Orichalcum\+?$/.test(name)) return material(name);
     let shape = "armor";

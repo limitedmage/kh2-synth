@@ -238,6 +238,16 @@ td small { display: block; color: var(--muted); }
 .route-world { margin-bottom: 1rem; background: linear-gradient(130deg, #08260e, #020a05); border-color: #547a4e; }
 .route-world > h3 { padding: .4rem .65rem; margin: -.4rem -.4rem .25rem; background: linear-gradient(90deg, #155f0c, #06260b); border-radius: 5px; }
 .route-item { padding: .8rem 0; border-bottom: 1px solid #29472b; }
+.route-with-enemy-image { display: grid; grid-template-columns: 76px minmax(0, 1fr); align-items: start; gap: .75rem; }
+.route-enemy-information { min-width: 0; overflow-wrap: anywhere; }
+.route-enemy-image { display: block; width: 76px; }
+.route-enemy-image img { display: block; width: 76px; height: 76px; object-fit: contain; padding: .2rem; border: 1px solid #365c2b; border-radius: 5px; background: #010502; }
+#image-credits { display: grid; gap: .5rem; padding-left: 1.2rem; }
+@media (max-width: 480px) {
+  .route-with-enemy-image { grid-template-columns: 60px minmax(0, 1fr); gap: .5rem; }
+  .route-enemy-image, .route-enemy-image img { width: 60px; }
+  .route-enemy-image img { height: 60px; }
+}
 .route-item:last-child { border: 0; }
 .route-item p { margin-top: .3rem; }
 .route-item small { color: #d3ddc9; }

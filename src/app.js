@@ -5,6 +5,7 @@ import icons from "./icons.js";
 import { byId, on } from "./dom.js";
 import { createStore } from "./store.js";
 import { mountSaveTools } from "./save.js";
+import { imageCreditsMarkup } from "./enemy-images.js";
 import { mountPlan } from "./views/plan.js";
 import { mountRecipes } from "./views/recipes.js";
 import { mountInventory } from "./views/inventory.js";
@@ -59,6 +60,7 @@ function renderSaveStatus(state) {
 }
 
 mountSaveTools(store, notice);
+byId("image-credits").innerHTML = imageCreditsMarkup();
 mountNavigation();
 mountPlan(byId("tab-plan"), store);
 mountRecipes(byId("tab-recipes"), { store, notice });
