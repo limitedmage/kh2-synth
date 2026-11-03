@@ -202,10 +202,14 @@ nav button.active::before { content: "◆"; font-size: .72em; color: var(--gold)
 .craftability-locked .craftability { color: var(--gold); }
 .goal.craftability-missing { border-left-color: var(--red); }
 .craftability-missing .craftability { color: var(--red); }
-.inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(245px, 1fr)); gap: .6rem; }
-.stock-row { display: flex; align-items: center; justify-content: space-between; gap: .7rem; border-radius: 6px; padding: .65rem .85rem; border-color: #385a2f; background: linear-gradient(90deg, #071607, #010502); }
-.stock-row label { flex-direction: row; align-items: center; justify-content: space-between; gap: .6rem; width: 100%; font-size: .9rem; color: var(--ink); }
-.stock-row input { flex-shrink: 0; color: var(--gold); border-color: #96822f; font-weight: 800; text-align: right; }
+.inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr)); gap: .6rem; }
+.stock-row { display: flex; align-items: center; justify-content: space-between; gap: .4rem; border-radius: 6px; padding: .65rem .6rem; border-color: #385a2f; background: linear-gradient(90deg, #071607, #010502); }
+.stock-row label { flex: 1; min-width: 0; flex-direction: row; align-items: center; font-size: .85rem; color: var(--ink); white-space: nowrap; }
+.stock-row .icon-label { gap: .35rem; }
+.stock-controls { display: flex; flex-shrink: 0; align-items: center; gap: .15rem; }
+.stock-row input { flex-shrink: 0; width: 3.5rem; min-height: 32px; padding: .4rem .3rem; appearance: textfield; color: var(--gold); border-color: #96822f; font-weight: 800; text-align: right; }
+.stock-row input::-webkit-inner-spin-button, .stock-row input::-webkit-outer-spin-button { appearance: none; margin: 0; }
+.stock-adjust { flex: 0 0 26px; width: 26px; min-height: 32px; padding: 0; border-radius: 4px; font-size: 1rem; }
 .stock-row.has-stock { border-left: 3px solid var(--mint); }
 .checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: 1rem; margin-top: 1rem; }
 .world-card { background: linear-gradient(140deg, #0b3d12, #031b0b); border-color: #66836b; }

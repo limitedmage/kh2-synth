@@ -329,6 +329,47 @@ try {
   await expectRate("Minute Bomb", 18, 6);
   console.log("PASS Lucky Lucky: effective/base rates, unchanged stock/goals, reload, export/import");
 
+  const materials = await open("materials", {
+    inventory: { "Dark Shard": 0, "Dense Crystal": 9999, "Blazing Stone": 7 },
+  });
+  const darkStock = materials.getByRole("spinbutton", { name: "Dark Shard current stock", exact: true });
+  const increaseStock = materials.getByRole("button", { name: "Increase Dark Shard stock", exact: true });
+  const decreaseStock = materials.getByRole("button", { name: "Decrease Dark Shard stock", exact: true });
+  await decreaseStock.click();
+  assert.equal(await darkStock.inputValue(), "0", "Decrementing empty stock must not create negative inventory");
+  await increaseStock.click();
+  await increaseStock.dblclick();
+  assert.equal(await darkStock.inputValue(), "3", "Repeated increases must add one per click without losing changes");
+  await darkStock.fill("7");
+  await increaseStock.click();
+  assert.equal(await darkStock.inputValue(), "8", "The stepper must apply to the manually entered count");
+  await decreaseStock.click();
+  assert.equal(await darkStock.inputValue(), "7");
+  await increaseStock.focus();
+  await materials.keyboard.press("Enter");
+  assert.equal(await darkStock.inputValue(), "8", "Stock controls must work from the keyboard");
+  await materials.getByRole("button", { name: "Increase Dense Crystal stock", exact: true }).click();
+  assert.equal((await saved(materials)).inventory["Dense Crystal"], 9999, "Increasing stock must preserve the existing maximum");
+  await materials.getByRole("button", { name: "Decrease Dense Crystal stock", exact: true }).click();
+  assert.equal((await saved(materials)).inventory["Dense Crystal"], 9998);
+  assert.equal((await saved(materials)).inventory["Blazing Stone"], 7, "Adjusting stock must not affect other materials");
+  await materials.locator("#material-search").fill("Dark Shard");
+  await decreaseStock.click();
+  assert.equal(await darkStock.inputValue(), "7", "Filtered materials must keep working stock controls");
+  await materials.reload();
+  assert.equal(await darkStock.inputValue(), "7", "Adjusted stock must persist after reload");
+  for (const width of [1440, 1000, 700, 390, 320]) {
+    await materials.setViewportSize({ width, height: 844 });
+    await expectMobileLayout(materials, "inventory");
+    const wrapped = await materials.locator(".stock-row").evaluateAll((rows) => rows.filter((row) => {
+      const name = row.querySelector(".icon-label").getBoundingClientRect();
+      const controls = row.querySelector(".stock-controls").getBoundingClientRect();
+      return name.right > controls.left || Math.abs((name.top + name.bottom) / 2 - (controls.top + controls.bottom) / 2) > 1;
+    }).map((row) => row.querySelector("label").innerText));
+    assert.deepEqual(wrapped, [], `Material names and compact controls must fit on one row at ${width}px`);
+  }
+  console.log("PASS materials: increment/decrement, bounds, manual entry, keyboard, filtering, persistence, phone layouts");
+
   const navigation = await open("materials");
   await expectTab(navigation, "inventory", "materials");
   await navigation.reload();
