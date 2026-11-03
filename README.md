@@ -41,7 +41,23 @@ The Farming plan's **Lucky Lucky abilities** setting counts equipped copies acro
 
 ## Development
 
-The generated **index.html is committed** and contains all application code, styles, and guide data. `src/` contains the maintainable source.
+The generated **index.html is committed** and contains all application code, styles, and guide data. ES modules in `src/` are bundled inline by esbuild at build time; there is no runtime framework or module download.
+
+### Source layout
+
+| Path | Responsibility |
+| --- | --- |
+| `src/app.js` | Startup, navigation, notices, and save-file controls |
+| `src/store.js` | Journal actions, state transitions, and browser persistence |
+| `src/views/` | Screen-owned rendering and events; HTML templates receive state rather than mutating it |
+| `src/import/` | Media loading, crop alignment, OCR worker lifecycle, and editable review |
+| `src/selectors.js` | Pure wishlist and route projections |
+
+`src/planner.js`, `src/recognition.js`, `src/data.js`, and `src/icons.js` provide the calculation, image-processing, guide-data, and artwork modules. The OCR scanner reports status and results through callbacks; it does not read or update page controls. Only journal actions update saved state. Preview media, workers, and uncommitted review edits remain local to the import feature.
+
+Plain modules are sufficient for five fixed screens. A UI framework, custom elements, a virtual DOM, or a home-grown template engine would add machinery without removing the need for these ownership boundaries. Existing light-DOM markup, accessibility, save format, and direct `file://` usage are preserved.
+
+### Commands
 
 ```sh
 npm install

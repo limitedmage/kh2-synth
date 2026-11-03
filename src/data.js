@@ -1,4 +1,4 @@
-globalThis.KH2Data = (() => {
+const data = (() => {
   const wiki = (name) => `https://www.khwiki.com/${encodeURIComponent(name.replaceAll(" ", "_"))}`;
   const worlds = [
     ["tt", "Twilight Town", ["Not reached", "First Sora visit / tower", "Second Sora visit", "Final visit / mansion open"]],
@@ -214,3 +214,5 @@ globalThis.KH2Data = (() => {
   const levels = ["Amateur", "Novice", "Junior", "Skilled", "Senior", "Artisan", "Master", "Superior", "Primo"];
   return { wiki, worlds, optional, materials, materialNames, recipes, byRecipe, levels, tiers, rewards };
 })();
+
+export default data;

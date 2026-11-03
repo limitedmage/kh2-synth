@@ -1,5 +1,6 @@
-globalThis.KH2Planner = (() => {
-  const D = globalThis.KH2Data;
+import D from "./data.js";
+
+const planner = (() => {
   const count = (value, max = 9999) => Math.min(max, Math.max(0, Math.floor(Number(value) || 0)));
   const defaults = () => ({
     version: 1, goals: {}, inventory: {}, crafted: {}, worlds: {}, chests: {}, optional: {}, rewards: {},
@@ -178,3 +179,5 @@ globalThis.KH2Planner = (() => {
   }
   return { count, defaults, sanitize, costs, unlocked, availability, energyName, plan, wishlistConflicts, effectiveDropRate };
 })();
+
+export default planner;

@@ -16,3 +16,11 @@
 - [x] Apply the selected Lucky Lucky count to enemy drop rates.
 - [x] Remove the specified redundant copy and the Crafting order & notes section.
 - [x] Fix inventory OCR and detect table corners and column dividers from the image; verify all supplied recordings.
+
+## Code organization
+
+- [x] Evaluate frameworks and keep dependency-free runtime modules for the fixed screens.
+- [x] Centralize journal actions and persistence.
+- [x] Give each screen ownership of its rendering and events.
+- [x] Separate crop alignment, OCR workers, and import review.
+- [x] Verify the refactor against standalone workflows and every supplied media sample.

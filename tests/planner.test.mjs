@@ -1,11 +1,8 @@
 import { test } from "node:test";
 import assert from "node:assert/strict";
-import { readFile } from "node:fs/promises";
-import vm from "node:vm";
-
-const context = vm.createContext({});
-for (const name of ["data", "planner", "recognition"]) vm.runInContext(await readFile(new URL(`../src/${name}.js`, import.meta.url), "utf8"), context);
-const { KH2Data: D, KH2Planner: P, KH2Recognition: R } = context;
+import D from "../src/data.js";
+import P from "../src/planner.js";
+import R from "../src/recognition.js";
 const state = (overrides = {}) => ({ ...P.defaults(), materialTypes: 60, ...overrides });
 const row = (plan, name) => plan.requirements.find((r) => r.name === name);
 const plain = (value) => JSON.parse(JSON.stringify(value));

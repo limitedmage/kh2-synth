@@ -1,5 +1,6 @@
-globalThis.KH2Recognition = (() => {
-  const D = globalThis.KH2Data;
+import D from "./data.js";
+
+const recognition = (() => {
   const normalize = (text) => text.toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9+]/g, "");
   const aliases = { "Petite Ribbon": ["Petit Ribbon"], "Ultima Weapon": ["Ultima Keyblade"], "Orichalcum+": ["Orichalcum Plus"] };
   function distance(a, b) {
@@ -492,3 +493,5 @@ globalThis.KH2Recognition = (() => {
   }
   return { normalize, matchName, parseLines, merge, loadEngine, sourceCanvas, inventoryCanvas, quantityCanvas, quantityText, detectCorners, cropCanvas, rectifyCanvas, seek };
 })();
+
+export default recognition;

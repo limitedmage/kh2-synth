@@ -1,4 +1,4 @@
-globalThis.KH2Icons = (() => {
+const icons = (() => {
   const colors = {
     Blazing: "#ff9575", Frost: "#8ce2ff", Lightning: "#ffe27c",
     Lucid: "#b9d1ff", Power: "#f49ac1", Dark: "#ba9aea",
@@ -61,3 +61,5 @@ globalThis.KH2Icons = (() => {
   };
   return Object.freeze({ material, item });
 })();
+
+export default icons;
