@@ -230,6 +230,7 @@ try {
 
   const downloadPromise = page.waitForEvent("download");
   await page.locator("#export").click();
+  await page.locator("#export-file").click();
   const download = await downloadPromise;
   const backupPath = fileURLToPath(new URL("save.json", artifacts));
   await download.saveAs(backupPath);

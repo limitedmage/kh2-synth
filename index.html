@@ -106,6 +106,10 @@ h3 { font-size: 1.08rem; font-weight: 800; text-shadow: 1px 2px #000; }
 .subtitle { margin-top: .6rem; }
 .save-tools { margin-left: auto; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .save-tools span { font-size: .75rem; color: var(--muted); width: 100%; text-align: right; }
+.save-export { width: min(440px, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); overflow: auto; padding: 1.2rem; border: 2px solid var(--line); border-radius: 12px 4px 16px 4px; background: var(--panel); color: var(--ink); box-shadow: 0 8px 32px #000b; }
+.save-export-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+#save-link-result { display: grid; gap: .75rem; margin-top: 1rem; }
+#save-url { font-size: .8rem; }
 main { max-width: 1320px; padding: 0 2rem; margin: auto; }
 .intro { display: flex; align-items: center; gap: 1rem; border-top: 1px solid var(--line); padding: 1rem 0 1.3rem; color: var(--muted); font-size: .85rem; }
 .pill, .tag { font-size: .67rem; letter-spacing: .06em; border: 1px solid #438d22; border-radius: 3px; padding: .2rem .5rem; color: var(--mint); white-space: nowrap; background: #020a04; }
@@ -355,8 +359,20 @@ footer p + p { margin-top: .8rem; }
       </svg>
     </div>
     <div><p class="eyebrow">KINGDOM HEARTS II · FINAL MIX</p><h1>Synthesis <span>Journal</span></h1></div>
-    <div class="save-tools"><span id="save-status" role="status">Saved on this device</span><button id="export" class="quiet">Export save</button><label class="button quiet">Load save<input id="load-save" type="file" accept=".json,application/json" hidden></label></div>
+    <div class="save-tools"><span id="save-status" role="status">Saved on this device</span><button id="export" class="quiet" popovertarget="save-export">Export save</button><label class="button quiet">Load save<input id="load-save" type="file" accept=".json,application/json" hidden></label></div>
   </header>
+  <div id="save-export" class="save-export" popover="auto">
+    <h2>Export save</h2>
+    <div class="save-export-actions">
+      <button id="export-file" class="quiet">Download JSON</button>
+      <button id="export-link" class="primary">Create magic URL</button>
+    </div>
+    <div id="save-link-result" hidden>
+      <label>Magic save URL<textarea id="save-url" rows="4" readonly spellcheck="false"></textarea></label>
+      <p class="muted">Open this URL on another device to import the complete save.</p>
+      <button id="copy-save-url" class="primary">Copy URL</button>
+    </div>
+  </div>
   <main>
     <nav aria-label="Journal sections">
       <button data-tab="plan" class="active" aria-current="page">Farming plan <span id="plan-count"></span></button>
@@ -1571,11 +1587,13 @@ footer p + p { margin-top: .8rem; }
   }
   function createStore(storage) {
     let state = planner_default.defaults();
+    let hasSave = false;
     let storageError = "";
     const listeners = /* @__PURE__ */ new Set();
     try {
       storage ||= globalThis.localStorage;
       const saved = storage.getItem(storageKey);
+      hasSave = !!saved;
       if (saved) {
         const raw = JSON.parse(saved);
         state = planner_default.sanitize(raw);
@@ -1586,6 +1604,7 @@ footer p + p { margin-top: .8rem; }
     }
     return {
       getState: () => state,
+      hasSave: () => hasSave,
       getStorageError: () => storageError,
       subscribe(listener) {
         listeners.add(listener);
@@ -1593,6 +1612,7 @@ footer p + p { margin-top: .8rem; }
       },
       dispatch(action) {
         state = reduceJournal(state, action);
+        hasSave = true;
         try {
           storage.setItem(storageKey, JSON.stringify(state));
           storageError = "";
@@ -1602,6 +1622,112 @@ footer p + p { margin-top: .8rem; }
         for (const listener of listeners) listener(state, action);
       }
     };
+  }
+
+  // src/save.js
+  var maxSaveBytes = 1e6;
+  var hostedURL = "https://limitedmage.github.io/kh2-synth/";
+  async function encodeSaveURL(state, href) {
+    const json = new TextEncoder().encode(JSON.stringify(planner_default.sanitize(state)));
+    if (json.byteLength > maxSaveBytes) throw new Error("Save is too large (maximum 1 MB).");
+    const stream = new Blob([json]).stream().pipeThrough(new CompressionStream("gzip"));
+    const bytes = new Uint8Array(await new Response(stream).arrayBuffer());
+    const payload = btoa(Array.from(bytes, (byte) => String.fromCharCode(byte)).join("")).replaceAll("+", "-").replaceAll("/", "_").replace(/=+$/, "");
+    const url = new URL(href);
+    const portable = ["http:", "https:"].includes(url.protocol) ? url : new URL(hostedURL);
+    portable.hash = `save=${payload}`;
+    return portable.href;
+  }
+  async function decodeSaveURL(payload) {
+    if (!payload || payload.length > maxSaveBytes * 2 || !/^[A-Za-z0-9_-]+$/.test(payload)) {
+      throw new Error("Invalid save URL.");
+    }
+    const bytes = Uint8Array.from(atob(payload.replaceAll("-", "+").replaceAll("_", "/")), (character) => character.charCodeAt(0));
+    let size = 0;
+    const stream = new Blob([bytes]).stream().pipeThrough(new DecompressionStream("gzip")).pipeThrough(new TransformStream({
+      transform(chunk, controller) {
+        size += chunk.byteLength;
+        if (size > maxSaveBytes) throw new Error("Save is too large (maximum 1 MB).");
+        controller.enqueue(chunk);
+      }
+    }));
+    return planner_default.sanitize(JSON.parse(await new Response(stream).text()));
+  }
+  function mountSaveTools(store2, notice2) {
+    const menu = byId("save-export");
+    const link2 = byId("save-url");
+    const createLink = byId("export-link");
+    menu.addEventListener("beforetoggle", (event) => {
+      if (event.newState === "open") {
+        byId("save-link-result").hidden = true;
+        link2.value = "";
+      }
+    });
+    byId("export-file").addEventListener("click", () => {
+      const url = URL.createObjectURL(new Blob([JSON.stringify(store2.getState(), null, 2)], { type: "application/json" }));
+      const anchor = document.createElement("a");
+      anchor.href = url;
+      anchor.download = "kh2-synthesis-save.json";
+      anchor.click();
+      setTimeout(() => URL.revokeObjectURL(url), 1e3);
+      menu.hidePopover();
+    });
+    createLink.addEventListener("click", async () => {
+      createLink.disabled = true;
+      try {
+        link2.value = await encodeSaveURL(store2.getState(), location.href);
+        byId("save-link-result").hidden = false;
+        link2.focus();
+        link2.select();
+      } catch (error) {
+        notice2(`Could not create save URL: ${error.message}`);
+      } finally {
+        createLink.disabled = false;
+      }
+    });
+    byId("copy-save-url").addEventListener("click", async () => {
+      try {
+        await navigator.clipboard.writeText(link2.value);
+        notice2("Save URL copied.");
+      } catch {
+        link2.focus();
+        link2.select();
+        notice2("Copy the selected URL to share this save.");
+      }
+    });
+    byId("load-save").addEventListener("change", async (event) => {
+      const file = event.target.files[0];
+      if (!file) return;
+      try {
+        if (file.size > maxSaveBytes) throw new Error("Save file is too large (maximum 1 MB).");
+        const state = planner_default.sanitize(JSON.parse(await file.text()));
+        if (!confirm("Replace this journal's current wish list, inventory and progress with the selected save? Each wishlist recipe will be included once.")) return;
+        store2.dispatch({ type: "replace-save", value: state });
+        notice2("Save loaded.");
+      } catch (error) {
+        notice2(`Could not load save: ${error.message}`);
+      } finally {
+        event.target.value = "";
+      }
+    });
+    async function importURL() {
+      if (!location.hash.startsWith("#save=")) return;
+      const payload = location.hash.slice("#save=".length);
+      history.replaceState(null, "", "#plan");
+      try {
+        const state = await decodeSaveURL(payload);
+        if (store2.hasSave() && !confirm("A save already exists on this device. Replace its wishlist, inventory, progress and settings with this magic URL's save?")) {
+          notice2("Save URL import cancelled. Existing save kept.");
+          return;
+        }
+        store2.dispatch({ type: "replace-save", value: state });
+        notice2("Save imported from URL.");
+      } catch (error) {
+        notice2(`Could not load save URL: ${error.message}`);
+      }
+    }
+    window.addEventListener("hashchange", importURL);
+    importURL();
   }
 
   // src/selectors.js
@@ -2616,29 +2742,7 @@ footer p + p { margin-top: .8rem; }
     const count = Object.values(state.goals).reduce((total, quantity) => total + quantity, 0);
     byId("plan-count").textContent = count ? `(${count})` : "";
   }
-  byId("export").addEventListener("click", () => {
-    const url = URL.createObjectURL(new Blob([JSON.stringify(store.getState(), null, 2)], { type: "application/json" }));
-    const anchor = document.createElement("a");
-    anchor.href = url;
-    anchor.download = "kh2-synthesis-save.json";
-    anchor.click();
-    setTimeout(() => URL.revokeObjectURL(url), 1e3);
-  });
-  byId("load-save").addEventListener("change", async (event) => {
-    const file = event.target.files[0];
-    if (!file) return;
-    try {
-      if (file.size > 1e6) throw new Error("Save file is too large (maximum 1 MB).");
-      const state = planner_default.sanitize(JSON.parse(await file.text()));
-      if (!confirm("Replace this journal's current wish list, inventory and progress with the selected save? Each wishlist recipe will be included once.")) return;
-      store.dispatch({ type: "replace-save", value: state });
-      notice("Save loaded.");
-    } catch (error) {
-      notice(`Could not load save: ${error.message}`);
-    } finally {
-      event.target.value = "";
-    }
-  });
+  mountSaveTools(store, notice);
   mountNavigation();
   mountPlan(byId("tab-plan"), store);
   mountRecipes(byId("tab-recipes"), { store, notice });

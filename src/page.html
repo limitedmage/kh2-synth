@@ -24,8 +24,20 @@
       </svg>
     </div>
     <div><p class="eyebrow">KINGDOM HEARTS II · FINAL MIX</p><h1>Synthesis <span>Journal</span></h1></div>
-    <div class="save-tools"><span id="save-status" role="status">Saved on this device</span><button id="export" class="quiet">Export save</button><label class="button quiet">Load save<input id="load-save" type="file" accept=".json,application/json" hidden></label></div>
+    <div class="save-tools"><span id="save-status" role="status">Saved on this device</span><button id="export" class="quiet" popovertarget="save-export">Export save</button><label class="button quiet">Load save<input id="load-save" type="file" accept=".json,application/json" hidden></label></div>
   </header>
+  <div id="save-export" class="save-export" popover="auto">
+    <h2>Export save</h2>
+    <div class="save-export-actions">
+      <button id="export-file" class="quiet">Download JSON</button>
+      <button id="export-link" class="primary">Create magic URL</button>
+    </div>
+    <div id="save-link-result" hidden>
+      <label>Magic save URL<textarea id="save-url" rows="4" readonly spellcheck="false"></textarea></label>
+      <p class="muted">Open this URL on another device to import the complete save.</p>
+      <button id="copy-save-url" class="primary">Copy URL</button>
+    </div>
+  </div>
   <main>
     <nav aria-label="Journal sections">
       <button data-tab="plan" class="active" aria-current="page">Farming plan <span id="plan-count"></span></button>

@@ -99,6 +99,10 @@ h3 { font-size: 1.08rem; font-weight: 800; text-shadow: 1px 2px #000; }
 .subtitle { margin-top: .6rem; }
 .save-tools { margin-left: auto; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
 .save-tools span { font-size: .75rem; color: var(--muted); width: 100%; text-align: right; }
+.save-export { width: min(440px, calc(100vw - 2rem)); max-height: calc(100vh - 2rem); overflow: auto; padding: 1.2rem; border: 2px solid var(--line); border-radius: 12px 4px 16px 4px; background: var(--panel); color: var(--ink); box-shadow: 0 8px 32px #000b; }
+.save-export-actions { display: flex; flex-wrap: wrap; gap: .6rem; margin-top: 1rem; }
+#save-link-result { display: grid; gap: .75rem; margin-top: 1rem; }
+#save-url { font-size: .8rem; }
 main { max-width: 1320px; padding: 0 2rem; margin: auto; }
 .intro { display: flex; align-items: center; gap: 1rem; border-top: 1px solid var(--line); padding: 1rem 0 1.3rem; color: var(--muted); font-size: .85rem; }
 .pill, .tag { font-size: .67rem; letter-spacing: .06em; border: 1px solid #438d22; border-radius: 3px; padding: .2rem .5rem; color: var(--mint); white-space: nowrap; background: #020a04; }

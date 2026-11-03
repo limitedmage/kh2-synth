@@ -7,7 +7,9 @@
 3. Set **World progress**, optional unlocks, chest completion, and the Moogle level.
 4. Open **Farming plan** for readiness checkmarks, ingredient counts, missing materials, and farming locations.
 
-The page saves locally in the browser. **Export save** downloads a JSON backup; **Load save** restores it. Keep the HTML at the same path for consistent browser storage. Browser restrictions/private mode may prevent saving; JSON backups work independently. The URL fragment keeps the current tab.
+The page saves locally in the browser. **Export save** offers a JSON backup or a **magic URL** containing a compressed snapshot of the complete save. Open that URL on another device to import it; an existing save requires confirmation before replacement. The payload is removed from the address bar after opening, so reloading does not import it again. Links created from a local HTML file open the GitHub Pages version. Save data stays in the URL fragment, not a server upload.
+
+**Load save** restores JSON backups. Keep the HTML at the same path for consistent browser storage. Browser restrictions/private mode may prevent saving; JSON backups work independently. Ordinary URL fragments keep the current tab.
 
 Ready checkmarks and ingredient costs are calculated independently for each wishlist item using the full current inventory, without reserving materials for other items. Ingredient chips show owned/needed counts and retain surplus; combined totals appear only under **Materials to collect**. Shared-material warnings flag conflicts only between items that are independently ready to craft; missing and locked items are excluded. **End-game preset** unlocks every world and optional area without marking chests collected or adding inventory. Menu styling and item/material icons are original artwork.
 
@@ -47,7 +49,8 @@ The generated **index.html is committed** and contains all application code, sty
 
 | Path | Responsibility |
 | --- | --- |
-| `src/app.js` | Startup, navigation, notices, and save-file controls |
+| `src/app.js` | Startup, navigation, and notices |
+| `src/save.js` | JSON backups, compressed save URLs, and import/export controls |
 | `src/store.js` | Journal actions, state transitions, and browser persistence |
 | `src/views/` | Screen-owned rendering and events; HTML templates receive state rather than mutating it |
 | `src/import/` | Media loading, crop alignment, OCR worker lifecycle, and editable review |

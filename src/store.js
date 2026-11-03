@@ -67,11 +67,13 @@ export function reduceJournal(state, action) {
 
 export function createStore(storage) {
   let state = planner.defaults();
+  let hasSave = false;
   let storageError = "";
   const listeners = new Set();
   try {
     storage ||= globalThis.localStorage;
     const saved = storage.getItem(storageKey);
+    hasSave = !!saved;
     if (saved) {
       const raw = JSON.parse(saved);
       state = planner.sanitize(raw);
@@ -82,6 +84,7 @@ export function createStore(storage) {
   }
   return {
     getState: () => state,
+    hasSave: () => hasSave,
     getStorageError: () => storageError,
     subscribe(listener) {
       listeners.add(listener);
@@ -89,6 +92,7 @@ export function createStore(storage) {
     },
     dispatch(action) {
       state = reduceJournal(state, action);
+      hasSave = true;
       try {
         storage.setItem(storageKey, JSON.stringify(state));
         storageError = "";

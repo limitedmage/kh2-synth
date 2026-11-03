@@ -1,5 +1,7 @@
 import { chromium } from "playwright";
 import assert from "node:assert/strict";
+import { readFile } from "node:fs/promises";
+import data from "../src/data.js";
 
 const journal = new URL("../index.html", import.meta.url).href;
 const storageKey = "kh2-final-mix-synthesis-v1";
@@ -305,7 +307,7 @@ try {
     try {
       URL.createObjectURL = (blob) => { exportedBlob = blob; return "blob:ui-export-check"; };
       HTMLAnchorElement.prototype.click = function () {};
-      document.getElementById("export").click();
+      document.getElementById("export-file").click();
       return JSON.parse(await exportedBlob.text());
     } finally {
       URL.createObjectURL = createURL;
@@ -328,6 +330,87 @@ try {
   assert.equal(await lucky.locator("#lucky-lucky").inputValue(), "4");
   await expectRate("Minute Bomb", 18, 6);
   console.log("PASS Lucky Lucky: effective/base rates, unchanged stock/goals, reload, export/import");
+
+  const sharing = await open("plan", {
+    goals: { "AP Boost": 1, "Save the King+": 1 },
+    inventory: { "Dense Shard": 17, "Orichalcum+": 3 },
+    crafted: { "Save the King": true }, worlds: { tt: 2, hb: 2 },
+    chests: { tt: true }, optional: { mushrooms: true },
+    rewards: { [data.rewards[0].id]: true },
+    moogle: 8, energy: "farm", expand: false, materialTypes: 60, luckyLuckyCount: 7,
+    methods: { "Mythril Shard": "collect" },
+  });
+  const sharedSave = await sharing.evaluate((key) => KH2Planner.sanitize(JSON.parse(localStorage.getItem(key))), storageKey);
+  await sharing.locator("#export").click();
+  await sharing.locator("#export-link").click();
+  await sharing.locator("#save-link-result").waitFor({ state: "visible" });
+  const magicURL = await sharing.locator("#save-url").inputValue();
+  assert.ok(magicURL.startsWith("https://limitedmage.github.io/kh2-synth/#save="), "Local-file exports must produce portable hosted URLs");
+  await sharing.evaluate(() => {
+    Object.defineProperty(navigator, "clipboard", { configurable: true, value: {
+      writeText: async (text) => { window.copiedSaveURL = text; },
+    } });
+  });
+  await sharing.locator("#copy-save-url").click();
+  assert.equal(await sharing.evaluate(() => window.copiedSaveURL), magicURL);
+  await sharing.evaluate(() => {
+    navigator.clipboard.writeText = async () => { throw new Error("Clipboard unavailable"); };
+  });
+  await sharing.locator("#copy-save-url").click();
+  assert.ok(await sharing.locator("#save-url").evaluate((input) =>
+    input.selectionStart === 0 && input.selectionEnd === input.value.length,
+  ), "When clipboard access fails, the whole URL must be selected for manual copying");
+  await sharing.keyboard.press("Escape");
+
+  const device = await browser.newContext({ viewport: { width: 390, height: 844 } });
+  contexts.push(device);
+  const html = await readFile(new URL("../index.html", import.meta.url), "utf8");
+  await device.route("https://limitedmage.github.io/kh2-synth/**", (route) =>
+    route.fulfill({ contentType: "text/html", body: html }));
+  const receiver = await device.newPage();
+  receiver.on("pageerror", (error) => errors.push(error.message));
+  let acceptImport = false;
+  const prompts = [];
+  receiver.on("dialog", async (dialog) => {
+    prompts.push(dialog.message());
+    if (acceptImport) await dialog.accept();
+    else await dialog.dismiss();
+  });
+  await receiver.goto(magicURL);
+  await receiver.locator("#notice").filter({ hasText: "Save imported from URL." }).waitFor();
+  assert.deepEqual(await saved(receiver), sharedSave, "A fresh device must import every saved field without confirmation");
+  assert.equal(prompts.length, 0);
+  assert.equal(new URL(receiver.url()).hash, "#plan", "The payload must be removed after opening the URL");
+  await receiver.locator('[data-tab="inventory"]').click();
+  await receiver.getByRole("button", { name: "Increase Dark Shard stock", exact: true }).click();
+  const existingSave = await saved(receiver);
+  await receiver.goto(magicURL);
+  await receiver.locator("#notice").filter({ hasText: "Existing save kept." }).waitFor();
+  assert.equal(prompts.length, 1, "An existing save must require confirmation");
+  assert.deepEqual(await saved(receiver), existingSave, "Declining must preserve the entire existing save");
+  acceptImport = true;
+  const reloadURL = new URL(magicURL);
+  reloadURL.search = "?transfer=1";
+  await receiver.goto(reloadURL.href);
+  await receiver.locator("#notice").filter({ hasText: "Save imported from URL." }).waitFor();
+  assert.equal(prompts.length, 2);
+  assert.deepEqual(await saved(receiver), sharedSave, "Accepting must replace the entire save");
+  await receiver.reload();
+  assert.deepEqual(await saved(receiver), sharedSave);
+  assert.equal(prompts.length, 2, "Reloading must not import or prompt again");
+  await receiver.goto("https://limitedmage.github.io/kh2-synth/#save=not-a-save");
+  await receiver.locator("#notice").filter({ hasText: "Could not load save URL:" }).waitFor();
+  assert.deepEqual(await saved(receiver), sharedSave, "Invalid URLs must not change existing data");
+  assert.equal(prompts.length, 2, "Invalid URLs must not offer to replace valid data");
+  await receiver.locator("#export").click();
+  await receiver.locator("#export-link").click();
+  await receiver.locator("#save-link-result").waitFor({ state: "visible" });
+  const exportLayout = await receiver.locator("#save-export").evaluate((panel) => {
+    const bounds = panel.getBoundingClientRect();
+    return bounds.left >= 0 && bounds.right <= innerWidth && panel.scrollWidth <= panel.clientWidth;
+  });
+  assert.ok(exportLayout, "Export options and the save URL must fit a phone screen");
+  console.log("PASS save URLs: full cross-device import, existing-save confirmation, cancellation, reload, invalid data, clipboard fallback, phone layout");
 
   const materials = await open("materials", {
     inventory: { "Dark Shard": 0, "Dense Crystal": 9999, "Blazing Stone": 7 },

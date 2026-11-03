@@ -4,6 +4,7 @@ import recognition from "./recognition.js";
 import icons from "./icons.js";
 import { byId, on } from "./dom.js";
 import { createStore } from "./store.js";
+import { mountSaveTools } from "./save.js";
 import { mountPlan } from "./views/plan.js";
 import { mountRecipes } from "./views/recipes.js";
 import { mountInventory } from "./views/inventory.js";
@@ -57,28 +58,7 @@ function renderSaveStatus(state) {
   byId("plan-count").textContent = count ? `(${count})` : "";
 }
 
-byId("export").addEventListener("click", () => {
-  const url = URL.createObjectURL(new Blob([JSON.stringify(store.getState(), null, 2)], { type: "application/json" }));
-  const anchor = document.createElement("a");
-  anchor.href = url; anchor.download = "kh2-synthesis-save.json"; anchor.click();
-  setTimeout(() => URL.revokeObjectURL(url), 1000);
-});
-byId("load-save").addEventListener("change", async (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-  try {
-    if (file.size > 1000000) throw new Error("Save file is too large (maximum 1 MB).");
-    const state = planner.sanitize(JSON.parse(await file.text()));
-    if (!confirm("Replace this journal's current wish list, inventory and progress with the selected save? Each wishlist recipe will be included once.")) return;
-    store.dispatch({ type: "replace-save", value: state });
-    notice("Save loaded.");
-  } catch (error) {
-    notice(`Could not load save: ${error.message}`);
-  } finally {
-    event.target.value = "";
-  }
-});
-
+mountSaveTools(store, notice);
 mountNavigation();
 mountPlan(byId("tab-plan"), store);
 mountRecipes(byId("tab-recipes"), { store, notice });
