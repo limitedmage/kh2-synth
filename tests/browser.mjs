@@ -101,6 +101,13 @@ try {
       await page.waitForFunction(() => !document.getElementById("recognize").disabled || /codec|could not|unsupported/i.test(document.getElementById("ocr-status").textContent));
       assert.equal(await page.locator("#recognize").isEnabled(), true, await page.locator("#ocr-status").innerText());
       if (kind === "inventory") {
+        const visiblePixels = await page.locator("#preview").evaluate((canvas) => {
+          const pixels = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
+          let visible = 0;
+          for (let i = 0; i < pixels.length; i += 4) if (pixels[i] + pixels[i + 1] + pixels[i + 2] > 30) visible++;
+          return visible / (pixels.length / 4);
+        });
+        assert.ok(visiblePixels > 0.25, "Video selection must show the decoded game frame, not a black canvas with crop outlines");
         await page.locator("#align-screen").click();
         await page.locator("#preview").scrollIntoViewIfNeeded();
         const bounds = await page.locator("#preview").boundingBox();

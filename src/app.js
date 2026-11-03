@@ -348,6 +348,7 @@
           media.src = mediaURL; media.load();
         });
         if (!Number.isFinite(media.duration) || !media.duration) throw new Error("Video duration could not be read. Export to H.264 MP4.");
+        await R.seek(media, Math.min(0.1, media.duration / 2));
       } else {
         media = new Image();
         media.src = mediaURL;
