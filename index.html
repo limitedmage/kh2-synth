@@ -1,0 +1,1073 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#111827">
+  <title>Synthesis Journal · Kingdom Hearts II Final Mix</title>
+  <style>:root{color-scheme:dark;--bg:#0e1420;--panel:#172131;--line:#2c3a4d;--ink:#eef3fc;--muted:#a8b7cc;--gold:#efd098;--mint:#8be2c9;--warn:#ffd29b;--red:#ffb1b1;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px;line-height:1.55}
+*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 0,#223048 0,transparent 42%),var(--bg);color:var(--ink)}button,input,select,textarea{font:inherit}button,.button{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:1px solid var(--line);border-radius:8px;padding:.6rem .9rem;background:#253349;color:var(--ink);cursor:pointer;text-decoration:none;min-height:42px}button:hover,.button:hover{border-color:var(--mint);background:#30435c}button:disabled{opacity:.5;cursor:wait}.primary{background:var(--mint);border-color:var(--mint);color:#102b27;font-weight:700}.primary:hover{background:#b3f4e1;color:#102b27}.quiet{background:transparent}a{color:var(--mint)}input,select,textarea{border:1px solid #43536b;border-radius:6px;background:#101a29;color:var(--ink);padding:.55rem .65rem;max-width:100%;min-height:42px}input[type=number]{width:5.5rem}input[type=checkbox]{accent-color:var(--mint);width:18px;height:18px;min-height:0;margin:0}label{display:flex;flex-direction:column;gap:.35rem;color:var(--muted);font-size:.87rem}label.check{flex-direction:row;align-items:center;gap:.6rem}textarea{width:100%;resize:vertical}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--gold);outline-offset:3px}h1,h2,h3,p{margin:0}h1{font-size:clamp(1.7rem,3vw,2.4rem);font-weight:650;letter-spacing:-.05em;line-height:1.2}h2{font-size:1.6rem;letter-spacing:-.03em;font-weight:650}h3{font-size:1.05rem;font-weight:650}.masthead{max-width:1240px;margin:auto;padding:3rem 2rem 2rem;display:flex;align-items:center;gap:1.2rem}.brand-mark{font-size:3.2rem;color:var(--gold);line-height:1;text-shadow:0 0 25px #efd09833}.eyebrow{font-size:.69rem;letter-spacing:.18em;color:var(--gold);font-weight:700;margin-bottom:.5rem}.subtitle,.muted{color:var(--muted);font-size:.9rem}.subtitle{margin-top:.65rem}.save-tools{margin-left:auto;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;justify-content:flex-end}.save-tools span{font-size:.75rem;color:var(--muted);width:100%;text-align:right}main{max-width:1200px;padding:0 2rem;margin:auto}.intro{display:flex;align-items:center;gap:1rem;border-top:1px solid var(--line);padding:1.25rem 0;color:var(--muted);font-size:.85rem}.pill,.tag{font-size:.65rem;letter-spacing:.08em;border:1px solid #4d5a62;border-radius:5px;padding:.2rem .5rem;color:var(--mint);white-space:nowrap}nav{display:flex;gap:.3rem;border-bottom:1px solid var(--line);margin-bottom:2rem;overflow:auto}nav button{white-space:nowrap;border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;padding:.85rem 1rem;color:var(--muted)}nav button.active{border-bottom-color:var(--gold);color:var(--gold);background:#efd09808}.section-title{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin:1.8rem 0 1rem}.section-title p{margin-top:.35rem}.panel{padding:1.3rem;background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:1.2rem}.settings{display:flex;gap:1.25rem;flex-wrap:wrap}.settings label{flex:1;min-width:180px}.settings>p{width:100%;font-size:.8rem;border-top:1px solid var(--line);padding-top:.8rem}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.2rem}.stat{padding:1.1rem 1.3rem;border:1px solid var(--line);border-radius:10px;background:#17213188}.stat strong{display:block;color:var(--gold);font-size:1.8rem;font-weight:600}.stat span{font-size:.8rem;color:var(--muted)}.empty{text-align:center;padding:2.5rem 1.2rem;border:1px dashed #46546b;border-radius:12px;color:var(--muted)}.empty h3{color:var(--ink);margin-bottom:.4rem}.empty button{margin-top:1rem}.toolbar{display:flex;gap:1rem;align-items:end;flex-wrap:wrap;margin-bottom:1.2rem}.search{flex:1;min-width:180px}.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin:1rem 0 1.5rem}.card{padding:1.2rem;background:var(--panel);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;gap:.8rem}.card h3{display:flex;gap:.6rem;align-items:center}.card p{font-size:.82rem;color:var(--muted)}.card .card-actions{margin-top:auto;display:flex;gap:.6rem;align-items:center;justify-content:space-between}.ingredients{font-size:.8rem;color:var(--muted);line-height:1.8}.rank{color:var(--gold);border:1px solid #746347;font-size:.7rem;border-radius:4px;padding:.05rem .35rem;font-weight:700}.goal{display:flex;align-items:center;flex-wrap:wrap;gap:.8rem;padding:.8rem 0;border-bottom:1px solid var(--line)}.goal:first-child{padding-top:0}.goal:last-child{border:0;padding-bottom:0}.goal .goal-name{flex:1;min-width:150px}.goal .goal-name small{display:block;color:var(--muted);font-size:.75rem}.goal label{font-size:.75rem}.goal button{padding:.35rem .65rem}.goal .check{width:100%}.inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:.6rem}.stock-row{display:flex;align-items:center;justify-content:space-between;gap:.7rem;border:1px solid var(--line);border-radius:8px;padding:.65rem .85rem;background:var(--panel)}.stock-row label{flex-direction:row;align-items:center;justify-content:space-between;width:100%;font-size:.9rem;color:var(--ink)}.stock-row.has-stock{border-left:3px solid var(--mint)}.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:1rem;margin-top:1rem}.world-card select{width:100%}.world-card .check{font-size:.8rem}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;text-align:left;background:var(--panel);font-size:.85rem}th{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;background:#1d2a3c}td,th{padding:.9rem 1rem;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}td.numeric{text-align:right;font-variant-numeric:tabular-nums}td small{display:block;color:var(--muted)}.positive{color:var(--mint)}.warning{color:var(--warn)}.alert{border:1px solid #7c603c;background:#ffd29b0a;padding:1rem 1.2rem;border-radius:10px;margin-bottom:1rem;font-size:.9rem}.route-world{margin-bottom:1rem}.route-item{padding:.8rem 0;border-bottom:1px solid var(--line)}.route-item:last-child{border:0}.route-item p{margin-top:.3rem}.route-item small{color:var(--muted)}.locked{opacity:.75}.route-item .tag{margin-left:.5rem}.craft-step{border-bottom:1px solid var(--line);padding:.7rem 0;font-size:.85rem}.craft-step span{display:block;color:var(--muted);font-size:.8rem}summary{cursor:pointer;color:var(--gold);padding:.2rem 0}details[open]>summary{margin-bottom:1rem}footer{margin:3rem 0 2rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--muted);font-size:.75rem}footer details{margin-top:1rem}footer p+p{margin-top:.8rem}#notice{position:sticky;top:.5rem;z-index:5;background:#28453e;border:1px solid var(--mint);border-radius:8px;padding:.8rem 1rem;margin-bottom:1rem;font-size:.85rem}#media-preview{max-width:900px;margin:1rem auto}#preview{width:100%;height:auto;display:block;border-radius:8px;cursor:crosshair;touch-action:none}.crop-fields input{width:5.5rem}#ocr-progress{width:100%;accent-color:var(--mint)}#ocr-status{font-size:.85rem;color:var(--gold);margin:.7rem 0}.review-row{display:grid;grid-template-columns:24px minmax(150px,1fr) 85px minmax(130px,1fr);gap:.8rem;align-items:center;padding:.7rem 0;border-bottom:1px solid var(--line)}.review-row small{color:var(--muted);font-size:.75rem}.review-row select{width:100%}#apply-import{margin-top:1rem}[hidden]{display:none!important}.optional h3{margin-bottom:.5rem}.storage-error{color:var(--warn)!important}
+@media(max-width:700px){.masthead{padding:1.8rem 1rem;flex-wrap:wrap;gap:.8rem}.brand-mark{font-size:2.5rem}.save-tools{width:100%;justify-content:flex-start;margin-left:0}.save-tools span{width:auto;text-align:left;margin-right:auto}main{padding:0 1rem}.intro{align-items:flex-start;flex-direction:column;gap:.6rem}.summary{gap:.5rem}.stat{padding:.8rem}.stat strong{font-size:1.5rem}.stat span{font-size:.72rem}.section-title{align-items:flex-start;flex-wrap:wrap}nav{margin-left:-1rem;margin-right:-1rem;padding:0 .5rem}nav button{font-size:.85rem;padding:.8rem .7rem}.card-grid{grid-template-columns:1fr}.settings{gap:.8rem}.settings label{min-width:100%}.review-row{grid-template-columns:20px minmax(110px,1fr) 65px}.review-row small{grid-column:2/-1}.panel{padding:1rem}th,td{padding:.7rem .65rem}}
+@media(prefers-reduced-motion:no-preference){button,.button{transition:background .15s,border-color .15s}}
+</style>
+</head>
+<body>
+  <header class="masthead">
+    <div class="brand-mark" aria-hidden="true">◇</div>
+    <div><p class="eyebrow">KINGDOM HEARTS II · FINAL MIX</p><h1>Synthesis Journal</h1><p class="subtitle">A little less grinding. A little more adventure.</p></div>
+    <div class="save-tools"><span id="save-status" role="status">Saved on this device</span><button id="export" class="quiet">Export save</button><label class="button quiet">Load save<input id="load-save" type="file" accept=".json,application/json" hidden></label></div>
+  </header>
+  <main>
+    <div class="intro"><span class="pill">LOCAL-FIRST · NO SERVER</span><p>Choose the next creations. Count the materials. Find the missing pieces.</p></div>
+    <nav aria-label="Journal sections">
+      <button data-tab="plan" class="active" aria-current="page">Farming plan <span id="plan-count"></span></button>
+      <button data-tab="recipes">Recipes</button>
+      <button data-tab="inventory">Materials</button>
+      <button data-tab="progress">World progress</button>
+      <button data-tab="import">Photo &amp; video import</button>
+    </nav>
+    <div id="notice" role="status" hidden></div>
+    <section id="tab-plan">
+      <div class="section-title"><div><p class="eyebrow">THE NEXT ADVENTURE</p><h2>Make a plan</h2></div><button data-go="recipes" class="primary">Add a recipe</button></div>
+      <div class="settings panel">
+        <label>Moogle level<select id="moogle"></select></label>
+        <label>Energy materials<select id="energy"><option value="owned">Use available stock</option><option value="none">Save energy materials</option><option value="farm">Plan to farm energy too</option></select></label>
+        <label>Missing craftable materials<select id="expand"><option value="true">Expand into ingredients</option><option value="false">Show material only</option></select></label>
+        <p id="moogle-perks" class="muted"></p>
+      </div>
+      <div id="summary" class="summary"></div>
+      <div id="goals" class="panel"></div>
+      <div id="blockers"></div>
+      <div class="section-title"><div><h2>Materials to collect</h2><p class="muted">Shared stock is counted once across every creation and sub-recipe.</p></div><label class="check"><input id="show-owned" type="checkbox"> Include covered materials</label></div>
+      <div id="requirements"></div>
+      <div class="section-title"><div><h2>Where to go</h2><p class="muted">Available routes first. Locked routes include their unlock requirement.</p></div></div>
+      <div id="routes"></div>
+      <details class="panel"><summary>Crafting order &amp; calculation notes</summary><div id="crafting"></div><p class="muted">This is a shopping plan, not an automatic game save editor. Update materials after crafting. Moogle level stays fixed for the calculation; gaining levels in-game can lower later costs. Energy allocation follows goal order, then sub-recipes. Chests are never counted as free stock.</p></details>
+    </section>
+    <section id="tab-recipes" hidden>
+      <div class="section-title"><div><p class="eyebrow">THE WISH LIST</p><h2>What to make</h2><p class="muted">Add quantities manually or import a photo of Recipes / Free Development.</p></div><button data-go="import" class="quiet">Import a photo</button></div>
+      <div class="toolbar"><label class="search">Find a recipe<input id="recipe-search" type="search" placeholder="Ribbon, Mythril, Save the King…"></label><label>Category<select id="recipe-category"><option value="">All recipes</option><option>Recipes</option><option>Free Development</option><option>Materials</option></select></label></div>
+      <p class="muted">Selecting a recipe assumes its recipe document has been obtained. Each card lists its unlock. For an upgrade, the plan includes one base craft unless marked already made.</p>
+      <div id="recipe-list" class="card-grid"></div>
+    </section>
+    <section id="tab-inventory" hidden>
+      <div class="section-title"><div><p class="eyebrow">IN THE MOOGLE'S CARE</p><h2>Material stock</h2><p class="muted">Enter the current total shown in the Materials menu, not lifetime collection totals.</p></div><button data-go="import" class="quiet">Import inventory video</button></div>
+      <div class="toolbar"><label class="search">Find a material<input id="material-search" type="search" placeholder="Search materials…"></label><label class="check"><input id="stock-only" type="checkbox"> In stock only</label></div>
+      <div id="inventory-list" class="inventory-grid"></div>
+    </section>
+    <section id="tab-progress" hidden>
+      <div class="section-title"><div><p class="eyebrow">A WORLD AT A TIME</p><h2>Progress &amp; treasure</h2><p class="muted">Set the furthest area currently reachable. Chest completion is tracked separately and never changes stock.</p></div></div>
+      <div class="panel"><label class="check"><input id="all-chests" type="checkbox"> All chests in the game collected</label><p class="muted">This switches every world below on or off. No chest routes are planned.</p></div>
+      <div class="panel optional"><h3>Optional areas</h3><div id="optional-unlocks" class="checks"></div></div>
+      <div id="world-list" class="card-grid"></div>
+      <div class="panel"><h3>Free Development unlocks</h3><label>Different material types ever handed to the Moogle<input id="material-types" type="number" min="0" max="60" step="1"></label><p class="muted">This is a lifetime count from the synthesis collection list. An empty current stock does not remove a previously discovered material.</p></div>
+      <details class="panel"><summary>Orichalcum+ rewards</summary><p>Only seven exist. Track the four non-chest rewards here for reference; add current stock under Materials.</p><div id="orichalcum-rewards" class="checks"></div></details>
+    </section>
+    <section id="tab-import" hidden>
+      <div class="section-title"><div><p class="eyebrow">FROM THE SCREEN TO THE JOURNAL</p><h2>Import game media</h2><p class="muted">Recognition runs on this device. Nothing is uploaded. Review every result before applying.</p></div></div>
+      <div class="panel">
+        <div class="toolbar">
+          <label>Read<select id="import-kind"><option value="recipes">Recipe names (photo)</option><option value="inventory">Material stock (video or photo)</option></select></label>
+          <label class="button primary">Choose photo / video<input id="media-file" type="file" accept="image/*,video/*" hidden></label>
+          <span id="media-name" class="muted">No file selected</span>
+        </div>
+        <p class="muted">For recipe photos, select only the left-hand list (including dim names). For materials, select both columns with their quantities. Drag over the preview to change the reading area. Cropping helps with photos of a TV.</p>
+        <div id="media-preview" hidden><canvas id="preview" aria-label="Media preview. Drag to select reading area."></canvas><video id="video" muted playsinline hidden></video></div>
+        <div class="toolbar crop-fields">
+          <label>Left %<input id="crop-x" type="number" min="0" max="99" value="21"></label>
+          <label>Top %<input id="crop-y" type="number" min="0" max="99" value="28"></label>
+          <label>Width %<input id="crop-w" type="number" min="1" max="100" value="32"></label>
+          <label>Height %<input id="crop-h" type="number" min="1" max="100" value="40"></label>
+          <button id="crop-reset" class="quiet">Reset crop</button>
+        </div>
+        <div class="toolbar">
+          <label class="check"><input id="two-columns" type="checkbox" checked> Inventory has two columns</label>
+          <label>Video sampling<select id="sampling"><option value="0.2">Every 0.2 seconds (fast scroll)</option><option value="0.5">Every 0.5 seconds</option><option value="1">Every 1 second</option></select></label>
+          <button id="recognize" class="primary" disabled>Read selected area</button><button id="cancel-ocr" class="quiet" hidden>Cancel</button>
+        </div>
+        <p id="ocr-status" role="status">First use downloads the text recognition engine and English model. Manual entry works offline.</p>
+        <progress id="ocr-progress" max="1" value="0" hidden></progress>
+        <p class="muted">Keep scrolling videos short and pause on each page when possible. MOV support depends on the browser and codec; export to H.264 MP4 if playback fails. Large imports can take several minutes.</p>
+      </div>
+      <details class="panel"><summary>Paste or correct recognized text manually</summary><label>One recipe, or “Material name 12”, per line<textarea id="ocr-text" rows="8" placeholder="AP Boost&#10;Petite Ribbon&#10;&#10;Dense Shard 4"></textarea></label><button id="parse-text" class="quiet">Review this text</button></details>
+      <div id="import-review" class="panel" hidden>
+        <h3>Review recognition</h3><p class="muted">Unchecked rows are ignored. Repeated video rows are not added together. Conflicting readings stay unchecked until reviewed. Names without a readable count are left blank.</p>
+        <div id="review-rows"></div>
+        <p id="review-message" class="muted"></p>
+        <button id="apply-import" class="primary">Apply checked rows</button>
+        <p class="muted">Recipe imports set desired quantities (do not duplicate existing goals). Inventory imports replace only checked material totals; materials not detected are left unchanged.</p>
+      </div>
+    </section>
+    <footer><p>Built for the English HD release of Kingdom Hearts II Final Mix. Unofficial fan tool; no game assets included.</p><details><summary>Sources &amp; data notes</summary><p>Recipe quantities, ranks, Moogle perks, enemy drops and treasure locations are based on <a href="https://www.khwiki.com/Synthesis" target="_blank" rel="noreferrer">Kingdom Hearts Wiki</a>, its linked item/material pages, and <a href="https://www.destinyislands.com/kh2-fm/synthesis/materials/" target="_blank" rel="noreferrer">Destiny Islands' Final Mix guides</a>. Source links accompany recipes and routes. Numbers are base costs, before reductions; Mythril Crystal uses the rank-B Serenity Stone modifier. Final Mix Serenity drops differ from original KH2.</p><p>World stages are conservative farming gates, not a walkthrough. Some encounters change during story events; finish the current world episode to restore normal spawns. Potential chest locations are not a count of remaining treasure. Per-world completion includes late-access areas; Cavern treasure has its own switch. Optional boss / reward sources are labeled separately from repeatable enemy drops. Drop rates are base rates, before Lucky Lucky. No estimated kill count assumes guaranteed drops.</p></details></footer>
+  </main>
+  <noscript>This guide requires JavaScript enabled. No server is needed.</noscript>
+  <script>globalThis.KH2Data = (() => {
+  const wiki = (name) => `https://www.khwiki.com/${encodeURIComponent(name.replaceAll(" ", "_"))}`;
+  const worlds = [
+    ["tt", "Twilight Town", ["Not reached", "First Sora visit / tower", "Second Sora visit", "Final visit / mansion open"]],
+    ["hb", "Hollow Bastion / Radiant Garden", ["Not reached", "First visit", "1000 Heartless battle complete", "Late-game areas open"]],
+    ["ld", "The Land of Dragons", ["Not reached", "First visit", "Second visit / palace open"]],
+    ["bc", "Beast's Castle", ["Not reached", "First visit", "Second visit"]],
+    ["oc", "Olympus Coliseum", ["Not reached", "First visit / Underworld", "Second visit"]],
+    ["dc", "Disney Castle", ["Not reached", "Castle open"]],
+    ["tr", "Timeless River", ["Not reached", "Past the castle portal"]],
+    ["pr", "Port Royal", ["Not reached", "First visit", "Second visit / ship graveyard"]],
+    ["ag", "Agrabah", ["Not reached", "First visit", "Second visit"]],
+    ["ht", "Halloween Town", ["Not reached", "First visit", "Second visit"]],
+    ["pl", "Pride Lands", ["Not reached", "First visit", "Second visit complete"]],
+    ["sp", "Space Paranoids", ["Not reached", "First visit", "Second visit"]],
+    ["aw", "100 Acre Wood", ["Not reached", "Pooh / Piglet", "Rabbit / Kanga", "Spooky Cave / Starry Hill"]],
+    ["at", "Atlantica", ["Not reached", "Musicals available", "Final musical available"]],
+    ["tw", "The World That Never Was", ["Not reached", "City / before castle", "Castle / before Xigbar", "After Xigbar / upper castle"]],
+    ["co", "Cavern of Remembrance", ["Not reached", "Depths", "Mining Area / Engine Chamber", "Transport to Remembrance / Garden"]],
+  ].map(([id, name, stages]) => ({ id, name, stages }));
+  const optional = [
+    ["mushrooms", "Mushroom XIII challenges available"],
+    ["silhouettes", "Absent Silhouette battles available"],
+    ["data", "Garden of Assemblage data battles unlocked"],
+    ["clear", "Game cleared / Lingering Will available"],
+  ];
+  const tiers = ["Shard", "Stone", "Gem", "Crystal"];
+  const families = ["Blazing", "Frost", "Lightning", "Lucid", "Power", "Dark", "Dense", "Twilight", "Mythril", "Bright", "Energy", "Serenity", "Remembrance", "Tranquility"];
+  const materialNames = families.flatMap((f) => tiers.map((t) => `${f} ${t}`)).concat(["Orichalcum", "Orichalcum+", "Manifest Illusion", "Lost Illusion"]);
+  const materialPages = { Power: "Pulsing", Dark: "Writhing", Dense: "Betwixt", Bright: "Soothing", Energy: "Wellspring", Serenity: "Hungry", "Manifest Illusion": "Illusion", "Lost Illusion": "Illusion", "Orichalcum+": "Orichalcum" };
+  const materials = Object.fromEntries(materialNames.map((name) => [name, {
+    name, sources: [], chests: [],
+    url: wiki(materialPages[name] || materialPages[name.split(" ")[0]] || name.split(" ")[0]),
+  }]));
+  const source = (material, world, stage, enemy, room, rate, unlock = "", note = "") => {
+    materials[material].sources.push({ world, stage, enemy, room, rate, unlock, note, url: wiki(enemy) });
+  };
+  const drops = (family, rows) => rows.forEach(([tier, world, stage, enemy, room, rate]) => source(`${family} ${tier}`, world, stage, enemy, room, rate));
+  drops("Blazing", [
+    ["Shard", "tr", 1, "Minute Bomb", "Mickey's House / town windows", 6],
+    ["Shard", "pr", 1, "Hammer Frame", "Town", 10],
+    ["Stone", "oc", 1, "Tornado Step", "Cave of the Dead: Passage", 8],
+    ["Stone", "pr", 1, "Cannon Gun", "Town / Isla de Muerta", 6],
+    ["Gem", "ag", 1, "Fat Bandit", "Agrabah / Bazaar", 12],
+    ["Gem", "ag", 1, "Fiery Globe", "Agrabah / Cave of Wonders", 4],
+    ["Crystal", "oc", 1, "Crescendo", "Underworld Caverns", 6],
+    ["Crystal", "bc", 2, "Crimson Jazz", "Entrance Hall / Ballroom", 12],
+    ["Crystal", "hb", 2, "Crimson Jazz", "Borough", 12],
+  ]);
+  drops("Frost", [
+    ["Shard", "ld", 1, "Hook Bat", "Mountain Trail / Cave", 6],
+    ["Shard", "pr", 1, "Lance Soldier", "Town", 10],
+    ["Stone", "tr", 1, "Aeroplane", "Scene of the Fire", 8],
+    ["Stone", "tr", 1, "Hot Rod", "Timeless River window scenes", 12],
+    ["Gem", "ag", 1, "Fortuneteller", "Agrabah / Bazaar", 8],
+    ["Gem", "ag", 1, "Icy Cube", "Agrabah / Cave of Wonders", 4],
+    ["Crystal", "pl", 1, "Living Bone", "Elephant Graveyard", 12],
+  ]);
+  drops("Lightning", [
+    ["Shard", "ld", 1, "Bolt Tower", "Checkpoint", 10],
+    ["Shard", "tr", 1, "Rapid Thruster", "Timeless River window scenes", 4],
+    ["Shard", "pl", 2, "Rapid Thruster", "Pride Rock: Peak", 4],
+    ["Stone", "ht", 1, "Driller Mole", "Candy Cane Lane", 6],
+    ["Stone", "ld", 2, "Emerald Blues", "Mountain Trail / Ridge", 10],
+    ["Gem", "hb", 2, "Armored Knight", "Restoration Site / Bailey", 12],
+    ["Gem", "sp", 1, "Surveillance Robot", "Canyon", 8],
+    ["Crystal", "sp", 1, "Strafer", "Canyon / I/O Tower: Hallway", 6],
+    ["Crystal", "sp", 2, "Devastator", "Space Paranoids", 4],
+  ]);
+  drops("Lucid", [
+    ["Shard", "bc", 1, "Rabid Dog", "Castle halls", 6],
+    ["Shard", "oc", 1, "Trick Ghost", "Cave of the Dead: Passage", 10],
+    ["Stone", "ht", 1, "Wight Knight", "Halloween Town Square / Graveyard", 8],
+    ["Stone", "ht", 2, "Graveyard", "Halloween Town Square", 12],
+    ["Stone", "ht", 2, "Toy Soldier", "Christmas Town", 12],
+    ["Gem", "hb", 2, "Bookmaster", "Borough", 10],
+    ["Gem", "sp", 1, "Magnum Loader", "I/O Tower: Hallway", 8],
+    ["Crystal", "ld", 2, "Neoshadow", "Mountain Trail / Cave", 8],
+    ["Crystal", "tw", 1, "Neoshadow", "Fragment Crossing", 8],
+  ]);
+  drops("Power", [
+    ["Shard", "ht", 1, "Creeper Plant", "Halloween Town Square / Graveyard", 8],
+    ["Shard", "bc", 1, "Large Body", "Castle halls", 12],
+    ["Stone", "ag", 1, "Luna Bandit", "Bazaar", 8],
+    ["Stone", "pr", 1, "Silver Rock", "Town / Isla de Muerta", 6],
+    ["Gem", "pl", 1, "Aerial Knocker", "Jungle", 8],
+    ["Gem", "pl", 1, "Shaman", "Elephant Graveyard / Wastelands", 10],
+    ["Crystal", "ht", 2, "Morning Star", "Christmas Town: Candy Cane Lane", 12],
+  ]);
+  drops("Dark", [
+    ["Shard", "tr", 1, "Soldier", "Mickey's House", 8],
+    ["Shard", "bc", 1, "Shadow", "Castle halls", 4],
+    ["Stone", "ld", 1, "Assault Rider", "Village / Checkpoint / Mountain Trail", 12],
+    ["Stone", "ld", 1, "Nightwalker", "Village / Mountain Trail", 10],
+    ["Gem", "bc", 1, "Gargoyle Knight", "Entrance Hall / The West Hall", 10],
+    ["Gem", "bc", 1, "Gargoyle Warrior", "Entrance Hall / The West Hall", 8],
+    ["Crystal", "ld", 2, "Air Pirate", "Mountain Trail / Ridge", 8],
+  ]);
+  drops("Dense", [
+    ["Shard", "tt", 2, "Creeper", "Twilight Town Nobody encounters", 8],
+    ["Shard", "ld", 2, "Dragoon", "Palace", 12],
+    ["Shard", "tw", 2, "Dragoon", "Castle", 12],
+    ["Stone", "ld", 2, "Sniper", "Palace", 12],
+    ["Stone", "tw", 3, "Sniper", "Hall of Empty Melodies", 12],
+    ["Gem", "tt", 3, "Samurai", "Mansion: Basement Hall", 12],
+    ["Gem", "tw", 3, "Samurai", "Upper castle", 12],
+    ["Crystal", "tt", 3, "Berserker", "Station / Underground Concourse", 12],
+    ["Crystal", "tw", 2, "Berserker", "Naught's Skyway", 12],
+  ]);
+  drops("Twilight", [
+    ["Shard", "tt", 2, "Dusk", "Twilight Town Nobody encounters", 10],
+    ["Shard", "pr", 2, "Gambler", "Isla de Muerta", 12],
+    ["Stone", "tt", 3, "Dancer", "Station / Underground Concourse", 12],
+    ["Stone", "tw", 2, "Dancer", "Castle", 12],
+    ["Gem", "tw", 3, "Assassin", "Hall of Empty Melodies (upper level)", 12],
+    ["Crystal", "tw", 3, "Sorcerer", "Naught's Skyway / Nothing's Call", 12],
+  ]);
+  drops("Bright", [
+    ["Shard", "tr", 1, "Soldier", "Mickey's House", 4],
+    ["Shard", "ld", 1, "Hook Bat", "Mountain Trail / Cave", 3],
+    ["Shard", "ht", 1, "Creeper Plant", "Halloween Town Square", 4],
+    ["Stone", "oc", 1, "Tornado Step", "Cave of the Dead: Passage", 4],
+    ["Stone", "ag", 1, "Luna Bandit", "Bazaar", 4],
+    ["Gem", "pl", 1, "Aerial Knocker", "Jungle", 4],
+    ["Gem", "sp", 1, "Magnum Loader", "I/O Tower: Hallway", 4],
+    ["Crystal", "ld", 2, "Air Pirate", "Mountain Trail / Ridge", 4],
+    ["Crystal", "oc", 1, "Crescendo", "Underworld Caverns", 3],
+    ["Crystal", "tw", 1, "Neoshadow", "Fragment Crossing", 4],
+  ]);
+  drops("Energy", [
+    ["Shard", "ld", 1, "Nightwalker", "Village / Mountain Trail", 4],
+    ["Shard", "bc", 1, "Gargoyle Knight", "Entrance Hall / The West Hall", 4],
+    ["Stone", "oc", 1, "Trick Ghost", "Cave of the Dead: Passage", 4],
+    ["Stone", "pr", 1, "Lance Soldier", "Town", 4],
+    ["Gem", "ag", 1, "Fortuneteller", "Agrabah / Bazaar", 4],
+    ["Gem", "ld", 2, "Emerald Blues", "Mountain Trail / Ridge", 4],
+    ["Crystal", "hb", 2, "Bookmaster", "Borough", 4],
+    ["Crystal", "pl", 1, "Shaman", "Elephant Graveyard / Wastelands", 4],
+  ]);
+  drops("Serenity", [
+    ["Shard", "ld", 1, "Assault Rider", "Mountain Trail", 4],
+    ["Shard", "ag", 1, "Fat Bandit", "Agrabah / Bazaar", 4],
+    ["Shard", "tr", 1, "Hot Rod", "Timeless River window scenes", 4],
+    ["Stone", "bc", 2, "Crimson Jazz", "Entrance Hall / Ballroom", 4],
+    ["Stone", "pl", 1, "Living Bone", "Elephant Graveyard", 4],
+    ["Stone", "ht", 2, "Morning Star", "Candy Cane Lane", 4],
+    ["Gem", "co", 2, "Spring Metal", "Mining Area / Engine Chamber", 4],
+    ["Gem", "co", 2, "Runemaster", "Mining Area / Engine Chamber", 4],
+  ]);
+  const vendorRooms = [["ld", "Checkpoint"], ["bc", "The West Hall"], ["oc", "Cave of the Dead: Entrance"], ["ag", "Bazaar"], ["ht", "Candy Cane Lane"]];
+  for (const [world, room] of vendorRooms) {
+    tiers.forEach((tier, i) => source(`Serenity ${tier}`, world, 2, "Bulky Vendor", room, 100, "", ["Capsule Prize: react at 100–75% HP.", "Rare Capsule: react at 74–50% HP.", "Limited Capsule: react at 49–25% HP.", "Prime Capsule: wait until 24–1% HP."][i] + " Rare spawn; look for the Rare Heartless message and interact with scenery."));
+    source("Orichalcum", world, 2, "Bulky Vendor", room, null, "", "Capsule reaction: 8–16% depending on timing; Prime Capsule has the best rate. Rare spawn.");
+  }
+  drops("Remembrance", [
+    ["Shard", "co", 1, "Iron Hammer", "Depths", 10],
+    ["Shard", "co", 1, "Beffudler", "Depths", 6],
+    ["Stone", "co", 1, "Magic Phantom", "Depths", 10],
+    ["Stone", "co", 1, "Necromancer", "Depths", 10],
+    ["Gem", "co", 2, "Mad Ride", "Mining Area", 12],
+    ["Gem", "co", 2, "Spring Metal", "Mining Area / Engine Chamber", 10],
+    ["Crystal", "co", 2, "Reckless", "Engine Chamber", 12],
+  ]);
+  tiers.forEach((tier, i) => source(`Tranquility ${tier}`, "ag", 2, "Mushroom XIII", "No. V: Cave of Wonders: Treasure Room", null, "mushrooms", `Challenge reward, not a normal kill drop. Earn rank ${["E", "D", "C", "B"][i]} or better. Other Mushroom challenges also award this tier.`));
+  source("Lost Illusion", "hb", 2, "Absent Silhouette", "Vexen, Lexaeus, Zexion, Marluxia or Larxene", null, "silhouettes", "One-time reward from each silhouette. Not repeatable; use data battles for further copies.");
+  source("Lost Illusion", "co", 3, "Organization XIII's Replica Data", "Garden of Assemblage", null, "data", "Repeat Vexen, Lexaeus, Zexion, Marluxia or Larxene for more copies.");
+  source("Manifest Illusion", "dc", 1, "Lingering Will", "Hall of the Cornerstone portal", null, "clear", "Repeatable postgame boss reward.");
+  const chest = (name, world, stage, rooms) => {
+    for (const room of rooms.split(";")) materials[name].chests.push({ world, stage, room: room.trim(), url: materials[name].url });
+  };
+  chest("Mythril Shard", "tt", 1, "The Old Mansion;The Woods;Market Street: Tram Common;Central Station;Tower: Entryway;Sunset Terrace");
+  chest("Mythril Shard", "hb", 1, "Borough");
+  chest("Mythril Shard", "ld", 1, "Bamboo Grove;Checkpoint;Mountain Trail");
+  chest("Mythril Shard", "bc", 1, "The East Wing;The West Hall;Secret Passage;The West Wing;Courtyard");
+  chest("Mythril Shard", "oc", 1, "Cave of the Dead: Passage;Cave of the Dead: Inner Chamber;Underworld Caverns: Entrance;Underworld Caverns: The Lost Road;The Lock");
+  chest("Mythril Shard", "dc", 1, "Courtyard");
+  chest("Mythril Shard", "pr", 1, "Pier;Town;Isla de Muerta: Cave Mouth;Isla de Muerta: Moonlight Nook");
+  chest("Mythril Shard", "ag", 1, "Agrabah;Bazaar;Cave of Wonders: Entrance;Cave of Wonders: Valley of Stone");
+  chest("Mythril Shard", "ht", 1, "Graveyard");
+  chest("Mythril Shard", "pl", 1, "Elephant Graveyard;Wastelands");
+  chest("Mythril Stone", "tt", 1, "Tower: Wardrobe");
+  chest("Mythril Stone", "tt", 3, "Mansion: Foyer;Mansion: Dining Room");
+  chest("Mythril Stone", "hb", 2, "Corridors");
+  chest("Mythril Stone", "oc", 1, "Cave of the Dead: Passage;Underworld Caverns: The Lost Road");
+  chest("Mythril Stone", "dc", 1, "Courtyard");
+  chest("Mythril Stone", "tr", 1, "Waterway");
+  chest("Mythril Stone", "pr", 1, "Rampart");
+  chest("Mythril Stone", "ag", 1, "Agrabah;Palace Walls;Cave of Wonders: Valley of Stone");
+  chest("Mythril Stone", "ht", 1, "Halloween Town Square;Hinterlands;Candy Cane Lane");
+  chest("Mythril Stone", "pl", 1, "Gorge;Elephant Graveyard;Pride Rock;Wildebeest Valley;Wastelands;Jungle");
+  chest("Mythril Stone", "sp", 1, "Canyon");
+  chest("Mythril Stone", "aw", 1, "Pooh Bear's House");
+  chest("Mythril Stone", "tw", 1, "Fragment Crossing;Memory's Skyscraper");
+  chest("Mythril Stone", "tw", 3, "Ruin and Creation's Passage");
+  chest("Mythril Gem", "tt", 3, "Underground Concourse");
+  chest("Mythril Gem", "hb", 2, "Postern;Corridors");
+  chest("Mythril Gem", "pr", 1, "Town");
+  chest("Mythril Gem", "ag", 1, "Bazaar");
+  chest("Mythril Gem", "ht", 1, "Candy Cane Lane");
+  chest("Mythril Gem", "pl", 1, "Wildebeest Valley");
+  chest("Mythril Gem", "sp", 1, "Canyon");
+  chest("Mythril Gem", "aw", 1, "Piglet's House");
+  chest("Mythril Gem", "aw", 3, "The Spooky Cave");
+  chest("Mythril Gem", "tw", 2, "Nothing's Call;Naught's Skyway");
+  chest("Mythril Crystal", "tt", 3, "Underground Concourse;Tunnelway;Sunset Terrace;Mansion: Foyer;Mansion: Dining Room");
+  chest("Mythril Crystal", "hb", 2, "Corridors");
+  chest("Mythril Crystal", "ld", 2, "Throne Room");
+  chest("Mythril Crystal", "pr", 2, "Ship Graveyard: Seadrift Row");
+  chest("Mythril Crystal", "sp", 1, "Pit Cell");
+  chest("Mythril Crystal", "aw", 2, "Rabbit's House");
+  chest("Mythril Crystal", "aw", 3, "The Spooky Cave");
+  chest("Mythril Crystal", "tw", 1, "Fragment Crossing;Memory's Skyscraper");
+  chest("Mythril Crystal", "tw", 3, "Naught's Skyway;Ruin and Creation's Passage");
+  chest("Orichalcum", "aw", 2, "Kanga's House");
+  chest("Orichalcum", "aw", 3, "The Spooky Cave");
+  chest("Orichalcum", "ld", 2, "Throne Room");
+  chest("Orichalcum", "pr", 2, "Ship Graveyard: Seadrift Keep");
+  chest("Orichalcum", "tt", 3, "Underground Concourse;Tunnelway;Mansion: Library");
+  chest("Orichalcum", "tw", 1, "Fragment Crossing");
+  chest("Orichalcum", "tw", 3, "Nothing's Call;Naught's Skyway;Ruin and Creation's Passage");
+  chest("Orichalcum+", "sp", 2, "Central Computer Mesa");
+  chest("Orichalcum+", "tt", 3, "Sunset Terrace");
+  chest("Orichalcum+", "tw", 1, "The Brink of Despair");
+  chest("Manifest Illusion", "co", 1, "Depths");
+  chest("Manifest Illusion", "co", 2, "Mining Area;Engine Chamber");
+  chest("Lost Illusion", "co", 3, "Garden of Assemblage");
+  chest("Serenity Crystal", "tt", 3, "Mansion: Foyer");
+  chest("Serenity Crystal", "co", 2, "Mining Area;Engine Chamber");
+  chest("Serenity Crystal", "pl", 1, "Pride Rock;Jungle");
+  chest("Serenity Gem", "co", 2, "Mining Area");
+  chest("Serenity Gem", "pr", 1, "Isla de Muerta: Moonlight Nook");
+  chest("Serenity Gem", "pr", 2, "Ship Graveyard: Seadrift Row");
+  chest("Serenity Gem", "ag", 1, "Cave of Wonders: Treasure Room");
+  chest("Serenity Gem", "ht", 1, "Graveyard");
+  chest("Serenity Gem", "pl", 1, "Wastelands;Jungle");
+  const rewards = [
+    ["sp", "Central Computer Mesa chest", 2],
+    ["tt", "Sunset Terrace chest (Sora)", 3],
+    ["tw", "The Brink of Despair chest", 1],
+    ["aw", "Complete Starry Hill", 3],
+    ["at", "Complete A New Day is Dawning", 2],
+    ["oc", "Win Goddess of Fate Cup (after Xemnas's first battle)", 2],
+    ["hb", "Hand in all 60 Final Mix material types to a Moogle", 1],
+  ].map(([world, label, stage], i) => ({ id: `plus-${i}`, world, label, stage }));
+  for (const reward of rewards.slice(3)) source("Orichalcum+", reward.world, reward.stage, "One-time reward", reward.label, null, "", "Collect once; never a repeatable enemy drop.");
+  const recipes = [];
+  function recipe(name, rank, ingredients, upgrade, modifier, category = "Recipes", unlock = "", minLevel = 1, types = 0) {
+    const base = { name, rank, ingredients, category, unlock, minLevel, types, url: wiki(name), base: "", modifier: "" };
+    recipes.push(base);
+    if (upgrade) recipes.push({ ...base, name: upgrade, base: name, modifier, minLevel: Math.max(3, minLevel), url: wiki(name) });
+  }
+  recipe("Mega-Potion", "B", { "Mythril Shard": 3, "Power Shard": 1, "Blazing Shard": 1, "Lucid Shard": 1 }, "Mega-Ether", "Serenity Stone", "Recipes", "Mega Recipe · Beast's Castle: Belle's Room");
+  recipe("Elixir", "A", { "Mythril Stone": 3, "Power Stone": 1, "Dark Stone": 1 }, "Megalixir", "Serenity Gem", "Recipes", "Star Recipe · Disney Castle: Courtyard");
+  recipe("Drive Recovery", "C", { "Mythril Shard": 3, "Dark Shard": 3, "Frost Shard": 1, "Lightning Shard": 1 }, "High Drive Recovery", "Serenity Shard", "Recipes", "Recovery Recipe · Land of Dragons: Mountain Trail");
+  recipe("AP Boost", "S", { "Mythril Gem": 1, "Power Crystal": 3, "Dark Crystal": 3, "Frost Crystal": 3 }, "Magic Boost", "Serenity Crystal", "Recipes", "Skill Recipe · Radiant Garden: Ansem's Study");
+  recipe("Defense Boost", "S", { "Mythril Crystal": 1, "Blazing Crystal": 3, "Lightning Crystal": 3, "Lucid Crystal": 3 }, "Power Boost", "Serenity Crystal", "Recipes", "Guard Recipe · 100 Acre Wood: Spooky Cave minigame");
+  recipe("Petite Ribbon", "A", { "Mythril Crystal": 2, "Orichalcum": 1, "Dense Stone": 1, "Dense Shard": 1 }, "Ribbon", "Serenity Gem", "Recipes", "Style Recipe · 100 Acre Wood: Starry Hill");
+  recipe("Moon Amulet", "A", { "Orichalcum": 3, "Mythril Crystal": 1, "Twilight Stone": 1, "Twilight Shard": 1 }, "Star Charm", "Serenity Gem", "Recipes", "Moon Recipe · Radiant Garden: Restoration Site");
+  recipe("Save the Queen", "S", { "Orichalcum": 1, "Dense Crystal": 3, "Dense Gem": 5, "Dense Stone": 7, "Dense Shard": 9 }, "Save the Queen+", "Serenity Crystal", "Recipes", "Queen Recipe · Land of Dragons: Throne Room");
+  recipe("Save the King", "S", { "Orichalcum": 1, "Twilight Crystal": 3, "Twilight Gem": 5, "Twilight Stone": 7, "Twilight Shard": 9 }, "Save the King+", "Serenity Crystal", "Recipes", "King Recipe · Port Royal: Ship Graveyard: Seadrift Row");
+  recipe("Ultima Weapon", "S", { "Orichalcum+": 13, "Orichalcum": 1, "Mythril Crystal": 1, "Dense Crystal": 1, "Twilight Crystal": 1, "Serenity Crystal": 3 }, "", "", "Recipes", "Ultimate Recipe · Twilight Town: Mansion: Basement Corridor · Energy Crystal required", 2);
+  for (const [name, upgrade, family] of [["Firaga Bangle", "Firagun Bangle", "Blazing"], ["Blizzaga Armlet", "Blizzagun Armlet", "Frost"], ["Thundaga Trinket", "Thundagun Trinket", "Lightning"], ["Midnight Anklet", "Chaos Anklet", "Lucid"]]) {
+    recipe(name, "C", { "Mythril Shard": 5, [`${family} Stone`]: 1, [`${family} Shard`]: 1 }, upgrade, "Serenity Shard", "Free Development", "Obtain 5 material types", 1, 5);
+  }
+  recipe("Garnet Ring", "C", { "Mythril Stone": 3, "Power Stone": 1, "Power Shard": 1, "Dark Shard": 1 }, "Diamond Ring", "Serenity Shard", "Free Development", "Obtain 5 material types", 1, 5);
+  recipe("Mythril Ring", "C", { "Mythril Stone": 3, "Power Stone": 1, "Dark Stone": 1, "Dark Shard": 1 }, "Orichalcum Ring", "Serenity Shard", "Free Development", "Obtain 5 material types", 1, 5);
+  recipe("Power Band", "B", { "Mythril Stone": 5, "Power Stone": 1, "Dark Stone": 1, "Lucid Stone": 1 }, "Buster Band", "Serenity Stone", "Free Development", "Obtain 20 material types", 1, 20);
+  recipe("Acrisius", "B", { "Mythril Stone": 5, "Blazing Stone": 1, "Frost Stone": 1, "Lightning Stone": 1 }, "Acrisius+", "Serenity Stone", "Free Development", "Obtain 20 material types", 1, 20);
+  recipe("Soldier Earring", "B", { "Mythril Gem": 3, "Dark Gem": 1, "Frost Gem": 1, "Lucid Gem": 1 }, "Fencer Earring", "Serenity Stone", "Free Development", "Obtain 20 material types", 1, 20);
+  recipe("Mage Earring", "B", { "Mythril Gem": 3, "Power Gem": 1, "Blazing Gem": 1, "Lightning Gem": 1 }, "Slayer Earring", "Serenity Stone", "Free Development", "Obtain 20 material types", 1, 20);
+  recipe("Expert's Ring", "A", { "Mythril Crystal": 3, "Dark Crystal": 1, "Dark Gem": 1, "Dark Stone": 1, "Dark Shard": 1 }, "Master's Ring", "Serenity Gem", "Free Development", "Obtain 20 material types", 1, 20);
+  recipe("Mythril Shard", "C", { "Dense Stone": 1, "Dense Shard": 3, "Twilight Stone": 1, "Twilight Shard": 3 }, "Mythril Stone", "Serenity Shard", "Materials", "Obtain 20 material types", 1, 20);
+  recipe("Mythril Gem", "B", { "Dense Crystal": 1, "Dense Gem": 3, "Twilight Crystal": 1, "Twilight Gem": 3 }, "Mythril Crystal", "Serenity Stone", "Materials", "Moogle level 8", 8);
+  recipe("Serenity Crystal", "A", { "Tranquility Crystal": 1, "Remembrance Crystal": 1, "Bright Crystal": 9 }, "Manifest Illusion", "Serenity Gem", "Materials", "Moogle level 8", 8);
+  recipe("Shock Charm", "S", { "Lost Illusion": 1, "Remembrance Gem": 1, "Remembrance Stone": 3, "Tranquility Gem": 1, "Tranquility Stone": 3 }, "Shock Charm+", "Serenity Crystal", "Recipes", "Cloaked Thunder · defeat Larxene's Absent Silhouette");
+  recipe("Shadow Archive", "S", { "Lost Illusion": 1, "Manifest Illusion": 1, "Remembrance Crystal": 1, "Serenity Gem": 3 }, "Shadow Archive+", "Serenity Crystal", "Recipes", "Book of Shadows · defeat Zexion's Absent Silhouette");
+  recipe("Full Bloom", "S", { "Lost Illusion": 1, "Manifest Illusion": 1, "Tranquility Crystal": 1, "Serenity Gem": 3 }, "Full Bloom+", "Serenity Crystal", "Recipes", "Eternal Blossom · defeat Marluxia's Absent Silhouette");
+  recipe("Draw Ring", "S", { "Manifest Illusion": 1, "Remembrance Shard": 3, "Bright Gem": 3, "Bright Stone": 5, "Bright Shard": 9 }, "Lucky Ring", "Serenity Crystal", "Recipes", "Rare Document · complete the Duality puzzle");
+  recipe("Frozen Pride", "S", { "Lost Illusion": 1, "Tranquility Crystal": 1, "Tranquility Gem": 3, "Tranquility Stone": 5, "Tranquility Shard": 7 }, "Frozen Pride+", "Serenity Crystal", "Recipes", "Road to Discovery · defeat Vexen's Absent Silhouette");
+  recipe("Centurion", "S", { "Lost Illusion": 1, "Remembrance Crystal": 1, "Remembrance Gem": 3, "Remembrance Stone": 5, "Remembrance Shard": 7 }, "Centurion+", "Serenity Crystal", "Recipes", "Strength Beyond Strength · defeat Lexaeus's Absent Silhouette");
+  const byRecipe = Object.fromEntries(recipes.map((r) => [r.name, r]));
+  const levels = ["Amateur", "Novice", "Junior", "Skilled", "Senior", "Artisan", "Master", "Superior", "Primo"];
+  return { wiki, worlds, optional, materials, materialNames, recipes, byRecipe, levels, tiers, rewards };
+})();
+
+
+globalThis.KH2Planner = (() => {
+  const D = globalThis.KH2Data;
+  const count = (value, max = 9999) => Math.min(max, Math.max(0, Math.floor(Number(value) || 0)));
+  const defaults = () => ({
+    version: 1, goals: {}, inventory: {}, crafted: {}, worlds: {}, chests: {}, optional: {}, rewards: {},
+    moogle: 1, energy: "owned", expand: true, materialTypes: 0, methods: {},
+  });
+  function sanitize(raw) {
+    if (!raw || typeof raw !== "object" || Array.isArray(raw) || raw.version !== 1) throw new Error("Not a supported Synthesis Journal save (version 1).");
+    const state = defaults();
+    for (const [field, names] of [["goals", D.recipes.map((r) => r.name)], ["inventory", D.materialNames]]) {
+      for (const name of names) if (raw[field]?.[name] !== undefined) state[field][name] = count(raw[field][name], field === "goals" ? 99 : 9999);
+    }
+    for (const [field, names] of [["crafted", D.recipes.map((r) => r.name)], ["chests", D.worlds.map((w) => w.id)], ["optional", D.optional.map(([id]) => id)], ["rewards", D.rewards.map((r) => r.id)]]) {
+      for (const name of names) state[field][name] = raw[field]?.[name] === true;
+    }
+    for (const world of D.worlds) state.worlds[world.id] = count(raw.worlds?.[world.id], world.stages.length - 1);
+    for (const name of D.materialNames) if (["collect", "craft"].includes(raw.methods?.[name])) state.methods[name] = raw.methods[name];
+    state.moogle = Math.max(1, count(raw.moogle, 9));
+    state.materialTypes = Math.max(count(raw.materialTypes, 60), Object.values(state.inventory).filter((n) => n > 0).length);
+    state.energy = ["owned", "none", "farm"].includes(raw.energy) ? raw.energy : "owned";
+    state.expand = raw.expand !== false;
+    return state;
+  }
+  const threshold = { C: 5, B: 6, A: 7, S: 9 };
+  const energyName = (recipe) => `Energy ${D.tiers["CBAS".indexOf(recipe.rank)]}`;
+  const unlocked = (recipe, state) => state.moogle >= recipe.minLevel && state.materialTypes >= recipe.types;
+  function costs(recipe, state, energy = false) {
+    const levelDiscount = state.moogle >= threshold[recipe.rank] ? 2 : 1;
+    const divisor = levelDiscount * (energy ? 2 : 1);
+    const result = Object.fromEntries(Object.entries(recipe.ingredients).map(([name, qty]) => [
+      name, recipe.name === "Ultima Weapon" && name === "Orichalcum+" ? Math.ceil(qty / 2) : Math.ceil(qty / divisor),
+    ]));
+    if (recipe.modifier) result[recipe.modifier] = (result[recipe.modifier] || 0) + 1;
+    if (energy) result[energyName(recipe)] = (result[energyName(recipe)] || 0) + 1;
+    return result;
+  }
+  function availability(route, state) {
+    const world = D.worlds.find((w) => w.id === route.world);
+    const conditions = [];
+    if ((state.worlds[route.world] || 0) < route.stage) conditions.push(`${world.name}: ${world.stages[route.stage]}`);
+    if (route.world === "co" && (state.worlds.hb || 0) < 2) conditions.push("Complete Hollow Bastion's 1000 Heartless battle");
+    if (route.unlock && !state.optional[route.unlock]) conditions.push(D.optional.find(([id]) => id === route.unlock)?.[1] || route.unlock);
+    return { available: !conditions.length, reason: conditions.join("; ") };
+  }
+  function chestSources(name, state) {
+    return D.materials[name].chests.filter((route) => !state.chests[route.world]).map((route) => ({ ...route, ...availability(route, state) }));
+  }
+  function plan(state) {
+    const demand = {};
+    const energyStock = Object.fromEntries(D.tiers.map((tier) => [`Energy ${tier}`, count(state.inventory[`Energy ${tier}`])]));
+    const steps = [];
+    const warnings = [];
+    const made = new Set(Object.keys(state.crafted).filter((name) => state.crafted[name]));
+    const requested = Object.fromEntries(Object.entries(state.goals).filter(([name, n]) => D.byRecipe[name] && count(n, 99)));
+    const scheduled = new Set();
+    const bonusStock = {};
+    function addDemand(name, amount) { demand[name] = (demand[name] || 0) + amount; }
+    function craft(recipe, quantity, purpose, path = new Set()) {
+      if (!quantity || path.has(recipe.name)) return false;
+      if (!unlocked(recipe, state)) {
+        warnings.push(`${recipe.name}: requires ${recipe.minLevel > state.moogle ? `Moogle level ${recipe.minLevel}` : `${recipe.types} discovered material types`}.`);
+        return false;
+      }
+      const next = new Set([...path, recipe.name]);
+      if (recipe.base && !made.has(recipe.base)) {
+        const base = D.byRecipe[recipe.base];
+        if (requested[recipe.base] && !scheduled.has(recipe.base)) {
+          scheduled.add(recipe.base);
+          if (!craft(base, count(requested[recipe.base], 99), "Goal", next)) return false;
+        } else if (!scheduled.has(recipe.base)) {
+          if (!craft(base, 1, "First-time upgrade prerequisite", next)) return false;
+          if (D.materials[recipe.base]) bonusStock[recipe.base] = (bonusStock[recipe.base] || 0) + 1;
+        }
+      }
+      let powered = 0;
+      const energy = energyName(recipe);
+      const specialAllowed = state.moogle >= (recipe.modifier ? 4 : 2);
+      const plain = costs(recipe, state, false);
+      const reduced = costs(recipe, state, true);
+      const useful = Object.entries(recipe.ingredients).some(([name]) => reduced[name] < plain[name]);
+      const mandatory = recipe.name === "Ultima Weapon";
+      if (mandatory) powered = quantity;
+      else if (specialAllowed && useful && state.energy !== "none") powered = state.energy === "farm" ? quantity : Math.min(quantity, energyStock[energy]);
+      if (mandatory && state.moogle < 2) return false;
+      energyStock[energy] = Math.max(0, energyStock[energy] - powered);
+      for (const [name, qty] of Object.entries(plain)) addDemand(name, qty * (quantity - powered));
+      for (const [name, qty] of Object.entries(reduced)) addDemand(name, qty * powered);
+      made.add(recipe.name);
+      steps.push({ name: recipe.name, quantity, powered, energy, purpose, ingredients: Object.fromEntries([...new Set([...Object.keys(plain), ...Object.keys(reduced)])].map((name) => [
+        name, (plain[name] || 0) * (quantity - powered) + (reduced[name] || 0) * powered,
+      ])) });
+      return true;
+    }
+    for (const [name, qty] of Object.entries(requested)) {
+      if (scheduled.has(name)) continue;
+      scheduled.add(name);
+      craft(D.byRecipe[name], count(qty, 99), "Goal");
+      if (name === "Ultima Weapon" && qty > 1) warnings.push("Ultima Weapon can only be synthesized once per game. Set its quantity to 1.");
+    }
+    // Expand parents before children so shared sub-material demand is pooled before using stock.
+    const expandable = ["Mythril Crystal", "Mythril Gem", "Mythril Stone", "Mythril Shard", "Manifest Illusion", "Serenity Crystal"];
+    const rows = {};
+    const calculate = (name) => {
+      const required = demand[name] || 0;
+      const owned = Math.min(required, count(state.inventory[name]) + (bonusStock[name] || 0));
+      return { name, required, owned, missing: Math.max(0, required - owned), crafted: 0, locked: false, bonus: bonusStock[name] || 0 };
+    };
+    for (const name of expandable) {
+      const row = calculate(name);
+      const recipe = D.byRecipe[name];
+      // Mythril has no enemy drops. Other craftable materials default to collecting instead.
+      const useCrafting = state.methods[name] ? state.methods[name] === "craft" : name.startsWith("Mythril");
+      if (row.missing && state.expand && useCrafting) {
+        if (unlocked(recipe, state) && craft(recipe, row.missing, "Missing material")) row.crafted = row.missing;
+        else row.locked = true;
+      }
+      rows[name] = row;
+    }
+    for (const name of D.materialNames) if (!rows[name]) rows[name] = calculate(name);
+    const requirements = D.materialNames.map((name) => rows[name]).filter((row) => row.required > 0);
+    // Final energy totals include all root and recursive crafts; stock is deducted only here.
+    for (const row of requirements) if (row.name.startsWith("Energy ")) Object.assign(row, calculate(row.name));
+    const needed = requirements.filter((row) => row.missing > 0 && !row.crafted);
+    const routeMaterials = requirements.filter((row) => row.missing > 0);
+    const routes = new Map();
+    for (const row of routeMaterials) {
+      if (!row.crafted) {
+        for (const route of D.materials[row.name].sources) {
+          const key = `${route.world}|${route.stage}|${route.enemy}|${route.room}|${route.unlock}`;
+          if (!routes.has(key)) routes.set(key, { ...route, ...availability(route, state), materials: [] });
+          routes.get(key).materials.push({ name: row.name, missing: row.missing, rate: route.rate, note: route.note });
+        }
+      }
+    }
+    return { requirements, needed, routes: [...routes.values()], steps, warnings: [...new Set(warnings)], goals: Object.values(requested).reduce((a, b) => a + b, 0) };
+  }
+  return { count, defaults, sanitize, costs, unlocked, availability, chestSources, energyName, plan };
+})();
+
+
+globalThis.KH2Recognition = (() => {
+  const D = globalThis.KH2Data;
+  const normalize = (text) => text.toLowerCase().replace(/[’‘]/g, "'").replace(/[^a-z0-9+]/g, "");
+  const aliases = { "Petite Ribbon": ["Petit Ribbon"], "Ultima Weapon": ["Ultima Keyblade"], "Orichalcum+": ["Orichalcum Plus"] };
+  function distance(a, b) {
+    let row = Array.from({ length: b.length + 1 }, (_, i) => i);
+    for (let i = 1; i <= a.length; i++) {
+      const next = [i];
+      for (let j = 1; j <= b.length; j++) next[j] = Math.min(next[j - 1] + 1, row[j] + 1, row[j - 1] + (a[i - 1] !== b[j - 1]));
+      row = next;
+    }
+    return row[b.length];
+  }
+  function matchName(text, names) {
+    const words = text.replace(/^[SCBA]\s+/i, "").trim().split(/\s+/);
+    const whole = normalize(words.join(" "));
+    const exact = names.find((name) => [name, ...(aliases[name] || [])].some((alias) => normalize(alias) === whole));
+    if (exact) return { name: exact, score: 1 };
+    const candidates = names.map((name) => {
+      let score = 0;
+      for (const alias of [name, ...(aliases[name] || [])]) {
+        const target = normalize(alias);
+        const expected = alias.split(/\s+/).length;
+        for (let start = 0; start < words.length; start++) {
+          for (let length = Math.max(1, expected - 1); length <= expected + 1; length++) {
+            const fragment = normalize(words.slice(start, start + length).join(" "));
+            if (!fragment || fragment.includes("+") !== target.includes("+") || (whole.includes("+") && !target.includes("+"))) continue;
+            const value = 1 - distance(fragment, target) / Math.max(fragment.length, target.length);
+            score = Math.max(score, value);
+          }
+        }
+      }
+      return { name, score };
+    }).sort((a, b) => b.score - a.score);
+    const best = candidates[0];
+    if (!best || best.score < 0.74 || (candidates[1] && best.score - candidates[1].score < 0.035)) return null;
+    return best;
+  }
+  function parseLines(lines, kind, source = "Pasted text") {
+    const names = kind === "recipes" ? D.recipes.map((r) => r.name) : D.materialNames;
+    const rows = [];
+    const unmatched = [];
+    for (const input of lines) {
+      const text = typeof input === "string" ? input : input.text;
+      if (!text?.trim()) continue;
+      let nameText = text.trim();
+      let quantity = kind === "recipes" ? 1 : null;
+      if (kind === "inventory") {
+        const number = nameText.match(/\s+(?:[x×]\s*)?([0-9OIl|SB]{1,4})\s*$/);
+        if (number) {
+          quantity = Number(number[1].replace(/[O]/g, "0").replace(/[Il|]/g, "1").replace(/S/g, "5").replace(/B/g, "8"));
+          nameText = nameText.slice(0, number.index);
+        }
+      }
+      const match = matchName(nameText, names);
+      if (!match) { unmatched.push(text); continue; }
+      const confidence = typeof input === "string" ? 100 : Number(input.confidence) || 0;
+      rows.push({ name: match.name, quantity, confidence, score: match.score, raw: text, source });
+    }
+    return { rows, unmatched };
+  }
+  function merge(observations) {
+    const groups = new Map();
+    for (const row of observations) {
+      if (!groups.has(row.name)) groups.set(row.name, []);
+      groups.get(row.name).push(row);
+    }
+    return [...groups].map(([name, readings]) => {
+      const valid = readings.filter((r) => r.quantity !== null);
+      const votes = new Map();
+      for (const row of valid) votes.set(row.quantity, (votes.get(row.quantity) || 0) + 1);
+      const ranked = [...votes].sort((a, b) => b[1] - a[1]);
+      const best = readings.toSorted((a, b) => b.confidence * b.score - a.confidence * a.score)[0];
+      const quantity = ranked.length ? ranked[0][0] : null;
+      const conflict = ranked.length > 1;
+      return { name, quantity, conflict, checked: quantity !== null && !conflict && best.confidence >= 55 && best.score >= 0.82,
+        readings: readings.length, alternatives: ranked.map(([value]) => value), confidence: Math.round(best.confidence), raw: best.raw };
+    });
+  }
+  let loading;
+  function loadEngine() {
+    if (globalThis.Tesseract) return Promise.resolve(globalThis.Tesseract);
+    if (!loading) loading = new Promise((resolve, reject) => {
+      const script = document.createElement("script");
+      script.src = "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/tesseract.min.js";
+      script.crossOrigin = "anonymous";
+      script.onload = () => resolve(globalThis.Tesseract);
+      script.onerror = () => { script.remove(); loading = null; reject(new Error("Recognition engine could not download. Check the connection, or use manual entry / pasted text.")); };
+      document.head.append(script);
+    });
+    return loading;
+  }
+  function cropCanvas(media, crop, column = 0, columns = 1) {
+    const width = media.videoWidth || media.naturalWidth || media.width;
+    const height = media.videoHeight || media.naturalHeight || media.height;
+    const x = width * crop.x / 100;
+    const y = height * crop.y / 100;
+    const w = Math.min(width - x, width * crop.w / 100);
+    const h = Math.min(height - y, height * crop.h / 100);
+    const canvas = document.createElement("canvas");
+    const part = w / columns;
+    const scale = Math.min(3, 1500 / part);
+    canvas.width = Math.round(part * scale);
+    canvas.height = Math.round(h * scale);
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.drawImage(media, x + column * part, y, part, h, 0, 0, canvas.width, canvas.height);
+    const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < image.data.length; i += 4) {
+      const luminance = image.data[i] * 0.2 + image.data[i + 1] * 0.65 + image.data[i + 2] * 0.15;
+      const value = 255 - Math.max(0, Math.min(255, (luminance - 30) * 1.5));
+      image.data[i] = image.data[i + 1] = image.data[i + 2] = value;
+    }
+    ctx.putImageData(image, 0, 0);
+    return canvas;
+  }
+  function seek(video, time, signal) {
+    return new Promise((resolve, reject) => {
+      if (signal?.aborted) return reject(new DOMException("Cancelled", "AbortError"));
+      if (Math.abs(video.currentTime - time) < 0.01 && video.readyState >= 2) return resolve();
+      let timer;
+      const cleanup = () => {
+        clearTimeout(timer);
+        video.removeEventListener("seeked", done);
+        video.removeEventListener("error", fail);
+        signal?.removeEventListener("abort", cancel);
+      };
+      const done = () => { cleanup(); resolve(); };
+      const fail = () => { cleanup(); reject(new Error("This video cannot be decoded. Export it as H.264 MP4, or import inventory screenshots.")); };
+      const cancel = () => { cleanup(); reject(new DOMException("Cancelled", "AbortError")); };
+      video.addEventListener("seeked", done, { once: true });
+      video.addEventListener("error", fail, { once: true });
+      signal?.addEventListener("abort", cancel, { once: true });
+      timer = setTimeout(fail, 15000);
+      video.currentTime = time;
+    });
+  }
+  return { normalize, matchName, parseLines, merge, loadEngine, cropCanvas, seek };
+})();
+
+
+(() => {
+  const D = globalThis.KH2Data;
+  const P = globalThis.KH2Planner;
+  const R = globalThis.KH2Recognition;
+  const $ = (id) => document.getElementById(id);
+  const escape = (value) => String(value).replace(/[&<>"']/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[c]));
+  const storageKey = "kh2-final-mix-synthesis-v1";
+  const chestWorlds = D.worlds.filter((w) => w.id !== "at");
+  let state = P.defaults();
+  let noticeTimer;
+  let storageWarning = "";
+  try {
+    const saved = localStorage.getItem(storageKey);
+    if (saved) state = P.sanitize(JSON.parse(saved));
+  } catch {
+    storageWarning = "Browser storage is unavailable or the saved data could not be read. Export a save to keep changes.";
+  }
+  function notice(message) {
+    $("notice").textContent = message;
+    $("notice").hidden = false;
+    clearTimeout(noticeTimer);
+    noticeTimer = setTimeout(() => { $("notice").hidden = true; }, 8000);
+  }
+  function save() {
+    try {
+      localStorage.setItem(storageKey, JSON.stringify(state));
+      $("save-status").textContent = "Saved on this device";
+      $("save-status").classList.remove("storage-error");
+    } catch {
+      $("save-status").textContent = "Not saved — use Export save";
+      $("save-status").classList.add("storage-error");
+    }
+  }
+  function tab(name) {
+    for (const section of document.querySelectorAll("main > section")) section.hidden = section.id !== `tab-${name}`;
+    for (const button of document.querySelectorAll("[data-tab]")) {
+      const active = button.dataset.tab === name;
+      button.classList.toggle("active", active);
+      if (active) button.setAttribute("aria-current", "page");
+      else button.removeAttribute("aria-current");
+    }
+  }
+  const link = (url, text) => `<a href="${escape(url)}" target="_blank" rel="noreferrer">${escape(text)}</a>`;
+  const ingredientText = (ingredients) => Object.entries(ingredients).map(([name, qty]) => `${qty} ${escape(name)}`).join(" · ");
+  function renderPlan() {
+    const plan = P.plan(state);
+    $("moogle").value = state.moogle;
+    $("energy").value = state.energy;
+    $("expand").value = String(state.expand);
+    const discounts = [["C", 5], ["B", 6], ["A", 7], ["S", 9]].filter(([, level]) => state.moogle >= level).map(([rank]) => rank);
+    $("moogle-perks").textContent = [
+      state.moogle >= 2 ? "Energy enabled" : "Energy unlocks at level 2",
+      state.moogle >= 3 ? "Serenity upgrades enabled" : "Upgrades unlock at level 3",
+      state.moogle >= 4 ? "Energy + Serenity may be combined" : "Combining Energy + Serenity needs level 4",
+      discounts.length ? `Half-cost ranks: ${discounts.join(", ")} (Energy stacks; round up per craft)` : "No automatic rank discounts yet",
+    ].join(" · ");
+    $("plan-count").textContent = plan.goals ? `(${plan.goals})` : "";
+    $("summary").innerHTML = `<div class="stat"><strong>${plan.goals}</strong><span>creations on the wish list</span></div><div class="stat"><strong>${plan.needed.reduce((n, r) => n + r.missing, 0)}</strong><span>materials still to collect</span></div><div class="stat"><strong>${plan.routes.filter((r) => r.available).length}</strong><span>available farming / reward sources</span></div>`;
+    const goals = Object.entries(state.goals).filter(([, qty]) => qty);
+    $("goals").innerHTML = goals.length ? `<h3>Wish list</h3>${goals.map(([name, qty]) => {
+      const recipe = D.byRecipe[name];
+      return `<div class="goal"><div class="goal-name">${escape(name)}<small>Rank ${recipe.rank} · ${escape(recipe.category)}</small></div><label>Quantity<input type="number" min="1" max="${name === "Ultima Weapon" ? 1 : 99}" value="${qty}" data-goal="${escape(name)}" aria-label="${escape(name)} desired quantity"></label><button class="quiet" data-remove="${escape(name)}" aria-label="Remove ${escape(name)}">Remove</button>${recipe.base ? `<label class="check"><input type="checkbox" data-crafted="${escape(recipe.base)}" ${state.crafted[recipe.base] ? "checked" : ""}> ${escape(recipe.base)} has already been made once</label>` : ""}</div>`;
+    }).join("")}` : `<div class="empty"><h3>Every creation starts with a wish.</h3><p>Add a recipe manually or read the list from a game photo.</p><button class="primary" data-go="recipes">Choose recipes</button> <button class="quiet" data-go="import">Import a photo</button></div>`;
+    $("blockers").innerHTML = plan.warnings.map((w) => `<div class="alert">${escape(w)}</div>`).join("");
+    const showOwned = $("show-owned").checked;
+    const requirements = plan.requirements.filter((r) => showOwned || r.missing);
+    const allChests = chestWorlds.every((w) => state.chests[w.id]);
+    $("requirements").innerHTML = requirements.length ? `<div class="table-wrap"><table><thead><tr><th>Material</th><th>Total need</th><th>Stock used</th><th>Shortfall</th><th>How to supply</th></tr></thead><tbody>${requirements.map((row) => {
+      const craftable = D.byRecipe[row.name];
+      let note = row.crafted ? `Synthesize ${row.crafted}` : row.missing ? "Collect" : "Covered by stock";
+      if (row.locked) note = `Synthesis locked: ${D.byRecipe[row.name].unlock}`;
+      if (row.name.startsWith("Mythril") && row.missing) note += allChests ? " · All chests marked collected; synthesis is the remaining source." : " · No enemy drops. Chests may supply some; only entered stock is budgeted.";
+      if (row.name === "Orichalcum+" && row.missing) note += " · Seven total in the game; chest completion is tracked under World progress.";
+      return `<tr><td>${link(D.materials[row.name].url, row.name)}${row.bonus ? `<small>Includes ${row.bonus} from a base-recipe prerequisite</small>` : ""}</td><td class="numeric">${row.required}</td><td class="numeric">${row.owned}</td><td class="numeric ${row.missing ? "warning" : "positive"}">${row.missing || "—"}</td><td>${escape(note)}${craftable && row.missing && state.expand ? `<label class="check"><input type="checkbox" data-method="${escape(row.name)}" ${(state.methods[row.name] ? state.methods[row.name] === "craft" : row.name.startsWith("Mythril")) ? "checked" : ""}> Plan synthesis for this material</label>` : ""}</td></tr>`;
+    }).join("")}</tbody></table></div>` : `<div class="empty">${plan.goals ? (plan.warnings.length ? "Resolve the locked recipes above to calculate their ingredients." : "The entered stock covers the plan. Open the crafting notes for the recipe breakdown.") : "Missing materials will appear here."}</div>`;
+    const groups = new Map();
+    for (const route of plan.routes.toSorted((a, b) => Number(b.available) - Number(a.available))) {
+      const key = `${route.world}|${route.available}`;
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(route);
+    }
+    $("routes").innerHTML = [...groups].map(([, routes]) => {
+      const world = D.worlds.find((w) => w.id === routes[0].world);
+      return `<div class="panel route-world ${routes[0].available ? "" : "locked"}"><h3>${escape(world.name)} <span class="tag">${routes[0].available ? "AVAILABLE" : "LOCKED"}</span></h3>${routes.map((r) => `<div class="route-item"><strong>${link(r.url, r.enemy)}</strong> <span class="muted">· ${escape(r.room)}</span><p>${r.materials.map((m) => `<span>${escape(m.name)} ×${m.missing}${m.rate !== null ? ` <small>(${m.rate}% base drop)</small>` : ""}</span>`).join(" · ")}</p>${[...new Set(r.materials.map((m) => m.note).filter(Boolean))].map((note) => `<p class="muted">${escape(note)}</p>`).join("")}${r.available ? "" : `<p class="warning">Unlock: ${escape(r.reason)}</p>`}</div>`).join("")}</div>`;
+    }).join("") || `<div class="empty">${plan.goals ? "No enemy farming sources needed yet. Mythril is chest / synthesis only; resolve any locked recipes above." : "Farming locations will follow the wish list and world progress."}</div>`;
+    const ordered = [];
+    const visited = new Set();
+    function order(step) {
+      if (visited.has(step)) return;
+      visited.add(step);
+      const recipe = D.byRecipe[step.name];
+      for (const other of plan.steps) if (other !== step && (other.name === recipe.base || Object.hasOwn(step.ingredients, other.name))) order(other);
+      ordered.push(step);
+    }
+    plan.steps.forEach(order);
+    $("crafting").innerHTML = ordered.map((step, i) => `<div class="craft-step"><strong>${i + 1}. ${escape(step.name)} ×${step.quantity}</strong> · ${escape(step.purpose)}<span>${ingredientText(step.ingredients)}</span><span>${step.powered ? `${step.powered} craft(s) use ${escape(step.energy)}.` : "No Energy modifier used."}</span></div>`).join("") || "<p class='muted'>No crafts planned.</p>";
+  }
+  function renderRecipes() {
+    const search = $("recipe-search").value.toLowerCase();
+    const category = $("recipe-category").value;
+    const recipes = D.recipes.filter((r) => (!category || category === r.category) && r.name.toLowerCase().includes(search));
+    $("recipe-list").innerHTML = recipes.map((r) => `<article class="card"><h3><span class="rank">${r.rank}</span>${escape(r.name)}</h3><p>${escape(r.category)} · ${link(r.url, "Source")}</p><div class="ingredients">${ingredientText(r.ingredients)}${r.modifier ? ` · 1 ${escape(r.modifier)}` : ""}</div><p>${escape(r.unlock)}${r.base ? ` · First make ${escape(r.base)}` : ""}</p><div class="card-actions"><span class="${P.unlocked(r, state) ? "positive" : "warning"}">${P.unlocked(r, state) ? "Level / collection unlocked" : `Needs ${r.minLevel > state.moogle ? `Moogle Lv ${r.minLevel}` : `${r.types} material types`}`}</span><button data-add="${escape(r.name)}" class="${state.goals[r.name] ? "quiet" : "primary"}">${state.goals[r.name] ? `Added (${state.goals[r.name]})` : "Add"}</button></div></article>`).join("") || "<p class='muted'>No matching recipes.</p>";
+  }
+  function renderInventory() {
+    const search = $("material-search").value.toLowerCase();
+    const names = D.materialNames.filter((name) => name.toLowerCase().includes(search) && (!$("stock-only").checked || state.inventory[name]));
+    $("inventory-list").innerHTML = names.map((name) => `<div class="stock-row ${state.inventory[name] ? "has-stock" : ""}"><label>${escape(name)}<input type="number" min="0" max="9999" step="1" value="${state.inventory[name] || 0}" data-stock="${escape(name)}" aria-label="${escape(name)} current stock"></label></div>`).join("") || "<p class='muted'>No matching materials.</p>";
+  }
+  function renderProgress() {
+    $("all-chests").checked = chestWorlds.every((w) => state.chests[w.id]);
+    $("all-chests").indeterminate = !$("all-chests").checked && chestWorlds.some((w) => state.chests[w.id]);
+    $("optional-unlocks").innerHTML = D.optional.map(([id, name]) => `<label class="check"><input type="checkbox" data-optional="${id}" ${state.optional[id] ? "checked" : ""}>${escape(name)}</label>`).join("");
+    $("world-list").innerHTML = D.worlds.map((w) => `<article class="card world-card"><h3>${escape(w.name)}</h3><label>Furthest reachable stage<select data-world="${w.id}" aria-label="${escape(w.name)} progress">${w.stages.map((stage, i) => `<option value="${i}" ${Number(state.worlds[w.id] || 0) === i ? "selected" : ""}>${escape(stage)}</option>`).join("")}</select></label>${w.id !== "at" ? `<label class="check"><input type="checkbox" data-chests="${w.id}" ${state.chests[w.id] ? "checked" : ""}> All chests here collected</label>` : "<p>Atlantica has musical rewards, not treasure chests.</p>"}</article>`).join("");
+    $("material-types").value = state.materialTypes;
+    $("orichalcum-rewards").innerHTML = D.rewards.slice(3).map((reward) => `<label class="check"><input type="checkbox" data-reward="${reward.id}" ${state.rewards[reward.id] ? "checked" : ""}>${escape(reward.label)}</label>`).join("");
+  }
+  function renderAll() { renderPlan(); renderRecipes(); renderInventory(); renderProgress(); }
+  $("moogle").innerHTML = D.levels.map((name, i) => `<option value="${i + 1}">${i + 1} · ${name} Moogle</option>`).join("");
+  document.addEventListener("click", (event) => {
+    const button = event.target.closest("button");
+    if (!button) return;
+    if (button.dataset.tab) tab(button.dataset.tab);
+    if (button.dataset.go) tab(button.dataset.go);
+    if (button.dataset.add) {
+      const name = button.dataset.add;
+      state.goals[name] = Math.min(name === "Ultima Weapon" ? 1 : 99, (state.goals[name] || 0) + 1);
+      save(); renderPlan(); renderRecipes();
+      notice(`${name} added to the wish list.`);
+    }
+    if (button.dataset.remove) {
+      delete state.goals[button.dataset.remove];
+      save(); renderPlan(); renderRecipes();
+    }
+  });
+  document.addEventListener("change", (event) => {
+    const el = event.target;
+    let changed = true;
+    if (el.dataset.goal) {
+      state.goals[el.dataset.goal] = Math.max(1, P.count(el.value, el.dataset.goal === "Ultima Weapon" ? 1 : 99));
+      renderRecipes();
+    } else if (el.dataset.stock) {
+      state.inventory[el.dataset.stock] = P.count(el.value);
+      el.value = state.inventory[el.dataset.stock];
+      el.closest(".stock-row").classList.toggle("has-stock", el.value !== "0");
+      state.materialTypes = Math.max(state.materialTypes, Object.values(state.inventory).filter((n) => n > 0).length);
+      $("material-types").value = state.materialTypes;
+      renderRecipes();
+    } else if (el.dataset.crafted) state.crafted[el.dataset.crafted] = el.checked;
+    else if (el.dataset.method) state.methods[el.dataset.method] = el.checked ? "craft" : "collect";
+    else if (el.dataset.world) state.worlds[el.dataset.world] = P.count(el.value, 3);
+    else if (el.dataset.chests) { state.chests[el.dataset.chests] = el.checked; renderProgress(); }
+    else if (el.dataset.optional) state.optional[el.dataset.optional] = el.checked;
+    else if (el.dataset.reward) state.rewards[el.dataset.reward] = el.checked;
+    else if (el.id === "all-chests") { for (const w of chestWorlds) state.chests[w.id] = el.checked; renderProgress(); }
+    else if (el.id === "moogle") { state.moogle = Math.max(1, P.count(el.value, 9)); renderRecipes(); }
+    else if (el.id === "energy") state.energy = el.value;
+    else if (el.id === "expand") state.expand = el.value === "true";
+    else if (el.id === "material-types") { state.materialTypes = Math.max(P.count(el.value, 60), Object.values(state.inventory).filter((n) => n > 0).length); el.value = state.materialTypes; renderRecipes(); }
+    else changed = false;
+    if (changed) { save(); renderPlan(); }
+  });
+  $("show-owned").addEventListener("change", renderPlan);
+  $("recipe-search").addEventListener("input", renderRecipes);
+  $("recipe-category").addEventListener("change", renderRecipes);
+  $("material-search").addEventListener("input", renderInventory);
+  $("stock-only").addEventListener("change", renderInventory);
+  $("export").addEventListener("click", () => {
+    const url = URL.createObjectURL(new Blob([JSON.stringify(state, null, 2)], { type: "application/json" }));
+    const a = document.createElement("a");
+    a.href = url; a.download = "kh2-synthesis-save.json"; a.click();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  });
+  $("load-save").addEventListener("change", async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    try {
+      if (file.size > 1000000) throw new Error("Save file is too large (maximum 1 MB).");
+      const next = P.sanitize(JSON.parse(await file.text()));
+      if (!confirm("Replace this journal's current wish list, inventory and progress with the selected save?")) return;
+      state = next; save(); renderAll(); notice("Save loaded.");
+    } catch (error) { notice(`Could not load save: ${error.message}`); }
+    finally { event.target.value = ""; }
+  });
+
+  let media;
+  let mediaURL;
+  let mediaReady = false;
+  let worker;
+  let controller;
+  let importing = false;
+  let review = [];
+  let reviewKind = "recipes";
+  let currentKind = "recipes";
+  let observations = [];
+  const cropIds = ["crop-x", "crop-y", "crop-w", "crop-h"];
+  function crop() {
+    const x = P.count($("crop-x").value, 99);
+    const y = P.count($("crop-y").value, 99);
+    return { x, y, w: Math.max(1, Math.min(100 - x, P.count($("crop-w").value, 100))), h: Math.max(1, Math.min(100 - y, P.count($("crop-h").value, 100))) };
+  }
+  function setCrop(value) {
+    for (const [key, val] of Object.entries(value)) $(`crop-${key}`).value = val;
+    drawPreview();
+  }
+  function resetCrop() {
+    setCrop($("import-kind").value === "recipes" ? { x: 21, y: 28, w: 32, h: 40 } : { x: 26, y: 28, w: 44, h: 49 });
+  }
+  function drawPreview() {
+    if (!mediaReady) return;
+    const canvas = $("preview");
+    const width = media.videoWidth || media.naturalWidth;
+    const height = media.videoHeight || media.naturalHeight;
+    canvas.width = Math.min(1000, width);
+    canvas.height = Math.round(canvas.width * height / width);
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(media, 0, 0, canvas.width, canvas.height);
+    const c = crop();
+    const x = c.x / 100 * canvas.width, y = c.y / 100 * canvas.height, w = c.w / 100 * canvas.width, h = c.h / 100 * canvas.height;
+    ctx.fillStyle = "#0008";
+    ctx.fillRect(0, 0, canvas.width, y); ctx.fillRect(0, y + h, canvas.width, canvas.height - y - h);
+    ctx.fillRect(0, y, x, h); ctx.fillRect(x + w, y, canvas.width - x - w, h);
+    ctx.strokeStyle = "#8be2c9"; ctx.lineWidth = 2;
+    ctx.strokeRect(x, y, w, h);
+    if ($("import-kind").value === "inventory" && $("two-columns").checked) {
+      ctx.setLineDash([6, 6]); ctx.beginPath(); ctx.moveTo(x + w / 2, y); ctx.lineTo(x + w / 2, y + h); ctx.stroke();
+    }
+  }
+  let dragStart;
+  function position(event) {
+    const rect = $("preview").getBoundingClientRect();
+    return { x: Math.max(0, Math.min(99, (event.clientX - rect.left) / rect.width * 100)), y: Math.max(0, Math.min(99, (event.clientY - rect.top) / rect.height * 100)) };
+  }
+  $("preview").addEventListener("pointerdown", (event) => {
+    if (importing) return;
+    dragStart = position(event); $("preview").setPointerCapture(event.pointerId);
+  });
+  $("preview").addEventListener("pointermove", (event) => {
+    if (!dragStart) return;
+    const end = position(event);
+    setCrop({ x: Math.round(Math.min(dragStart.x, end.x)), y: Math.round(Math.min(dragStart.y, end.y)), w: Math.max(1, Math.round(Math.abs(end.x - dragStart.x))), h: Math.max(1, Math.round(Math.abs(end.y - dragStart.y))) });
+  });
+  for (const type of ["pointerup", "pointercancel"]) $("preview").addEventListener(type, () => { dragStart = null; });
+  for (const id of cropIds) $(id).addEventListener("input", drawPreview);
+  $("crop-reset").addEventListener("click", resetCrop);
+  $("two-columns").addEventListener("change", drawPreview);
+  $("import-kind").addEventListener("change", () => {
+    currentKind = $("import-kind").value;
+    resetCrop();
+    if (review.length) {
+      $("import-review").hidden = true;
+      review = [];
+    }
+    $("ocr-status").textContent = "Choose media or paste text for this import type.";
+  });
+  $("media-file").addEventListener("change", async (event) => {
+    const file = event.target.files[0];
+    if (!file) return;
+    mediaReady = false; $("recognize").disabled = true;
+    $("import-review").hidden = true;
+    if (mediaURL) URL.revokeObjectURL(mediaURL);
+    $("video").pause(); $("video").removeAttribute("src"); $("video").load();
+    mediaURL = URL.createObjectURL(file);
+    $("media-name").textContent = file.name;
+    $("ocr-status").textContent = "Opening media…";
+    try {
+      const videoFile = file.type.startsWith("video/") || /\.(mov|mp4|webm|m4v)$/i.test(file.name);
+      if (videoFile) {
+        $("import-kind").value = "inventory"; currentKind = "inventory";
+        media = $("video");
+        await new Promise((resolve, reject) => {
+          const timer = setTimeout(() => finish(new Error("Video could not be opened. Try an H.264 MP4 export.")), 15000);
+          function finish(error) {
+            clearTimeout(timer);
+            media.removeEventListener("loadeddata", ready); media.removeEventListener("error", fail);
+            if (error) reject(error); else resolve();
+          }
+          const ready = () => finish();
+          const fail = () => finish(new Error("Video codec not supported by this browser. Export to H.264 MP4, or use screenshots."));
+          media.addEventListener("loadeddata", ready, { once: true });
+          media.addEventListener("error", fail, { once: true });
+          media.src = mediaURL; media.load();
+        });
+        if (!Number.isFinite(media.duration) || !media.duration) throw new Error("Video duration could not be read. Export to H.264 MP4.");
+      } else {
+        media = new Image();
+        media.src = mediaURL;
+        await media.decode();
+      }
+      mediaReady = true; $("media-preview").hidden = false; $("recognize").disabled = false;
+      resetCrop();
+      $("ocr-status").textContent = "Check the highlighted area, then read. All results remain editable.";
+    } catch (error) { $("media-preview").hidden = true; $("ocr-status").textContent = error.message; }
+  });
+  function renderReview(unmatched = 0) {
+    const names = reviewKind === "recipes" ? D.recipes.map((r) => r.name) : D.materialNames;
+    $("import-review").hidden = false;
+    $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select><input type="number" min="${reviewKind === "recipes" ? 1 : 0}" max="${reviewKind === "recipes" ? 99 : 9999}" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?"><small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small></div>`).join("");
+    $("review-message").textContent = `${review.length} recognized ${reviewKind === "recipes" ? "recipes" : "materials"}. ${unmatched ? `${unmatched} unrecognized text line(s); inspect the raw text and add anything missing manually.` : ""}${!review.length ? " Adjust the crop or use pasted text / manual entry." : ""}`;
+    $("apply-import").disabled = !review.length;
+  }
+  $("import-review").addEventListener("change", (event) => {
+    const el = event.target;
+    if (el.dataset.reviewCheck !== undefined) review[Number(el.dataset.reviewCheck)].checked = el.checked;
+    if (el.dataset.reviewName !== undefined) review[Number(el.dataset.reviewName)].name = el.value;
+    if (el.dataset.reviewQty !== undefined) review[Number(el.dataset.reviewQty)].quantity = el.value === "" ? null : P.count(el.value, reviewKind === "recipes" ? 99 : 9999);
+  });
+  $("parse-text").addEventListener("click", () => {
+    reviewKind = $("import-kind").value;
+    const parsed = R.parseLines($("ocr-text").value.split(/\r?\n/), reviewKind);
+    review = R.merge(parsed.rows); renderReview(parsed.unmatched.length);
+  });
+  $("apply-import").addEventListener("click", () => {
+    const checked = review.filter((row) => row.checked);
+    if (checked.some((r) => r.quantity === null || (reviewKind === "recipes" && !r.quantity))) { notice("Enter a valid quantity for every checked row."); return; }
+    const names = checked.map((r) => r.name);
+    if (new Set(names).size !== names.length) { notice("Duplicate names in review. Uncheck or rename duplicate rows before applying."); return; }
+    for (const row of checked) {
+      if (reviewKind === "recipes") state.goals[row.name] = P.count(row.quantity, row.name === "Ultima Weapon" ? 1 : 99);
+      else state.inventory[row.name] = P.count(row.quantity);
+    }
+    state.materialTypes = Math.max(state.materialTypes, Object.values(state.inventory).filter((n) => n > 0).length);
+    save(); renderAll();
+    notice(`${checked.length} ${reviewKind === "recipes" ? "recipe quantities" : "material totals"} updated. Unrecognized / unchecked entries were left unchanged.`);
+  });
+  function setImportBusy(busy) {
+    importing = busy;
+    for (const id of ["media-file", "import-kind", "two-columns", "sampling", "parse-text", "crop-reset", ...cropIds]) $(id).disabled = busy;
+    $("recognize").disabled = busy || !mediaReady;
+    $("cancel-ocr").hidden = !busy;
+    $("ocr-progress").hidden = !busy;
+  }
+  $("cancel-ocr").addEventListener("click", () => {
+    controller?.abort();
+    void worker?.terminate();
+    worker = null;
+    $("ocr-status").textContent = "Cancelling; partial readings will be available for review.";
+  });
+  $("recognize").addEventListener("click", async () => {
+    if (!mediaReady || importing) return;
+    controller = new AbortController();
+    const signal = controller.signal;
+    reviewKind = currentKind;
+    observations = [];
+    let unmatched = 0;
+    const raw = [];
+    let done = 0;
+    setImportBusy(true);
+    $("import-review").hidden = true;
+    $("ocr-progress").value = 0;
+    try {
+      $("ocr-status").textContent = "Loading local recognition engine / English model…";
+      const engine = await R.loadEngine();
+      if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
+      worker = await engine.createWorker("eng", 1, {
+        workerPath: "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js",
+        corePath: "https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1",
+        langPath: "https://tessdata.projectnaptha.com/4.0.0",
+        logger: (event) => {
+          if (!done && !signal.aborted && event.status !== "recognizing text") $("ocr-status").textContent = `${event.status} ${Math.round((event.progress || 0) * 100)}%`;
+        },
+      });
+      if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
+      await worker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1", user_defined_dpi: "150" });
+      const video = media === $("video");
+      const interval = Number($("sampling").value);
+      const frames = video ? Math.ceil(media.duration / interval) : 1;
+      if (frames > 1200) throw new Error("This recording would need more than 1200 frames. Choose a slower sampling interval or trim the recording.");
+      const columns = reviewKind === "inventory" && $("two-columns").checked ? 2 : 1;
+      const total = frames * columns;
+      const selectedCrop = crop();
+      for (let frame = 0; frame < frames; frame++) {
+        if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
+        if (video) await R.seek(media, Math.min(frame * interval, media.duration - 0.01), signal);
+        drawPreview();
+        for (let column = 0; column < columns; column++) {
+          if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
+          $("ocr-status").textContent = `Reading ${video ? `frame ${frame + 1}/${frames}, ` : ""}column ${column + 1}/${columns}. ${Math.round(done / total * 100)}% complete.`;
+          const canvas = R.cropCanvas(media, selectedCrop, column, columns);
+          const result = await worker.recognize(canvas);
+          const lines = result.data.lines || result.data.text.split(/\r?\n/).map((text) => ({ text, confidence: result.data.confidence }));
+          const parsed = R.parseLines(lines, reviewKind, `Frame ${frame + 1}, column ${column + 1}`);
+          observations.push(...parsed.rows);
+          unmatched += parsed.unmatched.length;
+          raw.push(result.data.text);
+          done++; $("ocr-progress").value = done / total;
+        }
+      }
+      $("ocr-status").textContent = "Reading complete. Review recognized names and counts below.";
+    } catch (error) {
+      $("ocr-status").textContent = signal.aborted ? "Cancelled. Partial results are available below." : `Recognition stopped: ${error.message}. Manual entry and pasted text remain available.`;
+    } finally {
+      if (worker) { await worker.terminate().catch(() => {}); worker = null; }
+      $("ocr-text").value = raw.join("\n");
+      review = R.merge(observations); renderReview(unmatched);
+      setImportBusy(false);
+    }
+  });
+  renderAll();
+  if (storageWarning) { notice(storageWarning); $("save-status").textContent = "Use Export save"; $("save-status").classList.add("storage-error"); }
+})();
+</script>
+</body>
+</html>
