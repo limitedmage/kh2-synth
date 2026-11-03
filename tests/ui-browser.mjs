@@ -101,6 +101,19 @@ async function expectIcons(page, selector) {
   )), `Icons in ${selector} must have geometry and remain decorative`);
 }
 
+async function expectExportActions(page) {
+  const layout = await page.locator("#save-export").evaluate((dialog) => {
+    const json = dialog.querySelector("#export-file").getBoundingClientRect();
+    const copy = dialog.querySelector("#copy-save-url").getBoundingClientRect();
+    const url = dialog.querySelector("#save-url").getBoundingClientRect();
+    return {
+      sameRow: Math.abs(json.top - copy.top) <= 1 && json.right <= copy.left,
+      above: Math.max(json.bottom, copy.bottom) <= url.top,
+    };
+  });
+  assert.ok(layout.sameRow && layout.above, "JSON export and Copy URL must sit side by side above the URL");
+}
+
 async function expectMobileLayout(page, name) {
   await page.locator(`[data-tab="${name}"]`).click();
   const layout = await page.evaluate(() => {
@@ -122,11 +135,12 @@ async function expectMobileLayout(page, name) {
   }
 }
 
-try {
-  const stock = {
-    "Mythril Shard": 5, "Blazing Stone": 3, "Blazing Shard": 1,
-    "Frost Stone": 1, "Frost Shard": 1,
-  };
+const stock = {
+  "Mythril Shard": 5, "Blazing Stone": 3, "Blazing Shard": 1,
+  "Frost Stone": 1, "Frost Shard": 1,
+};
+
+async function wishlistSuite() {
   const wishlist = await open("plan", {
     goals: { "Firaga Bangle": 99, "Blizzaga Armlet": 1 },
     inventory: stock, moogle: 1, energy: "none", expand: false,
@@ -206,7 +220,9 @@ try {
   for (const name of ["plan", "recipes", "inventory", "progress"]) await expectMobileLayout(wishlist, name);
   assert.deepEqual((await saved(wishlist)).inventory, stock, "Navigation and responsive rendering must not change stock");
   console.log("PASS wishlist: one-of-each migration, shared stock, unchanged inventory, idempotent Add, icons, 390px layouts");
+}
 
+async function readinessSuite() {
   const sufficient = await open("plan", {
     goals: { "Firaga Bangle": 1, "Blizzaga Armlet": 1 },
     inventory: { ...stock, "Mythril Shard": 10 }, moogle: 1, energy: "none", expand: false,
@@ -229,7 +245,9 @@ try {
   await peers.locator('[data-remove="Thundaga Trinket"]').click();
   assert.equal(await peers.locator("#goals .craft-conflict").count(), 0, "A missing peer alone must not trigger a shared-material warning");
   console.log("PASS wishlist: advisory only on ready conflicting recipes; none on missing/locked or sufficient stock");
+}
 
+async function energySuite() {
   const energyStock = {
     "Mythril Shard": 5, "Blazing Stone": 1, "Blazing Shard": 1,
     "Frost Stone": 1, "Frost Shard": 1, "Energy Shard": 1,
@@ -277,7 +295,9 @@ try {
   await upgrade.locator("#moogle").selectOption("2");
   await expectReady(upgrade, "Ribbon", 0, "locked");
   console.log("PASS wishlist: first-craft prerequisite and upgrade Moogle gate");
+}
 
+async function luckySuite() {
   const lucky = await open("plan", {
     goals: { "Firaga Bangle": 1 }, inventory: {}, moogle: 1, energy: "none", expand: false,
   });
@@ -330,7 +350,9 @@ try {
   assert.equal(await lucky.locator("#lucky-lucky").inputValue(), "4");
   await expectRate("Minute Bomb", 18, 6);
   console.log("PASS Lucky Lucky: effective/base rates, unchanged stock/goals, reload, export/import");
+}
 
+async function saveSuite() {
   const sharing = await open("plan", {
     goals: { "AP Boost": 1, "Save the King+": 1 },
     inventory: { "Dense Shard": 17, "Orichalcum+": 3 },
@@ -349,6 +371,7 @@ try {
   await sharing.locator("#export").click();
   await sharing.waitForFunction(() => !document.getElementById("copy-save-url").disabled);
   assert.equal(await sharing.locator("#save-export button").count(), 2, "Export must offer only JSON download and URL copy, without a generation button");
+  await expectExportActions(sharing);
   const magicURL = await sharing.locator("#save-url").inputValue();
   assert.ok(magicURL.startsWith(`${sharedPageURL}#save=`), "Magic URLs must keep the current host, custom path and query parameters");
   await sharing.evaluate(() => {
@@ -422,13 +445,16 @@ try {
   assert.equal(prompts.length, 2, "Invalid URLs must not offer to replace valid data");
   await receiver.locator("#export").click();
   await receiver.waitForFunction(() => !document.getElementById("copy-save-url").disabled);
+  await expectExportActions(receiver);
   const exportLayout = await receiver.locator("#save-export").evaluate((panel) => {
     const bounds = panel.getBoundingClientRect();
     return bounds.left >= 0 && bounds.right <= innerWidth && panel.scrollWidth <= panel.clientWidth;
   });
   assert.ok(exportLayout, "Export options and the save URL must fit a phone screen");
   console.log("PASS save URLs: full cross-device import, existing-save confirmation, cancellation, reload, invalid data, clipboard fallback, phone layout");
+}
 
+async function materialsSuite() {
   const materials = await open("materials", {
     inventory: { "Dark Shard": 0, "Dense Crystal": 9999, "Blazing Stone": 7 },
   });
@@ -469,7 +495,9 @@ try {
     assert.deepEqual(wrapped, [], `Material names and compact controls must fit on one row at ${width}px`);
   }
   console.log("PASS materials: increment/decrement, bounds, manual entry, keyboard, filtering, persistence, phone layouts");
+}
 
+async function navigationSuite() {
   const navigation = await open("materials");
   await expectTab(navigation, "inventory", "materials");
   await navigation.reload();
@@ -493,7 +521,9 @@ try {
   await unknown.reload();
   await expectTab(unknown, "plan", "plan");
   console.log("PASS navigation: initial fragments, reload, back/forward, hashchange, unknown fallback, accessibility");
+}
 
+async function progressSuite() {
   const progress = await open("world-progress", {
     inventory: { "Dark Shard": 17, "Orichalcum+": 2 },
     chests: { tt: true, hb: false, ld: true },
@@ -523,6 +553,9 @@ try {
     }), true, "Every farming route must be available after the endgame preset");
   }
   console.log("PASS endgame: world maxima, all areas/routes, chest/inventory preservation, persisted reload");
+}
+
+async function accessibilitySuite() {
   const accessible = await open("plan");
   await accessible.emulateMedia({ forcedColors: "active", reducedMotion: "reduce" });
   await accessible.setViewportSize({ width: 390, height: 844 });
@@ -540,6 +573,26 @@ try {
   });
   assert.ok(focus.visible && focus.inside, "The rounded Moogle panel must preserve visible keyboard focus without clipping its outline");
   await expectPlanLayout(accessible);
+}
+
+const suites = {
+  wishlist: wishlistSuite,
+  readiness: readinessSuite,
+  energy: energySuite,
+  lucky: luckySuite,
+  save: saveSuite,
+  materials: materialsSuite,
+  navigation: navigationSuite,
+  progress: progressSuite,
+  accessibility: accessibilitySuite,
+};
+
+try {
+  const selected = [...new Set(process.argv.slice(2))];
+  for (const name of selected) {
+    if (!Object.hasOwn(suites, name)) throw new Error(`Unknown UI suite "${name}". Choose: ${Object.keys(suites).join(", ")}.`);
+  }
+  for (const name of selected.length ? selected : Object.keys(suites)) await suites[name]();
   assert.deepEqual(errors, [], "UI workflows must not trigger browser errors");
 } finally {
   await Promise.all(contexts.map((context) => context.close()));

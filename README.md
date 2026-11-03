@@ -73,6 +73,8 @@ npm run test:browser
 npm run test:ui
 ```
 
-`npm run check` rebuilds and runs all suites. Browser checks use `file://`, not a development server. Sample media in `samples/` stays local and is ignored by Git.
+For a small change, run `npm run check:quick -- save` (or the relevant UI groups) instead of every browser workflow. This rebuilds the standalone page, runs the fast Node tests, and checks only the selected UI groups. Groups: `wishlist`, `readiness`, `energy`, `lucky`, `save`, `materials`, `navigation`, `progress`, `accessibility`. Multiple groups can be combined, for example `npm run check:quick -- save materials`.
+
+`npm run check` still rebuilds and runs every regression suite. Default browser checks do not run media OCR or capture diagnostic screenshots. Use `npm run test:browser -- --screenshots` when desktop/mobile images are needed. Browser checks use `file://`, not a development server; the save URL test also simulates custom hosting locally. Sample media in `samples/` stays local and is ignored by Git.
 
 With the supplied samples present, `node tests/browser.mjs --media` exercises local OCR on both recipe photos and all three inventory recordings (`materials.MOV`, `materials-2.MOV`, and `materials-3.mp4`). It checks every visible material and count against the footage, including Orichalcum+, camera alignment, and yellow screen-capture counts. This check needs internet for OCR engine/model downloads. Disputed readings intentionally remain unchecked for manual review.

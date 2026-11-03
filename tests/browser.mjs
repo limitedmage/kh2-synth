@@ -239,10 +239,14 @@ try {
   await page.locator("#load-save").setInputFiles(backupPath);
   await page.waitForFunction(() => document.getElementById("notice").textContent === "Save loaded.");
   await page.getByRole("button", { name: /^Farming plan/ }).click();
-  await page.screenshot({ path: fileURLToPath(new URL("desktop.png", artifacts)), fullPage: true });
+  if (process.argv.includes("--screenshots")) {
+    await page.screenshot({ path: fileURLToPath(new URL("desktop.png", artifacts)), fullPage: true });
+  }
   await page.setViewportSize({ width: 390, height: 844 });
   assert.equal(await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth), true, "Page must fit a phone viewport");
-  await page.screenshot({ path: fileURLToPath(new URL("mobile.png", artifacts)), fullPage: true });
+  if (process.argv.includes("--screenshots")) {
+    await page.screenshot({ path: fileURLToPath(new URL("mobile.png", artifacts)), fullPage: true });
+  }
   console.log("PASS: file:// manual planning, inventory, persistence, chest switches, reviewed imports, save backup and responsive layout.");
 
   if (process.argv.includes("--media")) {
