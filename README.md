@@ -1,8 +1,14 @@
 # KH2 Final Mix Synthesis Journal
 
-**Developed with AI assistance.** Recipe data, calculations, and OCR results may contain errors; verify them in-game.
+**[Open the Synthesis Journal!](https://limitedmage.github.io/kh2-synth)**
 
-**[Open the deployed journal](https://limitedmage.github.io/kh2-synth).**
+No account needed. All data is processed locally and nothing is ever uploaded.
+
+## DISCLAIMER
+
+**Developed with AI assistance.** Recipe data, calculations, and OCR results may contain errors. This is a personal fun project I built for my own use and wanted to share it.
+
+## How to use
 
 **Open [index.html](index.html) directly in a modern browser. No server, account, or build step is needed.**
 
