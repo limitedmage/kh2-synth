@@ -12,7 +12,7 @@
 - [x] Inset dropdown arrows and reserve space for option text.
 - [x] Replace the top-left emblem with an original Moogle-inspired icon.
 - [x] Show per-item owned/needed ingredients on a separate wrapping row; leave totals under Materials to collect.
-- [x] Warn about shared-material shortfalls only on ready-to-craft items.
+- [x] Warn about shared-material shortfalls only between ready-to-craft items.
 - [x] Apply the selected Lucky Lucky count to enemy drop rates.
 - [x] Remove the specified redundant copy and the Crafting order & notes section.
 - [x] Fix inventory OCR and detect table corners and column dividers from the image; verify all supplied recordings.

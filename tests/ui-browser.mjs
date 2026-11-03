@@ -143,7 +143,8 @@ try {
     "Chest routes are not planned.",
   ]) assert.ok(!appCopy.includes(removed), `Requested copy must remain absent: ${removed}`);
   await expectReady(wishlist, "Firaga Bangle", 1, "ready");
-  await expectReady(wishlist, "Blizzaga Armlet", 0, "missing");
+  await expectReady(wishlist, "Blizzaga Armlet", 1, "ready");
+  assert.equal(await wishlist.locator("#goals .craft-conflict").count(), 2, "Both independently ready items must warn when their materials conflict");
   const warningLabel = await goal(wishlist, "Firaga Bangle").locator(".craft-conflict > summary").getAttribute("aria-label");
   for (const text of ["Shared materials warning", "Firaga Bangle", "Blizzaga Armlet", "Mythril Shard"]) {
     assert.ok(warningLabel.includes(text), `Ready recipe conflict warning must describe ${text}`);
@@ -166,7 +167,7 @@ try {
   await wishlist.locator('[data-remove="Firaga Bangle"]').click();
   await expectReady(wishlist, "Blizzaga Armlet", 1, "ready");
   assert.equal(await wishlist.locator("#goals .craft-conflict").count(), 0, "Removing a conflicting wish must clear its shared-stock advisory");
-  assert.deepEqual((await saved(wishlist)).inventory, stock, "Removing a wish must free the reservation without consuming inventory");
+  assert.deepEqual((await saved(wishlist)).inventory, stock, "Removing a wish must leave inventory unchanged");
 
   await wishlist.locator('[data-tab="recipes"]').click();
   await expectIcons(wishlist, "#recipe-list");
@@ -187,6 +188,18 @@ try {
   await expectReady(sufficient, "Firaga Bangle", 1, "ready");
   await expectReady(sufficient, "Blizzaga Armlet", 1, "ready");
   assert.equal(await sufficient.locator("#goals .craft-conflict").count(), 0, "Sufficient shared stock must not show conflict warnings");
+  const peers = await open("plan", {
+    goals: { "Firaga Bangle": 1, "Blizzaga Armlet": 1, "Thundaga Trinket": 1 },
+    inventory: { ...stock, "Frost Stone": 0, "Lightning Stone": 1, "Lightning Shard": 1 },
+    moogle: 1, energy: "none", expand: false,
+  });
+  await expectReady(peers, "Firaga Bangle", 1, "ready");
+  await expectReady(peers, "Blizzaga Armlet", 0, "missing");
+  await expectReady(peers, "Thundaga Trinket", 1, "ready");
+  const peersWarning = await goal(peers, "Firaga Bangle").locator(".craft-conflict > summary").getAttribute("aria-label");
+  assert.ok(peersWarning.includes("Thundaga Trinket") && !peersWarning.includes("Blizzaga Armlet"), "Warnings must name only other ready-to-craft items");
+  await peers.locator('[data-remove="Thundaga Trinket"]').click();
+  assert.equal(await peers.locator("#goals .craft-conflict").count(), 0, "A missing peer alone must not trigger a shared-material warning");
   console.log("PASS wishlist: advisory only on ready conflicting recipes; none on missing/locked or sufficient stock");
 
   const energyStock = {
@@ -200,27 +213,27 @@ try {
   await expectReady(energy, "Firaga Bangle", 1, "ready");
   await expectReady(energy, "Blizzaga Armlet", 1, "ready");
   await expectIngredient(energy, "Firaga Bangle", "Mythril Shard", 5, 2);
-  await expectIngredient(energy, "Blizzaga Armlet", "Mythril Shard", 5, 3);
+  await expectIngredient(energy, "Blizzaga Armlet", "Mythril Shard", 5, 2);
   await expectIngredient(energy, "Firaga Bangle", "Energy Shard", 1, 1);
-  assert.equal(await goal(energy, "Blizzaga Armlet").locator('.goal-ingredients [data-material="Energy Shard"]').count(), 0, "Finite Energy must not appear in both root costs");
+  await expectIngredient(energy, "Blizzaga Armlet", "Energy Shard", 1, 1);
   await energy.locator("#energy").selectOption("none");
   await expectReady(energy, "Firaga Bangle", 1, "ready");
-  await expectReady(energy, "Blizzaga Armlet", 0, "missing");
+  await expectReady(energy, "Blizzaga Armlet", 1, "ready");
   await energy.locator("#energy").selectOption("farm");
   await expectReady(energy, "Firaga Bangle", 1, "ready");
-  await expectReady(energy, "Blizzaga Armlet", 0, "missing");
+  await expectReady(energy, "Blizzaga Armlet", 1, "ready");
   await energy.locator("#energy").selectOption("owned");
   await energy.locator("#moogle").selectOption("1");
   await expectReady(energy, "Firaga Bangle", 1, "ready");
-  await expectReady(energy, "Blizzaga Armlet", 0, "missing");
+  await expectReady(energy, "Blizzaga Armlet", 1, "ready");
   await energy.locator("#moogle").selectOption("5");
   await expectReady(energy, "Firaga Bangle", 1, "ready");
   await expectReady(energy, "Blizzaga Armlet", 1, "ready");
   await energy.locator("#energy").selectOption("none");
-  await expectReady(energy, "Blizzaga Armlet", 0, "missing");
+  await expectReady(energy, "Blizzaga Armlet", 1, "ready");
   assert.deepEqual((await saved(energy)).inventory, energyStock, "Moogle/Energy allocation must leave inventory unchanged");
   await energy.reload();
-  await expectReady(energy, "Blizzaga Armlet", 0, "missing");
+  await expectReady(energy, "Blizzaga Armlet", 1, "ready");
   assert.deepEqual((await saved(energy)).inventory, energyStock);
   console.log("PASS wishlist: Moogle discounts, finite/shared Energy, farming is not owned stock, reload");
 

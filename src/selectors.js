@@ -2,16 +2,17 @@ import data from "./data.js";
 import planner from "./planner.js";
 
 export function wishlistAvailability(state) {
-  const allocated = {};
   return new Map(Object.entries(state.goals).filter(([, quantity]) => quantity).map(([name]) => {
-    const plan = planner.plan({ ...state, goals: { ...allocated, [name]: 1 } });
+    const plan = planner.plan({ ...state, goals: { [name]: 1 } });
     const available = !plan.warnings.length && !plan.needed.length ? 1 : 0;
-    if (available) allocated[name] = 1;
     const locks = [
       ...plan.warnings,
       ...plan.requirements.filter((row) => row.locked).map((row) => `${row.name}: ${data.byRecipe[row.name].unlock}.`),
     ];
-    return [name, { available, status: available ? "ready" : locks.length ? "locked" : "missing", reason: locks.join(" ") }];
+    return [name, {
+      available, status: available ? "ready" : locks.length ? "locked" : "missing",
+      reason: locks.join(" "), ingredients: wishlistIngredients(plan).get(name),
+    }];
   }));
 }
 

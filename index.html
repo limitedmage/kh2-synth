@@ -812,13 +812,19 @@ footer p + p { margin-top: .8rem; }
       return { requirements, needed, routes: [...routes.values()], steps, warnings: [...new Set(warnings)], goals: Object.values(requested).reduce((a, b) => a + b, 0) };
     }
     function wishlistConflicts(state) {
-      const goals = Object.fromEntries(Object.entries(state.goals).filter(([name, qty]) => data_default.byRecipe[name] && count(qty)));
+      const goals = {};
+      const individuals = /* @__PURE__ */ new Map();
+      for (const [name, quantity] of Object.entries(state.goals)) {
+        if (!data_default.byRecipe[name] || !count(quantity)) continue;
+        const individual = plan({ ...state, goals: { [name]: quantity } });
+        if (individual.warnings.length || individual.needed.length) continue;
+        goals[name] = quantity;
+        individuals.set(name, individual);
+      }
       const conflicts = /* @__PURE__ */ new Map();
       const complete = plan({ ...state, goals });
       if (!complete.needed.length) return conflicts;
-      for (const name of Object.keys(goals)) {
-        const individual = plan({ ...state, goals: { [name]: goals[name] } });
-        if (individual.warnings.length || individual.needed.length) continue;
+      for (const [name, individual] of individuals) {
         const inventory = { ...state.inventory };
         const crafted = { ...state.crafted };
         for (const step of individual.steps) {
@@ -1584,16 +1590,19 @@ footer p + p { margin-top: .8rem; }
 
   // src/selectors.js
   function wishlistAvailability(state) {
-    const allocated = {};
     return new Map(Object.entries(state.goals).filter(([, quantity]) => quantity).map(([name]) => {
-      const plan = planner_default.plan({ ...state, goals: { ...allocated, [name]: 1 } });
+      const plan = planner_default.plan({ ...state, goals: { [name]: 1 } });
       const available = !plan.warnings.length && !plan.needed.length ? 1 : 0;
-      if (available) allocated[name] = 1;
       const locks = [
         ...plan.warnings,
         ...plan.requirements.filter((row) => row.locked).map((row) => `${row.name}: ${data_default.byRecipe[row.name].unlock}.`)
       ];
-      return [name, { available, status: available ? "ready" : locks.length ? "locked" : "missing", reason: locks.join(" ") }];
+      return [name, {
+        available,
+        status: available ? "ready" : locks.length ? "locked" : "missing",
+        reason: locks.join(" "),
+        ingredients: wishlistIngredients(plan).get(name)
+      }];
     }));
   }
   function wishlistIngredients(plan) {
@@ -1664,7 +1673,7 @@ footer p + p { margin-top: .8rem; }
       <span aria-hidden="true">${escape(name)} <strong class="wishlist-ratio"><span class="stock-count">${owned}</span><span class="ratio-divider">/</span><span class="need-count">${required}</span></strong></span>
     </span>`;
   }
-  function wishlistMarkup(state, plan) {
+  function wishlistMarkup(state) {
     const goals = Object.entries(state.goals).filter(([, quantity]) => quantity);
     if (!goals.length) return `
     <div class="empty">
@@ -1674,11 +1683,10 @@ footer p + p { margin-top: .8rem; }
     </div>`;
     const availability = wishlistAvailability(state);
     const conflicts = planner_default.wishlistConflicts(state);
-    const ingredients = wishlistIngredients(plan);
     return `<h3>Wishlist</h3>${goals.map(([name]) => {
       const recipe = data_default.byRecipe[name];
       const ready = availability.get(name);
-      const costs = ingredients.get(name);
+      const costs = ready.ingredients;
       const chips = Object.entries(costs || planner_default.costs(recipe, state, name === "Ultima Weapon")).filter(([, required]) => required).map(([material, required]) => ingredientChip(material, required, state.inventory)).join("");
       const base = recipe.base ? `
       <label class="check goal-base" title="${escape(recipe.base)} already made">
@@ -1793,7 +1801,7 @@ footer p + p { margin-top: .8rem; }
       <div class="stat"><strong>${plan.goals}</strong><span>items on the wishlist</span></div>
       <div class="stat"><strong>${plan.needed.reduce((total, row) => total + row.missing, 0)}</strong><span>materials to collect</span></div>
       <div class="stat"><strong>${plan.routes.filter((route) => route.available).length}</strong><span>available sources</span></div>`;
-      $("goals").innerHTML = wishlistMarkup(state, plan);
+      $("goals").innerHTML = wishlistMarkup(state);
       $("blockers").innerHTML = plan.warnings.map((warning) => `<div class="alert">${escape(warning)}</div>`).join("");
       $("requirements").innerHTML = requirementsMarkup(state, plan, $("show-owned").checked);
       $("routes").innerHTML = routesMarkup(plan);

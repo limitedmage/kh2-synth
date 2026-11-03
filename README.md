@@ -9,7 +9,7 @@
 
 The page saves locally in the browser. **Export save** downloads a JSON backup; **Load save** restores it. Keep the HTML at the same path for consistent browser storage. Browser restrictions/private mode may prevent saving; JSON backups work independently. The URL fragment keeps the current tab.
 
-Ready checkmarks share stock in wishlist order without consuming it. Each item's ingredient chips show owned/needed counts and retain surplus; combined totals appear only under **Materials to collect**. Shared-material warnings appear only on ready items. **End-game preset** unlocks every world and optional area without marking chests collected or adding inventory. Menu styling and item/material icons are original artwork.
+Ready checkmarks and ingredient costs are calculated independently for each wishlist item using the full current inventory, without reserving materials for other items. Ingredient chips show owned/needed counts and retain surplus; combined totals appear only under **Materials to collect**. Shared-material warnings flag conflicts only between items that are independently ready to craft; missing and locked items are excluded. **End-game preset** unlocks every world and optional area without marking chests collected or adding inventory. Menu styling and item/material icons are original artwork.
 
 ## Media import
 
@@ -31,7 +31,7 @@ Ready checkmarks share stock in wishlist order without consuming it. Each item's
 
 Stock is shared across the entire wish list. Missing Mythril can be recursively synthesized when its unlocks are met; Mythril has no enemy drops. Other craftable materials default to collecting, with a per-material synthesis switch. Chest tracking consists only of global and per-world completion switches: **no chest routes are planned, and unchecked chests never count as stock**.
 
-Moogle rank discounts and Energy reductions stack, rounding up per ingredient per craft. Energy is allocated in goal order, then to material sub-recipes; available-stock mode never assumes unlimited Energy. Upgrades require Moogle level 3, and combining their Serenity modifier with Energy requires level 4. First-time base crafts are included unless marked previously made; an upgrade does not consume the base equipment. The calculator holds Moogle level constant rather than predicting experience gains.
+Moogle rank discounts and Energy reductions stack, rounding up per ingredient per craft. For combined material totals, Energy is allocated in goal order, then to material sub-recipes; available-stock mode never assumes unlimited Energy. Upgrades require Moogle level 3, and combining their Serenity modifier with Energy requires level 4. First-time base crafts are included unless marked previously made; an upgrade does not consume the base equipment. The calculator holds Moogle level constant rather than predicting experience gains.
 
 Recipe selections assume their recipe documents have been collected. Free Development checks the lifetime number of material types discovered, independently of current stock. World stages conservatively gate farming locations; temporary story encounters can differ. Chest switches do not alter world progress. Orichalcum+ is finite, with non-chest reward tracking separate from inventory.
 

@@ -1,7 +1,7 @@
 import data from "../data.js";
 import planner from "../planner.js";
 import { escape, icon, link, on } from "../dom.js";
-import { groupRoutes, wishlistAvailability, wishlistIngredients } from "../selectors.js";
+import { groupRoutes, wishlistAvailability } from "../selectors.js";
 
 function readinessIndicator(ready) {
   const label = ready.status === "ready" ? "Ready to craft" : ready.status === "locked" ? "Locked" : "Needs materials";
@@ -51,7 +51,7 @@ function ingredientChip(name, required, inventory) {
     </span>`;
 }
 
-function wishlistMarkup(state, plan) {
+function wishlistMarkup(state) {
   const goals = Object.entries(state.goals).filter(([, quantity]) => quantity);
   if (!goals.length) return `
     <div class="empty">
@@ -61,11 +61,10 @@ function wishlistMarkup(state, plan) {
     </div>`;
   const availability = wishlistAvailability(state);
   const conflicts = planner.wishlistConflicts(state);
-  const ingredients = wishlistIngredients(plan);
   return `<h3>Wishlist</h3>${goals.map(([name]) => {
     const recipe = data.byRecipe[name];
     const ready = availability.get(name);
-    const costs = ingredients.get(name);
+    const costs = ready.ingredients;
     const chips = Object.entries(costs || planner.costs(recipe, state, name === "Ultima Weapon"))
       .filter(([, required]) => required).map(([material, required]) => ingredientChip(material, required, state.inventory)).join("");
     const base = recipe.base ? `
@@ -194,7 +193,7 @@ export function mountPlan(root, store) {
       <div class="stat"><strong>${plan.goals}</strong><span>items on the wishlist</span></div>
       <div class="stat"><strong>${plan.needed.reduce((total, row) => total + row.missing, 0)}</strong><span>materials to collect</span></div>
       <div class="stat"><strong>${plan.routes.filter((route) => route.available).length}</strong><span>available sources</span></div>`;
-    $("goals").innerHTML = wishlistMarkup(state, plan);
+    $("goals").innerHTML = wishlistMarkup(state);
     $("blockers").innerHTML = plan.warnings.map((warning) => `<div class="alert">${escape(warning)}</div>`).join("");
     $("requirements").innerHTML = requirementsMarkup(state, plan, $("show-owned").checked);
     $("routes").innerHTML = routesMarkup(plan);

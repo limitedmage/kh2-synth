@@ -141,13 +141,19 @@ const planner = (() => {
     return { requirements, needed, routes: [...routes.values()], steps, warnings: [...new Set(warnings)], goals: Object.values(requested).reduce((a, b) => a + b, 0) };
   }
   function wishlistConflicts(state) {
-    const goals = Object.fromEntries(Object.entries(state.goals).filter(([name, qty]) => D.byRecipe[name] && count(qty)));
+    const goals = {};
+    const individuals = new Map();
+    for (const [name, quantity] of Object.entries(state.goals)) {
+      if (!D.byRecipe[name] || !count(quantity)) continue;
+      const individual = plan({ ...state, goals: { [name]: quantity } });
+      if (individual.warnings.length || individual.needed.length) continue;
+      goals[name] = quantity;
+      individuals.set(name, individual);
+    }
     const conflicts = new Map();
     const complete = plan({ ...state, goals });
     if (!complete.needed.length) return conflicts;
-    for (const name of Object.keys(goals)) {
-      const individual = plan({ ...state, goals: { [name]: goals[name] } });
-      if (individual.warnings.length || individual.needed.length) continue;
+    for (const [name, individual] of individuals) {
       const inventory = { ...state.inventory };
       const crafted = { ...state.crafted };
       // Include synthesized material outputs and first-time prerequisites, not just root costs.

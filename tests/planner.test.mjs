@@ -66,15 +66,20 @@ test("wishlist conflicts ignore unrelated shortages and recipes outside a confli
   assert.deepEqual([...P.wishlistConflicts(input).keys()], ["Firaga Bangle", "Blizzaga Armlet"]);
   assert.equal(P.wishlistConflicts({ ...input, goals: { "Firaga Bangle": 1, "Defense Boost": 1 }, inventory: stocked({ "Blazing Crystal": 0 }) }).size, 0);
 });
-test("wishlist conflicts detect increased existing shared shortages but not unavailable crafts", () => {
+test("wishlist conflicts exclude unavailable peers, including their contribution to shortages", () => {
   const input = state({
     goals: { "Firaga Bangle": 1, "Blizzaga Armlet": 1 },
     inventory: stocked({ "Mythril Shard": 5, "Frost Stone": 0 }), expand: false, energy: "none",
   });
-  assert.deepEqual([...P.wishlistConflicts(input).keys()], ["Firaga Bangle"]);
-  assert.deepEqual(plain(P.wishlistConflicts(input).get("Firaga Bangle").materials), [{ name: "Mythril Shard", before: 0, after: 5 }]);
-  const three = { ...input, goals: { ...input.goals, "Thundaga Trinket": 1 }, inventory: stocked({ "Mythril Shard": 5 }) };
-  assert.deepEqual(plain(P.wishlistConflicts(three).get("Firaga Bangle").materials), [{ name: "Mythril Shard", before: 5, after: 10 }]);
+  assert.equal(P.wishlistConflicts(input).size, 0);
+  const three = { ...input, goals: { ...input.goals, "Thundaga Trinket": 1 } };
+  const conflicts = P.wishlistConflicts(three);
+  assert.deepEqual([...conflicts.keys()], ["Firaga Bangle", "Thundaga Trinket"]);
+  assert.deepEqual(plain(conflicts.get("Firaga Bangle")), {
+    materials: [{ name: "Mythril Shard", before: 0, after: 5 }], items: ["Thundaga Trinket"],
+  });
+  const allReady = { ...three, inventory: stocked({ "Mythril Shard": 5 }) };
+  assert.deepEqual(plain(P.wishlistConflicts(allReady).get("Firaga Bangle").materials), [{ name: "Mythril Shard", before: 5, after: 10 }]);
 });
 test("wishlist conflicts honor Moogle discounts and finite or selected Energy costs", () => {
   const input = state({
