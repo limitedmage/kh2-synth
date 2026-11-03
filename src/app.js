@@ -189,6 +189,7 @@
   let controller;
   let importing = false;
   let review = [];
+  let recipeReview = [];
   let reviewKind = "recipes";
   let currentKind = "recipes";
   let observations = [];
@@ -293,20 +294,34 @@
   });
   $("two-columns").addEventListener("change", drawPreview);
   $("column-split").addEventListener("input", drawPreview);
+  function syncImportMode() {
+    const recipes = currentKind === "recipes";
+    for (const id of ["two-columns", "column-split", "sampling"]) $(id).closest("label").hidden = recipes;
+    $("inventory-video-help").hidden = recipes;
+    $("import-instructions").textContent = recipes
+      ? "Read the left-hand recipe names only, including dim names. Scan both Recipes and Free Development: their results combine below. The right-hand ingredients / stock panel is not used. Import stock separately from the Materials list."
+      : "Read stock from the game's Materials list, including names and quantities in both columns. Recipe photos are never used as inventory. Drag to crop, or align four corners if the screen is crooked.";
+    $("paste-help").textContent = recipes ? "One recipe name per line, from either recipe list" : "One material and current count per line";
+    $("ocr-text").placeholder = recipes ? "AP Boost\nPetite Ribbon\nMythril Shard\nAcrisius" : "Dense Shard 4\nEnergy Crystal 3";
+    $("import-policy").textContent = recipes
+      ? "Recipe imports add missing goals with quantity 1 and preserve existing desired quantities. Stock comes only from the Materials list import or manual Materials entry."
+      : "Inventory imports replace only checked material totals; materials not detected are left unchanged.";
+  }
   $("import-kind").addEventListener("change", () => {
     currentKind = $("import-kind").value;
+    syncImportMode();
     resetCrop();
-    if (review.length) {
-      $("import-review").hidden = true;
-      review = [];
-    }
+    reviewKind = currentKind;
+    review = currentKind === "recipes" ? recipeReview : [];
+    if (review.length) renderReview();
+    else $("import-review").hidden = true;
     $("ocr-status").textContent = "Choose media or paste text for this import type.";
   });
   $("media-file").addEventListener("change", async (event) => {
     const file = event.target.files[0];
     if (!file) return;
     mediaReady = false; $("recognize").disabled = true;
-    $("import-review").hidden = true;
+    $("import-review").hidden = currentKind !== "recipes" || !recipeReview.length;
     if (mediaURL) URL.revokeObjectURL(mediaURL);
     $("video").pause(); $("video").removeAttribute("src"); $("video").load();
     mediaURL = URL.createObjectURL(file);
@@ -316,6 +331,8 @@
       const videoFile = file.type.startsWith("video/") || /\.(mov|mp4|webm|m4v)$/i.test(file.name);
       if (videoFile) {
         $("import-kind").value = "inventory"; currentKind = "inventory";
+        syncImportMode();
+        $("import-review").hidden = true;
         media = $("video");
         await new Promise((resolve, reject) => {
           const timer = setTimeout(() => finish(new Error("Video could not be opened. Try an H.264 MP4 export.")), 15000);
@@ -342,11 +359,24 @@
     } catch (error) { $("media-preview").hidden = true; $("ocr-status").textContent = error.message; }
   });
   function renderReview(unmatched = 0) {
-    const names = reviewKind === "recipes" ? D.recipes.map((r) => r.name) : D.materialNames;
+    const recipes = reviewKind === "recipes";
+    const names = recipes ? D.recipes.map((r) => r.name) : D.materialNames;
     $("import-review").hidden = false;
-    $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select><input type="number" min="${reviewKind === "recipes" ? 1 : 0}" max="${reviewKind === "recipes" ? 99 : 9999}" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?"><small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small></div>`).join("");
-    $("review-message").textContent = `${review.length} recognized ${reviewKind === "recipes" ? "recipes" : "materials"}. ${unmatched ? `${unmatched} unrecognized text line(s); inspect the raw text and add anything missing manually.` : ""}${!review.length ? " Adjust the crop or use pasted text / manual entry." : ""}`;
+    $("review-rows").classList.toggle("recipe-review", recipes);
+    $("review-instructions").textContent = recipes
+      ? "Recipe names from Recipes and Free Development are combined. Unchecked names are ignored. No inventory counts are read from recipe photos."
+      : "Unchecked rows are ignored. Repeated video rows are not added together. Conflicting readings stay unchecked until reviewed. Names without a readable count are left blank.";
+    $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select>${recipes ? "" : `<input type="number" min="0" max="9999" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?">`}<small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small></div>`).join("");
+    $("review-message").textContent = `${review.length} ${recipes ? "combined recipe names from Recipes / Free Development" : "recognized materials"}. ${unmatched ? `${unmatched} unrecognized text line(s); inspect the raw text and add anything missing manually.` : ""}${!review.length ? " Adjust the crop or use pasted text / manual entry." : ""}`;
     $("apply-import").disabled = !review.length;
+  }
+  function combineReview(incoming) {
+    if (reviewKind === "recipes") {
+      const combined = new Map(recipeReview.map((row) => [row.name, row]));
+      for (const row of incoming) if (!combined.has(row.name)) combined.set(row.name, row);
+      recipeReview = [...combined.values()];
+      review = recipeReview;
+    } else review = incoming;
   }
   $("import-review").addEventListener("change", (event) => {
     const el = event.target;
@@ -357,7 +387,7 @@
   $("parse-text").addEventListener("click", () => {
     reviewKind = $("import-kind").value;
     const parsed = R.parseLines($("ocr-text").value.split(/\r?\n/), reviewKind);
-    review = R.merge(parsed.rows); renderReview(parsed.unmatched.length);
+    combineReview(R.merge(parsed.rows)); renderReview(parsed.unmatched.length);
   });
   $("apply-import").addEventListener("click", () => {
     const checked = review.filter((row) => row.checked);
@@ -365,12 +395,13 @@
     const names = checked.map((r) => r.name);
     if (new Set(names).size !== names.length) { notice("Duplicate names in review. Uncheck or rename duplicate rows before applying."); return; }
     for (const row of checked) {
-      if (reviewKind === "recipes") state.goals[row.name] = P.count(row.quantity, row.name === "Ultima Weapon" ? 1 : 99);
+      if (reviewKind === "recipes") state.goals[row.name] = state.goals[row.name] || 1;
       else state.inventory[row.name] = P.count(row.quantity);
     }
-    state.materialTypes = Math.max(state.materialTypes, Object.values(state.inventory).filter((n) => n > 0).length);
+    if (reviewKind === "recipes") recipeReview = [];
+    else state.materialTypes = Math.max(state.materialTypes, Object.values(state.inventory).filter((n) => n > 0).length);
     save(); renderAll();
-    notice(`${checked.length} ${reviewKind === "recipes" ? "recipe quantities" : "material totals"} updated. Unrecognized / unchecked entries were left unchanged.`);
+    notice(reviewKind === "recipes" ? `${checked.length} recipe names combined with the wish list. Existing quantities and inventory were left unchanged.` : `${checked.length} material totals updated. Unrecognized / unchecked entries were left unchanged.`);
   });
   function setImportBusy(busy) {
     importing = busy;
@@ -457,16 +488,17 @@
           done++; $("ocr-progress").value = done / total;
         }
       }
-      $("ocr-status").textContent = "Reading complete. Review recognized names and counts below.";
+      $("ocr-status").textContent = reviewKind === "recipes" ? "Reading complete. Recipe names combined below. Scan the other recipe list or apply checked names." : "Reading complete. Review recognized names and counts below.";
     } catch (error) {
       $("ocr-status").textContent = signal.aborted ? "Cancelled. Partial results are available below." : `Recognition stopped: ${error.message}. Manual entry and pasted text remain available.`;
     } finally {
       if (worker) { await worker.terminate().catch(() => {}); worker = null; }
       $("ocr-text").value = raw.join("\n");
-      review = R.merge(observations, media === $("video") ? 2 : 1); renderReview(unmatched);
+      combineReview(R.merge(observations, media === $("video") ? 2 : 1)); renderReview(unmatched);
       setImportBusy(false);
     }
   });
+  syncImportMode();
   renderAll();
   if (storageWarning) { notice(storageWarning); $("save-status").textContent = "Use Export save"; $("save-status").classList.add("storage-error"); }
 })();

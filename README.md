@@ -14,10 +14,11 @@ The page saves locally in the browser. **Export save** downloads a JSON backup; 
 - Choose **Photo & video import** and select a photo or video. Media never leaves the device.
 - Drag a reading area over the recipe list or inventory table; percentage fields also adjust it. Default crops fit the supplied TV photos/video, but other captures may need adjustment.
 - For a crooked camera capture, select **Align four corners**, then click the table's top-left, top-right, bottom-right, and bottom-left corners. The page corrects perspective before recognition. Keep the camera still while scrolling; align again if it moves.
-- Recipe photos must include the left list only, not the right ingredient panel. Dim unmade items can be harder to recognize.
+- Recipe photos read names from the left list only, never ingredients or stock from the right panel. Scan **Recipes** and **Free Development** one after another: both lists accumulate into one deduplicated review before applying. Dim unmade items can be harder to recognize.
 - Inventory is read column-by-column, sampling every 0.2 seconds by default. Overlapping rows are not summed. Conflicting counts require review.
 - Quantities are recognized separately from names, with their own image thresholding. Video counts require repeated agreement before being preselected. Adjust **First column width %** if the preview separator clips the left counts or overlaps the right column.
-- Review names and quantities, check the desired rows, then apply. Imports replace only the checked entries and leave everything else unchanged. Unreadable counts stay blank.
+- Recipe review shows names only. Applying it adds missing goals at quantity 1 and preserves existing desired quantities; inventory never changes. Read inventory separately from the game's **Materials** list.
+- Inventory review includes quantities. Check the desired rows, then apply to replace only those material totals. Unreadable counts stay blank.
 - OCR downloads pinned Tesseract.js 5.1.1 and its English model from public CDNs on first use. Manual entry, planning, and saved data work without internet. No API key is needed.
 - MOV playback depends on browser codec support. If unsupported, export the recording as H.264 MP4 or use screenshots. Short recordings with pauses produce better results.
 - Cancel keeps partial readings for review. Pasted text is also supported.

@@ -45,6 +45,10 @@ globalThis.KH2Recognition = (() => {
       if (!text?.trim()) continue;
       let nameText = text.trim();
       let quantity = kind === "recipes" ? 1 : null;
+      if (kind === "recipes" && /\s+\d+(?:\s+\d+)*\s*$/.test(nameText)) {
+        unmatched.push(text);
+        continue;
+      }
       if (kind === "inventory") {
         const number = nameText.match(/\s+(?:[x×]\s*)?([0-9OIl|SB]{1,4})\s*$/);
         if (number) {

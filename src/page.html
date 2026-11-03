@@ -63,11 +63,11 @@
       <div class="section-title"><div><p class="eyebrow">FROM THE SCREEN TO THE JOURNAL</p><h2>Import game media</h2><p class="muted">Recognition runs on this device. Nothing is uploaded. Review every result before applying.</p></div></div>
       <div class="panel">
         <div class="toolbar">
-          <label>Read<select id="import-kind"><option value="recipes">Recipe names (photo)</option><option value="inventory">Material stock (video or photo)</option></select></label>
+          <label>Read<select id="import-kind"><option value="recipes">Recipes + Free Development (left list only)</option><option value="inventory">Materials list stock (video or photo)</option></select></label>
           <label class="button primary">Choose photo / video<input id="media-file" type="file" accept="image/*,video/*" hidden></label>
           <span id="media-name" class="muted">No file selected</span>
         </div>
-        <p class="muted">For recipe photos, select only the left-hand list (including dim names). For materials, select both columns with their quantities. Drag to crop. If the screen is crooked, use four-corner alignment to straighten the table.</p>
+        <p id="import-instructions" class="muted">Read the left-hand recipe names only, including dim names. Scan both Recipes and Free Development: their results combine below. The right-hand ingredients / stock panel is not used. Import stock separately from the Materials list.</p>
         <div id="media-preview" hidden><canvas id="preview" aria-label="Media preview. Drag to select reading area."></canvas><video id="video" muted playsinline hidden></video></div>
         <div class="toolbar crop-fields">
           <label>Left %<input id="crop-x" type="number" min="0" max="99" value="25"></label>
@@ -79,22 +79,22 @@
         </div>
         <p id="alignment-status" class="muted">For camera recordings: click Align four corners, then the table's top-left, top-right, bottom-right, and bottom-left corners. Keep the camera still while scrolling.</p>
         <div class="toolbar">
-          <label class="check"><input id="two-columns" type="checkbox" checked> Inventory has two columns</label>
-          <label>First column width %<input id="column-split" type="number" min="35" max="65" value="52" step="0.5"></label>
-          <label>Video sampling<select id="sampling"><option value="0.2">Every 0.2 seconds (fast scroll)</option><option value="0.5">Every 0.5 seconds</option><option value="1">Every 1 second</option></select></label>
+          <label class="check" hidden><input id="two-columns" type="checkbox" checked> Inventory has two columns</label>
+          <label hidden>First column width %<input id="column-split" type="number" min="35" max="65" value="52" step="0.5"></label>
+          <label hidden>Video sampling<select id="sampling"><option value="0.2">Every 0.2 seconds (fast scroll)</option><option value="0.5">Every 0.5 seconds</option><option value="1">Every 1 second</option></select></label>
           <button id="recognize" class="primary" disabled>Read selected area</button><button id="cancel-ocr" class="quiet" hidden>Cancel</button>
         </div>
         <p id="ocr-status" role="status">First use downloads the text recognition engine and English model. Manual entry works offline.</p>
         <progress id="ocr-progress" max="1" value="0" hidden></progress>
-        <p class="muted">Keep scrolling videos short and pause on each page when possible. MOV support depends on the browser and codec; export to H.264 MP4 if playback fails. Large imports can take several minutes.</p>
+        <p id="inventory-video-help" class="muted" hidden>Keep scrolling videos short and pause on each page when possible. MOV support depends on the browser and codec; export to H.264 MP4 if playback fails. Large imports can take several minutes.</p>
       </div>
-      <details class="panel"><summary>Paste or correct recognized text manually</summary><label>One recipe, or “Material name 12”, per line<textarea id="ocr-text" rows="8" placeholder="AP Boost&#10;Petite Ribbon&#10;&#10;Dense Shard 4"></textarea></label><button id="parse-text" class="quiet">Review this text</button></details>
+      <details class="panel"><summary>Paste or correct recognized text manually</summary><label><span id="paste-help">One recipe name per line, from either recipe list</span><textarea id="ocr-text" rows="8" placeholder="AP Boost&#10;Petite Ribbon&#10;Mythril Shard&#10;Acrisius"></textarea></label><button id="parse-text" class="quiet">Review this text</button></details>
       <div id="import-review" class="panel" hidden>
-        <h3>Review recognition</h3><p class="muted">Unchecked rows are ignored. Repeated video rows are not added together. Conflicting readings stay unchecked until reviewed. Names without a readable count are left blank.</p>
+        <h3>Review recognition</h3><p id="review-instructions" class="muted">Recipe names from Recipes and Free Development are combined. Unchecked names are ignored. No inventory counts are read from recipe photos.</p>
         <div id="review-rows"></div>
         <p id="review-message" class="muted"></p>
         <button id="apply-import" class="primary">Apply checked rows</button>
-        <p class="muted">Recipe imports set desired quantities (do not duplicate existing goals). Inventory imports replace only checked material totals; materials not detected are left unchanged.</p>
+        <p id="import-policy" class="muted">Recipe imports add missing goals with quantity 1 and preserve existing desired quantities. Stock comes only from the Materials list import or manual Materials entry.</p>
       </div>
     </section>
     <footer>

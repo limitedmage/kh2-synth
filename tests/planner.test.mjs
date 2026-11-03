@@ -138,3 +138,7 @@ test("one isolated video count is not preselected; repeated agreement can be", (
   assert.equal(merged.find((r) => r.name === "Dense Shard").checked, true);
   assert.equal(merged.find((r) => r.name === "Frost Crystal").checked, false);
 });
+test("recipe name parsing ignores the right-hand ingredient / stock rows", () => {
+  const parsed = R.parseLines(["AP Boost", "Mythril Gem 1 2", "Serenity Crystal 3", "Mythril Shard", "Acrisius"], "recipes");
+  assert.deepEqual(plain(parsed.rows.map((r) => r.name)), ["AP Boost", "Mythril Shard", "Acrisius"]);
+});
