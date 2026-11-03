@@ -1,5 +1,7 @@
 # KH2 Final Mix Synthesis Journal
 
+**[Open the deployed journal](https://limitedmage.github.io/kh2-synth).**
+
 **Open [index.html](index.html) directly in a modern browser. No server, account, or build step is needed.**
 
 1. Choose recipes under **Recipes**, or import a game photo. The wishlist requests one of each.
