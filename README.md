@@ -2,22 +2,25 @@
 
 **Open [index.html](index.html) directly in a modern browser. No server, account, or build step is needed.**
 
-1. Add recipes and quantities under **Recipes**, or import a game photo.
+1. Choose recipes under **Recipes**, or import a game photo. The wishlist requests one of each.
 2. Enter stock under **Materials**, or import a scrolling inventory video.
 3. Set **World progress**, optional unlocks, chest completion, and the Moogle level.
-4. Open **Farming plan** for shared material deficits, synthesis prerequisites, and available/locked enemy locations.
+4. Open **Farming plan** for readiness checkmarks, ingredient counts, missing materials, and farming locations.
 
-The page saves locally in the browser. **Export save** downloads a JSON backup; **Load save** restores it. Keep the HTML at the same path for consistent browser storage. Browser restrictions/private mode may prevent saving; JSON backups work independently.
+The page saves locally in the browser. **Export save** downloads a JSON backup; **Load save** restores it. Keep the HTML at the same path for consistent browser storage. Browser restrictions/private mode may prevent saving; JSON backups work independently. The URL fragment keeps the current tab.
+
+Ready checkmarks share stock in wishlist order without consuming it. Each item's ingredient chips show owned/needed counts and retain surplus; combined totals appear only under **Materials to collect**. Shared-material warnings appear only on ready items. **End-game preset** unlocks every world and optional area without marking chests collected or adding inventory. Menu styling and item/material icons are original artwork.
 
 ## Media import
 
-- Choose **Photo & video import** and select a photo or video. Media never leaves the device.
-- Four perspective corners are preselected when a photo or video opens. Drag individual corners to fit the recipe list or inventory table. Defaults fit the supplied TV photos/video approximately, but other captures may need adjustment.
-- To select new corners, choose **Realign four corners**, then click top-left, top-right, bottom-right, and bottom-left. **Reset corners** restores the preselected defaults. Keep the camera still while scrolling; adjust again if it moves.
+- Choose **Import media** and select a photo or video. Media never leaves the device.
+- Table corners and the inventory column divider are detected from the image, including camera perspective. Drag individual handles to adjust. If detection fails, a starting selection is shown for manual alignment.
+- To select new corners, choose **Realign four corners**, then click top-left, top-right, bottom-right, and bottom-left. **Reset corners** retries detection on the current frame. Keep the camera still while scrolling; adjust again if it moves.
 - Recipe photos read names from the left list only, never ingredients or stock from the right panel. Scan **Recipes** and **Free Development** one after another: both lists accumulate into one deduplicated review before applying. Dim unmade items can be harder to recognize.
 - Inventory is read column-by-column, sampling every 0.2 seconds by default. Overlapping rows are not summed. Conflicting counts require review.
-- Quantities are recognized separately from names, excluding adjacent grade badges. Video counts require repeated agreement before being preselected. Adjust **First column width %** if the preview separator clips the left counts or overlaps the right column.
-- Recipe review shows names only. Applying it adds missing goals at quantity 1 and preserves existing desired quantities; inventory never changes. Read inventory separately from the game's **Materials** list.
+- Material names are read without grade badges or quantities. A dedicated combined legacy/LSTM numeric recognizer reads white or yellow counts on blue or dark rows, rejecting badge fragments, neighboring rows, and low-confidence guesses. Video counts require repeated agreement before being preselected. Adjust **First column width %** if the preview separator clips the left counts or overlaps the right column.
+- Inventory alignment includes a small vertical margin to tolerate camera drift and avoid dropping the bottom rows while scrolling.
+- Recipe review shows names only. Applying it keeps one of each selected recipe; inventory never changes. Older saved wishlists also normalize to one of each. Read inventory separately from the game's **Materials** list.
 - Inventory review includes quantities. Use **Check all** or select individual rows, then correct any unreadable counts before applying. Applying replaces all previous inventory: omitted and unchecked materials become zero. Selecting or scanning a file does not clear stock.
 - Each material recognized from media shows a compact original-color name/count image on the right for correction. Hover for its photo/column or video timestamp. Repeated readings use the clearest source matching the displayed count. These images stay local and are not included in exported saves.
 - OCR downloads pinned Tesseract.js 5.1.1 and its English model from public CDNs on first use. Manual entry, planning, and saved data work without internet. No API key is needed.
@@ -34,6 +37,8 @@ Recipe selections assume their recipe documents have been collected. Free Develo
 
 Recipe, material, and enemy source links are included in the page. Final Mix data is used rather than original KH2 data, notably Petite Ribbon quantities and Serenity drop sources. Principal references: [Kingdom Hearts Wiki](https://www.khwiki.com/Synthesis) and [Destiny Islands](https://www.destinyislands.com/kh2-fm/synthesis/materials/). This unofficial fan tool contains no game assets.
 
+The Farming plan's **Lucky Lucky abilities** setting counts equipped copies across the active party, including equipment, and is saved/exported with the journal (default: 0). Final Mix stacks additively: `effective % = min(100, base % × (1 + 0.5 × count))`, per [KH Wiki's mechanics section](https://www.khwiki.com/Lucky_Strike#Mechanics), corroborated by the [Final Mix explanation](https://kingdomhearts.fandom.com/wiki/Lucky_Strike). Route rates show effective and unchanged base percentages; display values are rounded to two decimal places, not whole percentages. Unknown rates remain unknown. The input accepts nonnegative integers without assuming a mode/form-dependent game cap.
+
 ## Development
 
 The generated **index.html is committed** and contains all application code, styles, and guide data. `src/` contains the maintainable source.
@@ -44,8 +49,9 @@ npm run build
 npm test
 npx playwright install chromium
 npm run test:browser
+npm run test:ui
 ```
 
-`npm run check` rebuilds and runs both suites. Browser checks use `file://`, not a development server. Sample media in `samples/` stays local and is ignored by Git.
+`npm run check` rebuilds and runs all suites. Browser checks use `file://`, not a development server. Sample media in `samples/` stays local and is ignored by Git.
 
-With the supplied samples present, `node tests/browser.mjs --media` also exercises real local OCR on both photos and the crooked MOV, including four-corner alignment. This check needs internet for OCR engine/model downloads. Some sample readings intentionally remain unchecked for manual review.
+With the supplied samples present, `node tests/browser.mjs --media` exercises local OCR on both recipe photos and all three inventory recordings (`materials.MOV`, `materials-2.MOV`, and `materials-3.mp4`). It checks every visible material and count against the footage, including Orichalcum+, camera alignment, and yellow screen-capture counts. This check needs internet for OCR engine/model downloads. Disputed readings intentionally remain unchecked for manual review.

@@ -19,8 +19,8 @@ try {
     const column = document.createElement("canvas");
     column.width = 1000; column.height = 100;
     const ctx = column.getContext("2d");
-    const countInk = () => {
-      const quantity = KH2Recognition.quantityCanvas(column, { y0: 20, y1: 70 });
+    const countInk = (bounds = { y0: 20, y1: 70 }) => {
+      const quantity = KH2Recognition.quantityCanvas(column, bounds);
       const pixels = quantity.getContext("2d").getImageData(0, 0, quantity.width, quantity.height).data;
       let ink = 0;
       for (let i = 0; i < pixels.length; i += 4) if (pixels[i] < 128) ink++;
@@ -34,18 +34,46 @@ try {
       ctx.fillStyle = "#fff"; ctx.fillText("8", 920, 63);
       return countInk();
     });
-    return { baseline, badges };
+    ctx.fillStyle = "#2046a0"; ctx.fillRect(0, 0, 1000, 100);
+    ctx.fillStyle = "#fff"; ctx.textAlign = "right"; ctx.fillText("40", 894, 63);
+    const centered = countInk();
+    ctx.fillStyle = "#2046a0"; ctx.fillRect(0, 0, 1000, 100);
+    ctx.fillStyle = "#fff"; ctx.fillText("40", 994, 63);
+    const rightEdge = countInk();
+    ctx.fillStyle = "#2046a0"; ctx.fillRect(0, 0, 1000, 100);
+    ctx.fillStyle = "#fff"; ctx.fillText("26", 860, 63);
+    const row = countInk();
+    ctx.fillText("9", 860, 106);
+    const nextRow = countInk();
+    column.height = 150;
+    ctx.fillStyle = "#2046a0"; ctx.fillRect(0, 0, 1000, 150);
+    ctx.fillStyle = "#fff"; ctx.font = "bold 42px sans-serif"; ctx.fillText("13", 810, 73);
+    const raisedCount = countInk({ y0: 60, y1: 110 });
+    ctx.fillStyle = "#202020"; ctx.fillRect(0, 0, 1000, 150);
+    ctx.fillStyle = "#ffff00"; ctx.fillText("26", 810, 73);
+    const yellowCount = countInk({ y0: 60, y1: 110 });
+    const counters = {};
+    for (const [printed, recognized] of [["6", "5"], ["5", "5"], ["0", "5"], ["8", "5"], ["26", "25"]]) {
+      ctx.fillStyle = "#202020"; ctx.fillRect(0, 0, 1000, 150);
+      ctx.fillStyle = "#ffff00"; ctx.fillText(printed, 810, 73);
+      counters[printed] = KH2Recognition.quantityText(KH2Recognition.quantityCanvas(column, { y0: 35, y1: 85 }), recognized);
+    }
+    return { baseline, badges, centered, rightEdge, row, nextRow, raisedCount, yellowCount, counters };
   });
   assert.ok(quantityPixels.baseline > 0, "Count recognition must preserve the quantity digits");
   assert.deepEqual(quantityPixels.badges, Array(4).fill(quantityPixels.baseline), "White, pink and cyan grade badges must not contribute pixels to numeric OCR");
+  assert.ok(quantityPixels.centered > 0 && quantityPixels.raisedCount > 0, "Counts must survive camera skew relative to material names");
+  assert.equal(quantityPixels.rightEdge, quantityPixels.centered, "Rightmost digits must not be cropped: 40 must not become 4");
+  assert.equal(quantityPixels.nextRow, quantityPixels.row, "Partial digits from the next row must not become part of this count");
+  assert.ok(quantityPixels.yellowCount > 0, "Yellow counts on the screen capture's dark background must not be discarded");
+  assert.deepEqual(quantityPixels.counters, { 6: "6", 5: "5", 0: "5", 8: "5", 26: "26" }, "Only an enclosed lower counter may correct the game's misread 6; real 5s, zeroes and eights must not become 6");
   await page.getByRole("button", { name: "Recipes", exact: true }).click();
   await page.locator("#recipe-search").fill("AP Boost");
   await page.locator("[data-add='AP Boost']").click();
   await page.getByRole("button", { name: /^Farming plan/ }).click();
   await page.locator("#moogle").selectOption("4");
   await page.locator("#expand").selectOption("false");
-  await page.locator("[data-goal='AP Boost']").fill("3");
-  await page.locator("[data-goal='AP Boost']").blur();
+  assert.equal(await page.locator("input[data-goal]").count(), 0, "Wishlist items are requested once, without quantity controls");
   assert.match(await page.locator("#requirements").innerText(), /Power Crystal/);
   await page.getByRole("button", { name: "Materials", exact: true }).click();
   await page.locator("#material-search").fill("Power Crystal");
@@ -54,7 +82,7 @@ try {
   await page.reload();
   const saved = await page.evaluate(() => JSON.parse(localStorage.getItem("kh2-final-mix-synthesis-v1")));
   assert.equal(saved.inventory["Power Crystal"], 4);
-  assert.equal(saved.goals["AP Boost"], 3);
+  assert.equal(saved.goals["AP Boost"], 1);
   assert.equal(saved.moogle, 4);
   await page.getByRole("button", { name: "World progress", exact: true }).click();
   await page.locator("#all-chests").check();
@@ -62,11 +90,11 @@ try {
   await page.locator("[data-chests='ld']").uncheck();
   assert.equal(await page.locator("#all-chests").evaluate((el) => el.indeterminate), true);
   await page.locator("[data-world='ld']").selectOption("2");
-  await page.getByRole("button", { name: "Photo & video import", exact: true }).click();
+  await page.locator("[data-tab='import']").click();
   assert.equal(await page.locator("#crop-x, #crop-y, #crop-w, #crop-h").count(), 0, "Crop percentages must not require manual inputs");
   assert.equal(await page.locator("#two-columns").isVisible(), false);
   assert.equal(await page.locator("#column-split").isVisible(), false);
-  await page.getByText("Paste or correct recognized text manually").click();
+  await page.getByText("Paste or edit text", { exact: true }).click();
   await page.locator("#ocr-text").fill("AP Boost\nPetite Ribbon\nSave the King +\nMythril Gem 1 2");
   await page.locator("#parse-text").click();
   assert.equal(await page.locator(".review-row").count(), 3);
@@ -80,7 +108,7 @@ try {
   assert.equal(await page.locator(".review-row").count(), 5, "Both recipe lists combine without duplicate names");
   await page.locator("#apply-import").click();
   const recipesImported = await page.evaluate(() => JSON.parse(localStorage.getItem("kh2-final-mix-synthesis-v1")));
-  assert.equal(recipesImported.goals["AP Boost"], 3, "Recipe name imports preserve desired quantities");
+  assert.equal(recipesImported.goals["AP Boost"], 1, "Recipe imports keep one of each selected recipe");
   assert.equal(recipesImported.goals.Acrisius, 1);
   assert.equal(recipesImported.goals["Petite Ribbon"], 1);
   assert.deepEqual(recipesImported.inventory, saved.inventory, "Recipe imports must not change inventory");
@@ -119,6 +147,49 @@ try {
   assert.deepEqual(await page.evaluate(() => JSON.parse(localStorage.getItem("kh2-final-mix-synthesis-v1")).inventory), replaced.inventory);
   assert.equal(requests.filter((r) => !r.url.startsWith("file:")).length, 0, "Manual workflows must not need a network request");
 
+  const detectedTables = await page.evaluate(() => {
+    const canvas = document.createElement("canvas");
+    canvas.width = 800; canvas.height = 600;
+    const ctx = canvas.getContext("2d");
+    ctx.fillStyle = "#123456"; ctx.fillRect(0, 0, 800, 600);
+    const blank = KH2Recognition.detectCorners(canvas, "recipes");
+    ctx.fillStyle = "#202020"; ctx.fillRect(0, 0, 800, 600);
+    ctx.fillStyle = "#244ccc"; ctx.beginPath();
+    for (const [i, [x, y]] of [[155, 70], [580, 95], [605, 450], [130, 475]].entries()) ctx[i ? "lineTo" : "moveTo"](x, y);
+    ctx.closePath(); ctx.fill();
+    const recipes = KH2Recognition.detectCorners(canvas, "recipes");
+    ctx.fillStyle = "#202020"; ctx.fillRect(0, 0, 800, 600);
+    ctx.fillStyle = "#35dd77";
+    for (let row = 0; row < 8; row++) {
+      ctx.fillRect(140, 130 + row * 34, 50, 22);
+      ctx.fillRect(360, 122 + row * 33, 50, 22);
+    }
+    ctx.fillStyle = "#ff88bb"; ctx.fillRect(145, 540, 20, 8);
+    const inventory = KH2Recognition.detectCorners(canvas, "inventory");
+    ctx.fillStyle = "#202020"; ctx.fillRect(0, 0, 800, 600);
+    ctx.fillStyle = "#244ccc"; ctx.fillRect(110, 100, 650, 330);
+    ctx.fillStyle = "#35dd77";
+    for (let row = 0; row < 8; row++) {
+      ctx.fillRect(140, 130 + row * 34, 50, 22);
+      ctx.fillRect(460, 130 + row * 34, 50, 22);
+    }
+    const unequal = KH2Recognition.detectCorners(canvas, "inventory");
+    const dividerX = unequal && unequal[0].x + (unequal[1].x - unequal[0].x) * unequal.columnSplit / 100;
+    return { blank, recipes, inventory, unequalSplit: unequal?.columnSplit, dividerX };
+  });
+  assert.equal(detectedTables.blank, null, "A uniform image must not be reported as a detected table");
+  assert.ok(detectedTables.unequalSplit > 51, "Unequal table margins must not force a 50% column divider");
+  assert.ok(Math.abs(detectedTables.dividerX - 460 / 8) < 0.3, "The rectified divider must follow the second badge column");
+  for (const [kind, expected] of [
+    ["recipes", [[155, 70], [580, 95], [605, 450], [130, 475]]],
+    ["inventory", [[140, 130], [580, 114], [580, 360], [140, 390]]],
+  ]) {
+    assert.equal(detectedTables[kind]?.length, 4, `${kind} detection must find four corners`);
+    detectedTables[kind].forEach((point, i) => {
+      assert.ok(Math.abs(point.x - expected[i][0] / 8) < 3 && Math.abs(point.y - expected[i][1] / 6) < 3, `${kind} corners must follow the actual skewed table and ignore unrelated footer colors`);
+    });
+  }
+
   await page.locator("#import-kind").selectOption("recipes");
   const cornerPhoto = await page.evaluate(() => {
     const canvas = document.createElement("canvas");
@@ -129,7 +200,7 @@ try {
   });
   await page.locator("#media-file").setInputFiles({ name: "corners.png", mimeType: "image/png", buffer: Buffer.from(cornerPhoto.split(",")[1], "base64") });
   await page.waitForFunction(() => !document.getElementById("recognize").disabled);
-  assert.match(await page.locator("#alignment-status").innerText(), /Four corners preselected/);
+  assert.match(await page.locator("#alignment-status").innerText(), /Table not detected/);
   const defaultCorners = [[25, 23], [51, 23], [51, 63], [25, 63]];
   const expectCornerHandles = async (points) => {
     const handles = await page.locator("#preview").evaluate((canvas, corners) => corners.map(([x, y]) => {
@@ -162,7 +233,7 @@ try {
   const download = await downloadPromise;
   const backupPath = fileURLToPath(new URL("save.json", artifacts));
   await download.saveAs(backupPath);
-  assert.equal(JSON.parse(await readFile(backupPath, "utf8")).goals["AP Boost"], 3);
+  assert.equal(JSON.parse(await readFile(backupPath, "utf8")).goals["AP Boost"], 1);
   page.once("dialog", (dialog) => dialog.accept());
   await page.locator("#load-save").setInputFiles(backupPath);
   await page.waitForFunction(() => document.getElementById("notice").textContent === "Save loaded.");
@@ -175,15 +246,17 @@ try {
 
   if (process.argv.includes("--media")) {
     await page.setViewportSize({ width: 1440, height: 1000 });
-    await page.getByRole("button", { name: "Photo & video import", exact: true }).click();
-    for (const [file, kind] of [["recipes.jpeg", "recipes"], ["free-development.jpeg", "recipes"], ["materials.MOV", "inventory"]]) {
+    await page.locator("[data-tab='import']").click();
+    const selected = process.argv.slice(process.argv.indexOf("--media") + 1);
+    for (const [file, kind] of [["recipes.jpeg", "recipes"], ["free-development.jpeg", "recipes"], ["materials.MOV", "inventory"], ["materials-2.MOV", "inventory"], ["materials-3.mp4", "inventory"]].filter(([file]) => !selected.length || selected.includes(file))) {
+      await page.setViewportSize({ width: 1440, height: 1000 });
       const path = fileURLToPath(new URL(`samples/${file}`, root));
       await access(path);
       await page.locator("#import-kind").selectOption(kind);
       await page.locator("#media-file").setInputFiles(path);
       await page.waitForFunction(() => !document.getElementById("recognize").disabled || /codec|could not|unsupported/i.test(document.getElementById("ocr-status").textContent));
       assert.equal(await page.locator("#recognize").isEnabled(), true, await page.locator("#ocr-status").innerText());
-      assert.match(await page.locator("#alignment-status").innerText(), /Four corners preselected/, "Every media import must start with four selected corners");
+      assert.match(await page.locator("#alignment-status").innerText(), /Table detected/, "Sample table corners must be detected from pixels, not fixed percentages");
       if (kind === "inventory") {
         const visiblePixels = await page.locator("#preview").evaluate((canvas) => {
           const pixels = canvas.getContext("2d").getImageData(0, 0, canvas.width, canvas.height).data;
@@ -192,16 +265,8 @@ try {
           return visible / (pixels.length / 4);
         });
         assert.ok(visiblePixels > 0.25, "Video selection must show the decoded game frame, not a black canvas with crop outlines");
-        await page.locator("#preview").scrollIntoViewIfNeeded();
-        const bounds = await page.locator("#preview").boundingBox();
-        const defaults = [[26, 28], [70, 28], [70, 77], [26, 77]];
-        for (const [i, [x, y]] of [[500, 302], [1318, 310], [1342, 800], [520, 830]].entries()) {
-          await page.mouse.move(bounds.x + defaults[i][0] / 100 * bounds.width, bounds.y + defaults[i][1] / 100 * bounds.height);
-          await page.mouse.down();
-          await page.mouse.move(bounds.x + x / 1920 * bounds.width, bounds.y + y / 1080 * bounds.height);
-          await page.mouse.up();
-        }
-        assert.match(await page.locator("#alignment-status").innerText(), /corners updated/);
+        const split = Number(await page.locator("#column-split").inputValue());
+        assert.ok(split >= 45 && split <= 55, "The divider must be detected from the rank columns, not retained from a previous file");
       }
       await page.locator("#recognize").click();
       await page.waitForFunction(() => !document.getElementById("recognize").disabled, null, { timeout: 240000 });
@@ -223,14 +288,39 @@ try {
         await page.locator("#check-all-import").click();
         await page.locator("#apply-import").click();
         const combined = await page.evaluate(() => JSON.parse(localStorage.getItem("kh2-final-mix-synthesis-v1")));
-        assert.equal(combined.goals["AP Boost"], 3);
+        assert.equal(combined.goals["AP Boost"], 1);
         assert.equal(combined.goals.Acrisius, 1);
         assert.deepEqual(combined.inventory, replaced.inventory);
       }
       if (kind === "inventory") {
-        assert.ok(rows.length >= 30, "Inventory video should recognize most of its material list");
-        assert.ok(rows.some((r) => r.name === "Blazing Shard" && r.quantity === "26"));
-        assert.ok(rows.some((r) => r.name === "Dense Shard" && r.quantity === "4"));
+        const expected = {
+          "Blazing Shard": "26", "Blazing Gem": "1", "Frost Shard": "10", "Frost Stone": "10", "Frost Crystal": "1",
+          "Lightning Shard": "9", "Lightning Stone": "13", "Lightning Gem": "1", "Lightning Crystal": "1",
+          "Lucid Shard": "5", "Lucid Stone": "4", "Lucid Gem": "1", "Lucid Crystal": "1",
+          "Power Shard": "4", "Power Stone": "3", "Power Gem": "2", "Power Crystal": "4",
+          "Dark Shard": "40", "Dark Stone": "2", "Dark Gem": "5", "Dark Crystal": "4",
+          "Dense Shard": "4", "Dense Stone": "1", "Dense Gem": "2", "Twilight Shard": "4", "Twilight Stone": "1",
+          "Mythril Shard": "9", "Mythril Stone": "9", "Mythril Gem": "2", "Mythril Crystal": "5",
+          "Bright Shard": "19", "Bright Stone": "12", "Bright Gem": "2", "Bright Crystal": "1",
+          "Energy Shard": "8", "Energy Stone": "9", "Energy Gem": "3", "Energy Crystal": "3",
+          "Serenity Shard": "6", "Serenity Stone": "3", "Serenity Gem": "8", "Serenity Crystal": "6",
+          "Lost Illusion": "2", "Orichalcum": "6", "Orichalcum+": "3",
+        };
+        if (file !== "materials.MOV") Object.assign(expected, {
+          "Frost Shard": "12", "Frost Crystal": "2", "Lightning Shard": "10", "Lightning Stone": "14", "Lightning Gem": "3",
+          "Lucid Shard": "6", "Lucid Stone": "12", "Lucid Gem": "3", "Lucid Crystal": "2",
+          "Power Shard": "6", "Power Crystal": "5", "Dark Stone": "5", "Dark Crystal": "5",
+          "Dense Shard": "6", "Dense Gem": "3", "Dense Crystal": "1", "Twilight Shard": "10", "Twilight Stone": "2",
+          "Mythril Shard": "10", "Mythril Gem": "3", "Mythril Crystal": "8",
+          "Remembrance Shard": "9", "Remembrance Stone": "2", "Remembrance Gem": "2",
+          "Bright Shard": "20", "Bright Stone": "13", "Bright Crystal": "2",
+          "Energy Shard": "10", "Energy Gem": "4", "Serenity Shard": "11", "Serenity Stone": "5",
+          "Serenity Gem": "10", "Serenity Crystal": "7", "Orichalcum": "9", "Orichalcum+": "4",
+        });
+        assert.equal(rows.length, Object.keys(expected).length, "Every visible material must be recognized, including the final Orichalcum+ row");
+        assert.deepEqual(Object.fromEntries(rows.map((row) => [row.name, row.quantity])), expected, "Every displayed count must match the game footage, not just selected examples");
+        assert.ok((await page.locator("#ocr-text").inputValue()).includes(`Orichalcum+ ${expected["Orichalcum+"]}`), "Editable text must retain separately recognized quantities");
+        assert.ok(rows.filter((row) => row.checked).length >= 40, "Repeated accurate counts should be usable without checking every row manually");
         assert.equal(await page.locator(".review-source img").count(), rows.length, "Every material, including unreadable counts, must show its source row");
         const firstImage = page.locator(".review-source img").first();
         await firstImage.scrollIntoViewIfNeeded();

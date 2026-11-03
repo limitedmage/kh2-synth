@@ -3,114 +3,380 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <meta name="theme-color" content="#111827">
+  <meta name="theme-color" content="#080f24">
   <title>Synthesis Journal · Kingdom Hearts II Final Mix</title>
-  <style>:root{color-scheme:dark;--bg:#0e1420;--panel:#172131;--line:#2c3a4d;--ink:#eef3fc;--muted:#a8b7cc;--gold:#efd098;--mint:#8be2c9;--warn:#ffd29b;--red:#ffb1b1;font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;font-size:15px;line-height:1.55}
-*{box-sizing:border-box}body{margin:0;background:radial-gradient(ellipse at 85% 0,#223048 0,transparent 42%),var(--bg);color:var(--ink)}button,input,select,textarea{font:inherit}button,.button{display:inline-flex;align-items:center;justify-content:center;gap:.45rem;border:1px solid var(--line);border-radius:8px;padding:.6rem .9rem;background:#253349;color:var(--ink);cursor:pointer;text-decoration:none;min-height:42px}button:hover,.button:hover{border-color:var(--mint);background:#30435c}button:disabled{opacity:.5;cursor:wait}.primary{background:var(--mint);border-color:var(--mint);color:#102b27;font-weight:700}.primary:hover{background:#b3f4e1;color:#102b27}.quiet{background:transparent}a{color:var(--mint)}input,select,textarea{border:1px solid #43536b;border-radius:6px;background:#101a29;color:var(--ink);padding:.55rem .65rem;max-width:100%;min-height:42px}input[type=number]{width:5.5rem}input[type=checkbox]{accent-color:var(--mint);width:18px;height:18px;min-height:0;margin:0}label{display:flex;flex-direction:column;gap:.35rem;color:var(--muted);font-size:.87rem}label.check{flex-direction:row;align-items:center;gap:.6rem}textarea{width:100%;resize:vertical}button:focus-visible,a:focus-visible,input:focus-visible,select:focus-visible,summary:focus-visible{outline:2px solid var(--gold);outline-offset:3px}h1,h2,h3,p{margin:0}h1{font-size:clamp(1.7rem,3vw,2.4rem);font-weight:650;letter-spacing:-.05em;line-height:1.2}h2{font-size:1.6rem;letter-spacing:-.03em;font-weight:650}h3{font-size:1.05rem;font-weight:650}.masthead{max-width:1240px;margin:auto;padding:3rem 2rem 2rem;display:flex;align-items:center;gap:1.2rem}.brand-mark{font-size:3.2rem;color:var(--gold);line-height:1;text-shadow:0 0 25px #efd09833}.eyebrow{font-size:.69rem;letter-spacing:.18em;color:var(--gold);font-weight:700;margin-bottom:.5rem}.subtitle,.muted{color:var(--muted);font-size:.9rem}.subtitle{margin-top:.65rem}.save-tools{margin-left:auto;display:flex;gap:.5rem;align-items:center;flex-wrap:wrap;justify-content:flex-end}.save-tools span{font-size:.75rem;color:var(--muted);width:100%;text-align:right}main{max-width:1200px;padding:0 2rem;margin:auto}.intro{display:flex;align-items:center;gap:1rem;border-top:1px solid var(--line);padding:1.25rem 0;color:var(--muted);font-size:.85rem}.pill,.tag{font-size:.65rem;letter-spacing:.08em;border:1px solid #4d5a62;border-radius:5px;padding:.2rem .5rem;color:var(--mint);white-space:nowrap}nav{display:flex;gap:.3rem;border-bottom:1px solid var(--line);margin-bottom:2rem;overflow:auto}nav button{white-space:nowrap;border:0;border-bottom:3px solid transparent;border-radius:0;background:transparent;padding:.85rem 1rem;color:var(--muted)}nav button.active{border-bottom-color:var(--gold);color:var(--gold);background:#efd09808}.section-title{display:flex;justify-content:space-between;align-items:center;gap:1rem;margin:1.8rem 0 1rem}.section-title p{margin-top:.35rem}.panel{padding:1.3rem;background:var(--panel);border:1px solid var(--line);border-radius:12px;margin-bottom:1.2rem}.settings{display:flex;gap:1.25rem;flex-wrap:wrap}.settings label{flex:1;min-width:180px}.settings>p{width:100%;font-size:.8rem;border-top:1px solid var(--line);padding-top:.8rem}.summary{display:grid;grid-template-columns:repeat(3,1fr);gap:1rem;margin-bottom:1.2rem}.stat{padding:1.1rem 1.3rem;border:1px solid var(--line);border-radius:10px;background:#17213188}.stat strong{display:block;color:var(--gold);font-size:1.8rem;font-weight:600}.stat span{font-size:.8rem;color:var(--muted)}.empty{text-align:center;padding:2.5rem 1.2rem;border:1px dashed #46546b;border-radius:12px;color:var(--muted)}.empty h3{color:var(--ink);margin-bottom:.4rem}.empty button{margin-top:1rem}.toolbar{display:flex;gap:1rem;align-items:end;flex-wrap:wrap;margin-bottom:1.2rem}.search{flex:1;min-width:180px}.card-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:1rem;margin:1rem 0 1.5rem}.card{padding:1.2rem;background:var(--panel);border:1px solid var(--line);border-radius:10px;display:flex;flex-direction:column;gap:.8rem}.card h3{display:flex;gap:.6rem;align-items:center}.card p{font-size:.82rem;color:var(--muted)}.card .card-actions{margin-top:auto;display:flex;gap:.6rem;align-items:center;justify-content:space-between}.ingredients{font-size:.8rem;color:var(--muted);line-height:1.8}.rank{color:var(--gold);border:1px solid #746347;font-size:.7rem;border-radius:4px;padding:.05rem .35rem;font-weight:700}.goal{display:flex;align-items:center;flex-wrap:wrap;gap:.8rem;padding:.8rem 0;border-bottom:1px solid var(--line)}.goal:first-child{padding-top:0}.goal:last-child{border:0;padding-bottom:0}.goal .goal-name{flex:1;min-width:150px}.goal .goal-name small{display:block;color:var(--muted);font-size:.75rem}.goal label{font-size:.75rem}.goal button{padding:.35rem .65rem}.goal .check{width:100%}.inventory-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(245px,1fr));gap:.6rem}.stock-row{display:flex;align-items:center;justify-content:space-between;gap:.7rem;border:1px solid var(--line);border-radius:8px;padding:.65rem .85rem;background:var(--panel)}.stock-row label{flex-direction:row;align-items:center;justify-content:space-between;width:100%;font-size:.9rem;color:var(--ink)}.stock-row.has-stock{border-left:3px solid var(--mint)}.checks{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:1rem;margin-top:1rem}.world-card select{width:100%}.world-card .check{font-size:.8rem}.table-wrap{overflow:auto;border:1px solid var(--line);border-radius:10px}table{border-collapse:collapse;width:100%;text-align:left;background:var(--panel);font-size:.85rem}th{font-size:.7rem;color:var(--muted);text-transform:uppercase;letter-spacing:.06em;font-weight:600;background:#1d2a3c}td,th{padding:.9rem 1rem;border-bottom:1px solid var(--line);vertical-align:top}tr:last-child td{border-bottom:0}td.numeric{text-align:right;font-variant-numeric:tabular-nums}td small{display:block;color:var(--muted)}.positive{color:var(--mint)}.warning{color:var(--warn)}.alert{border:1px solid #7c603c;background:#ffd29b0a;padding:1rem 1.2rem;border-radius:10px;margin-bottom:1rem;font-size:.9rem}.route-world{margin-bottom:1rem}.route-item{padding:.8rem 0;border-bottom:1px solid var(--line)}.route-item:last-child{border:0}.route-item p{margin-top:.3rem}.route-item small{color:var(--muted)}.locked{opacity:.75}.route-item .tag{margin-left:.5rem}.craft-step{border-bottom:1px solid var(--line);padding:.7rem 0;font-size:.85rem}.craft-step span{display:block;color:var(--muted);font-size:.8rem}summary{cursor:pointer;color:var(--gold);padding:.2rem 0}details[open]>summary{margin-bottom:1rem}footer{margin:3rem 0 2rem;padding-top:1.5rem;border-top:1px solid var(--line);color:var(--muted);font-size:.75rem}footer details{margin-top:1rem}footer p+p{margin-top:.8rem}#notice{position:sticky;top:.5rem;z-index:5;background:#28453e;border:1px solid var(--mint);border-radius:8px;padding:.8rem 1rem;margin-bottom:1rem;font-size:.85rem}#media-preview{max-width:900px;margin:1rem auto}#preview{width:100%;height:auto;display:block;border-radius:8px;cursor:crosshair;touch-action:none}.crop-fields input{width:5.5rem}#ocr-progress{width:100%;accent-color:var(--mint)}#ocr-status{font-size:.85rem;color:var(--gold);margin:.7rem 0}.review-row{display:grid;grid-template-columns:24px minmax(150px,1fr) 85px minmax(130px,1fr);gap:.8rem;align-items:center;padding:.7rem 0;border-bottom:1px solid var(--line)}.review-row small{color:var(--muted);font-size:.75rem}.review-row select{width:100%}#apply-import{margin-top:1rem}[hidden]{display:none!important}.optional h3{margin-bottom:.5rem}.storage-error{color:var(--warn)!important}
-.recipe-review .review-row{grid-template-columns:24px minmax(150px,1fr) minmax(130px,1fr)}
-.review-row.has-source{grid-template-columns:24px minmax(150px,1fr) 85px minmax(130px,1fr) minmax(180px,320px)}.review-source{grid-column:5;grid-row:1;min-width:0;margin:0}.review-source img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:6px}
-@media(max-width:700px){.masthead{padding:1.8rem 1rem;flex-wrap:wrap;gap:.8rem}.brand-mark{font-size:2.5rem}.save-tools{width:100%;justify-content:flex-start;margin-left:0}.save-tools span{width:auto;text-align:left;margin-right:auto}main{padding:0 1rem}.intro{align-items:flex-start;flex-direction:column;gap:.6rem}.summary{gap:.5rem}.stat{padding:.8rem}.stat strong{font-size:1.5rem}.stat span{font-size:.72rem}.section-title{align-items:flex-start;flex-wrap:wrap}nav{margin-left:-1rem;margin-right:-1rem;padding:0 .5rem}nav button{font-size:.85rem;padding:.8rem .7rem}.card-grid{grid-template-columns:1fr}.settings{gap:.8rem}.settings label{min-width:100%}.review-row{grid-template-columns:20px minmax(110px,1fr) 65px}.recipe-review .review-row{grid-template-columns:20px minmax(110px,1fr)}.review-row small{grid-column:2/-1}.panel{padding:1rem}th,td{padding:.7rem .65rem}}
-@media(prefers-reduced-motion:no-preference){button,.button{transition:background .15s,border-color .15s}}
-@media(max-width:700px){.review-row.has-source{grid-template-columns:20px minmax(0,1fr) 60px minmax(80px,110px);gap:.5rem}.review-row.has-source input[type=number],.review-row.has-source select{width:100%;min-width:0}.review-row.has-source small{grid-column:2/4}.review-source{grid-column:4;grid-row:1/3}}
+  <style>:root {
+  color-scheme: dark;
+  --bg: #080f24;
+  --panel: #132449;
+  --line: #566f9e;
+  --ink: #f1f6ff;
+  --muted: #becce4;
+  --gold: #ffe294;
+  --mint: #90ecf5;
+  --warn: #ffd29b;
+  --red: #ffb1b1;
+  font-family: "Trebuchet MS", "Segoe UI", ui-sans-serif, system-ui, sans-serif;
+  font-size: 15px;
+  line-height: 1.55;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  background:
+    radial-gradient(ellipse at 92% 0, #24497988, transparent 48%),
+    linear-gradient(125deg, transparent 35%, #1b305a44 35.1%, transparent 65%),
+    var(--bg);
+  color: var(--ink);
+}
+button, input, select, textarea { font: inherit; }
+button, .button {
+  display: inline-flex; align-items: center; justify-content: center; gap: .45rem;
+  min-height: 44px; padding: .6rem 1rem;
+  border: 1px solid #93aed6; border-radius: 3px 12px 3px 3px;
+  background: linear-gradient(180deg, #324d79, #1d3155);
+  box-shadow: inset 0 1px #ffffff18, 0 2px 0 #02081a;
+  color: var(--ink); cursor: pointer; text-decoration: none; font-weight: 700;
+}
+button:hover, .button:hover { border-color: var(--mint); background: #35567f; }
+button:disabled { opacity: .5; cursor: not-allowed; }
+.primary { background: linear-gradient(180deg, #fff1b7, #e8bd62); border-color: #fff3bc; color: #14213b; }
+.primary:hover { background: #fff0b0; color: #14213b; border-color: #fff8da; }
+.quiet { background: #101f3c; }
+a { color: var(--mint); text-underline-offset: .2em; }
+a:hover { color: #d7fbff; }
+input, select, textarea {
+  min-height: 44px; max-width: 100%; padding: .55rem .65rem;
+  border: 1px solid #7d94b9; border-radius: 3px;
+  background: #080f24; color: var(--ink);
+}
+select {
+  -webkit-appearance: none; appearance: none;
+  min-width: 0; padding-right: 2.5rem; text-overflow: ellipsis;
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'%3E%3Cpath d='m1 1 5 5 5-5' fill='none' stroke='%2390ecf5' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/%3E%3C/svg%3E");
+  background-repeat: no-repeat;
+  background-position: right .8rem center;
+  background-size: .8rem .5333rem;
+}
+input[type=number] { width: 5.5rem; font-variant-numeric: tabular-nums; }
+input[type=checkbox] { accent-color: var(--gold); width: 18px; height: 18px; min-height: 0; margin: 0; flex-shrink: 0; }
+label { display: flex; flex-direction: column; gap: .35rem; color: var(--muted); font-size: .87rem; }
+label.check { flex-direction: row; align-items: center; gap: .6rem; min-height: 32px; }
+label.button { color: var(--ink); font-size: 1rem; }
+label.button.primary { color: #14213b; }
+textarea { width: 100%; resize: vertical; }
+button:focus-visible, a:focus-visible, input:focus-visible, select:focus-visible,
+textarea:focus-visible, summary:focus-visible, .button:focus-within {
+  outline: 3px solid var(--gold); outline-offset: 4px;
+}
+h1, h2, h3, p { margin: 0; }
+h1 { font-size: clamp(1.9rem, 3.8vw, 3rem); font-weight: 800; letter-spacing: -.045em; line-height: 1.15; text-shadow: 0 3px #030819; }
+h2 { font-size: 1.65rem; letter-spacing: -.025em; font-weight: 800; line-height: 1.25; }
+h3 { font-size: 1.08rem; font-weight: 700; }
+.masthead { max-width: 1240px; margin: auto; padding: 2.8rem 2rem 2rem; display: flex; align-items: center; gap: 1.2rem; }
+.brand-mark { display: grid; place-items: center; flex-shrink: 0; width: 64px; height: 76px; }
+.brand-mark svg { display: block; width: 100%; height: 100%; overflow: visible; stroke: #14213b; stroke-width: 2.5; filter: drop-shadow(0 0 8px #a5eaff44); }
+.brand-mark .brand-mark-wing { fill: #7799ca; stroke: #b6e4ef; }
+.brand-mark .brand-mark-body { fill: #fff3d9; }
+.brand-mark .brand-mark-stem { fill: none; stroke: var(--gold); }
+.brand-mark .brand-mark-pom { fill: #ec6675; }
+.brand-mark .brand-mark-ear { fill: #dfab8f; stroke: none; }
+.brand-mark .brand-mark-face { fill: none; }
+.brand-mark .brand-mark-nose { fill: #c97769; stroke-width: 2; }
+.eyebrow { font-size: .7rem; letter-spacing: .15em; color: var(--gold); font-weight: 800; margin-bottom: .45rem; }
+.subtitle, .muted { color: var(--muted); font-size: .9rem; }
+.subtitle { margin-top: .6rem; }
+.save-tools { margin-left: auto; display: flex; gap: .5rem; align-items: center; flex-wrap: wrap; justify-content: flex-end; }
+.save-tools span { font-size: .75rem; color: var(--muted); width: 100%; text-align: right; }
+main { max-width: 1200px; padding: 0 2rem; margin: auto; }
+.intro { display: flex; align-items: center; gap: 1rem; border-top: 1px solid var(--line); padding: 1rem 0 1.3rem; color: var(--muted); font-size: .85rem; }
+.pill, .tag { font-size: .67rem; letter-spacing: .06em; border: 1px solid #7092b3; border-radius: 2px; padding: .2rem .5rem; color: var(--mint); white-space: nowrap; background: #07162b; }
+nav { display: flex; gap: .45rem; padding: .35rem .25rem .75rem; border-bottom: 2px solid #90c6eb; margin-bottom: 2rem; overflow-x: auto; }
+nav button { white-space: nowrap; border: 1px solid #647ca7; border-radius: 3px 13px 3px 3px; padding: .8rem 1.1rem; background: linear-gradient(180deg, #253c67, #122340); color: #d5e0f2; }
+nav button.active { border-color: #fff1bc; color: #14213b; background: linear-gradient(180deg, #fff2bd, #edc567); box-shadow: 0 0 0 1px #9a7b3b, 0 3px 0 #050b1e; }
+nav button.active::before { content: "◆"; font-size: .72em; }
+.section-title { display: flex; justify-content: space-between; align-items: center; gap: 1rem; margin: 1.8rem 0 1rem; }
+.section-title p { margin-top: .35rem; }
+.section-title .eyebrow { margin-top: 0; }
+.panel, .card, .stat, .stock-row, .table-wrap {
+  border: 1px solid var(--line);
+  background: linear-gradient(135deg, #1b3459cc, transparent 65%), var(--panel);
+  box-shadow: inset 0 1px #d8ecff14, 0 4px 12px #02071955;
+}
+.panel { padding: 1.3rem; border-radius: 3px 16px 3px 3px; margin-bottom: 1.2rem; }
+.settings { display: flex; gap: 1.25rem; flex-wrap: wrap; border-top: 3px solid #a7d6ef; }
+.settings label { flex: 1; min-width: 180px; }
+.settings > p { width: 100%; font-size: .82rem; border-top: 1px solid var(--line); padding-top: .8rem; }
+.summary { display: grid; grid-template-columns: repeat(3, 1fr); gap: 1rem; margin-bottom: 1.2rem; }
+.stat { padding: 1.1rem 1.3rem; border-radius: 3px 12px 3px 3px; border-left: 3px solid var(--gold); }
+.stat strong { display: block; color: var(--gold); font-size: 2rem; font-weight: 800; line-height: 1.3; font-variant-numeric: tabular-nums; }
+.stat span { font-size: .82rem; color: var(--muted); }
+.empty { text-align: center; padding: 2.5rem 1.2rem; border: 1px dashed #8298bc; border-radius: 3px; background: #0c1932; color: var(--muted); }
+.empty h3 { color: var(--ink); margin-bottom: .4rem; }
+.empty button { margin-top: 1rem; }
+.toolbar { display: flex; gap: 1rem; align-items: end; flex-wrap: wrap; margin-bottom: 1.2rem; }
+.search { flex: 1; min-width: 180px; }
+.card-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 1rem; margin: 1rem 0 1.5rem; }
+.card { min-width: 0; padding: 1.2rem; border-radius: 3px 16px 3px 3px; display: flex; flex-direction: column; gap: .8rem; border-top-color: #a7c7ed; }
+.card h3 { display: flex; gap: .6rem; align-items: center; }
+.card p { font-size: .85rem; color: var(--muted); }
+.card .card-actions { margin-top: auto; display: flex; gap: .6rem; align-items: center; justify-content: space-between; }
+.ingredients { font-size: .83rem; color: var(--muted); line-height: 1.8; }
+.rank { color: var(--gold); border: 1px solid #b89a5c; font-size: .72rem; border-radius: 2px; padding: .05rem .35rem; font-weight: 800; background: #0a162f; }
+.kh-icon { display: inline-block; flex: 0 0 auto; width: 1.6em; height: 1.6em; vertical-align: middle; filter: drop-shadow(0 2px 1px #0008); }
+.icon-label { display: inline-flex; align-items: center; gap: .55rem; min-width: 0; vertical-align: middle; }
+.ingredient, .drop-material { gap: .3rem; max-width: 100%; }
+.ingredient > span, .drop-material > span, .craft-result > span { min-width: 0; overflow-wrap: anywhere; }
+.craft-result { max-width: 100%; }
+.card h3 .kh-icon { width: 1.9em; height: 1.9em; }
+.goal { min-width: 0; padding: .35rem .6rem; margin-top: .35rem; border: 1px solid var(--line); border-left: 3px solid var(--line); border-radius: 3px 10px 3px 3px; background: #0c193080; }
+.goal-main { display: flex; align-items: center; flex-wrap: nowrap; gap: .6rem; min-width: 0; }
+.goal .goal-name { display: flex; align-items: center; gap: .8rem; flex: 1; min-width: 0; }
+.goal-name .icon-label { min-width: 0; }
+.goal-title { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.goal .goal-name small { flex-shrink: 0; color: var(--muted); font-size: .72rem; white-space: nowrap; }
+.goal .goal-base { flex: 0 0 auto; gap: .35rem; min-height: 44px; font-size: .73rem; white-space: nowrap; cursor: pointer; }
+.goal .goal-remove { flex: 0 0 44px; width: 44px; padding: .5rem; border-color: transparent; background: transparent; box-shadow: none; color: var(--muted); }
+.goal .goal-remove:hover { color: var(--red); border-color: var(--red); background: #321b3040; }
+.goal-remove svg { width: 20px; height: 20px; }
+.wishlist-note { color: var(--muted); font-size: .83rem; margin: .5rem 0 1rem; }
+.wishlist-ingredients { display: flex; align-items: center; flex-wrap: wrap; gap: .4rem; min-width: 0; max-width: 100%; padding: .2rem 0; }
+.goal-ingredients { margin-top: .15rem; }
+.wishlist-ingredient { display: inline-flex; align-items: center; gap: .25rem; flex: 0 1 auto; min-width: 0; max-width: 100%; padding: .15rem .35rem; border: 1px solid var(--line); border-radius: 3px; background: #07132180; color: var(--ink); font-size: .73rem; }
+.wishlist-ingredient > span { min-width: 0; overflow-wrap: anywhere; }
+.wishlist-ingredient .kh-icon { width: 1.4em; height: 1.4em; }
+.wishlist-ratio { margin-left: .2rem; font-variant-numeric: tabular-nums; white-space: nowrap; }
+.ingredient-covered .wishlist-ratio { color: var(--mint); }
+.ingredient-short .wishlist-ratio { color: var(--gold); }
+.ingredient-preview { flex: 0 0 auto; color: var(--gold); font-size: .7rem; white-space: nowrap; }
+.craftability { position: relative; display: grid; place-items: center; flex: 0 0 32px; width: 32px; min-height: 44px; color: var(--muted); }
+.craftability-icon { display: block; width: 24px; height: 24px; }
+.craftability > summary { display: grid; place-items: center; width: 32px; min-height: 44px; padding: 0; list-style: none; color: inherit; }
+.craftability > summary::-webkit-details-marker { display: none; }
+.craftability[open] > summary { margin: 0; }
+.craftability-detail { position: absolute; z-index: 3; right: 0; top: 100%; width: min(260px, 65vw); padding: .65rem .8rem; border: 1px solid var(--gold); border-radius: 3px; background: var(--bg); box-shadow: 0 4px 12px #02071988; color: var(--ink); font-size: .8rem; overflow-wrap: anywhere; }
+.craft-conflict { position: relative; flex: 0 0 28px; width: 28px; color: var(--gold); }
+.craft-conflict > summary { display: grid; place-items: center; width: 28px; min-height: 44px; padding: 0; list-style: none; color: inherit; }
+.craft-conflict > summary::-webkit-details-marker { display: none; }
+.craft-conflict[open] > summary { margin: 0; }
+.craft-conflict svg { width: 22px; height: 22px; }
+.goal.craftability-ready { border-color: #537f92; border-left-color: var(--mint); background: linear-gradient(90deg, #224755aa, #142c4380); }
+.craftability-ready .craftability { color: var(--mint); }
+.goal.craftability-locked { border-left-color: var(--gold); }
+.craftability-locked .craftability { color: var(--gold); }
+.goal.craftability-missing { border-left-color: var(--red); }
+.craftability-missing .craftability { color: var(--red); }
+.inventory-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(245px, 1fr)); gap: .6rem; }
+.stock-row { display: flex; align-items: center; justify-content: space-between; gap: .7rem; border-radius: 3px 10px 3px 3px; padding: .65rem .85rem; }
+.stock-row label { flex-direction: row; align-items: center; justify-content: space-between; gap: .6rem; width: 100%; font-size: .9rem; color: var(--ink); }
+.stock-row input { flex-shrink: 0; }
+.stock-row.has-stock { border-left: 3px solid var(--mint); }
+.checks { display: grid; grid-template-columns: repeat(auto-fit, minmax(235px, 1fr)); gap: 1rem; margin-top: 1rem; }
+.world-card select { width: 100%; }
+.world-card .check { font-size: .83rem; }
+.table-wrap { overflow: auto; border-radius: 3px 12px 3px 3px; }
+table { border-collapse: collapse; width: 100%; text-align: left; background: #132449; font-size: .87rem; }
+th { font-size: .72rem; color: #d1e4ff; text-transform: uppercase; letter-spacing: .06em; font-weight: 700; background: #233d65; }
+td, th { padding: .9rem 1rem; border-bottom: 1px solid var(--line); vertical-align: top; }
+tr:last-child td { border-bottom: 0; }
+td.numeric { text-align: right; font-variant-numeric: tabular-nums; }
+td small { display: block; color: var(--muted); }
+.positive { color: var(--mint); }
+.warning { color: var(--warn); }
+.alert { border: 1px solid #b79b66; border-left: 3px solid var(--gold); background: #302f3e; padding: 1rem 1.2rem; border-radius: 3px; margin-bottom: 1rem; font-size: .9rem; }
+.route-world { margin-bottom: 1rem; }
+.route-item { padding: .8rem 0; border-bottom: 1px solid var(--line); }
+.route-item:last-child { border: 0; }
+.route-item p { margin-top: .3rem; }
+.route-item small { color: var(--muted); }
+.locked { border-left: 2px solid #8997b4; padding-left: .8rem; }
+.route-item .tag { margin-left: .5rem; }
+.craft-step { border-bottom: 1px solid var(--line); padding: .7rem 0; font-size: .87rem; }
+.craft-step > span { display: block; color: var(--muted); font-size: .82rem; }
+summary { cursor: pointer; color: var(--gold); padding: .35rem 0; font-weight: 700; }
+details[open] > summary { margin-bottom: 1rem; }
+footer { margin: 3rem 0 2rem; padding-top: 1.5rem; border-top: 1px solid var(--line); color: var(--muted); font-size: .8rem; }
+footer details { margin-top: 1rem; }
+footer p + p { margin-top: .8rem; }
+#notice { position: sticky; top: .5rem; z-index: 5; background: #153950; border: 1px solid var(--mint); border-radius: 3px; padding: .8rem 1rem; margin-bottom: 1rem; font-size: .87rem; box-shadow: 0 3px 15px #0008; }
+#media-preview { max-width: 900px; margin: 1rem auto; }
+#preview { width: 100%; height: auto; display: block; border: 1px solid #8eadd3; border-radius: 3px; cursor: crosshair; touch-action: none; }
+.crop-fields input { width: 5.5rem; }
+#ocr-progress { width: 100%; accent-color: var(--mint); }
+#ocr-status { font-size: .87rem; color: var(--gold); margin: .7rem 0; }
+.review-row { display: grid; grid-template-columns: 24px minmax(150px, 1fr) 85px minmax(130px, 1fr); gap: .8rem; align-items: center; padding: .8rem 0; border-bottom: 1px solid var(--line); }
+.review-row small { color: var(--muted); font-size: .78rem; }
+.review-row select { width: 100%; }
+.review-name { display: flex; align-items: center; gap: .35rem; min-width: 0; }
+.review-name select { flex: 1; min-width: 0; }
+.review-icon { display: flex; flex: 0 0 auto; align-items: center; }
+.recipe-review .review-row { grid-template-columns: 24px minmax(150px, 1fr) minmax(130px, 1fr); }
+.review-row.has-source { grid-template-columns: 24px minmax(130px, 1fr) 85px minmax(110px, 1fr) minmax(160px, 240px); }
+.review-source { grid-column: 5; grid-row: 1; min-width: 0; margin: 0; }
+.review-source img { display: block; width: 100%; height: auto; border: 1px solid #8da7d0; border-radius: 3px; }
+#apply-import { margin-top: 1rem; }
+[hidden] { display: none !important; }
+.optional h3 { margin-bottom: .5rem; }
+.storage-error { color: var(--warn) !important; }
+@media (max-width: 900px) {
+  .masthead { flex-wrap: wrap; }
+  .save-tools { width: 100%; justify-content: flex-start; margin-left: 0; }
+  .save-tools span { width: auto; text-align: left; margin-right: auto; }
+  .review-row.has-source { grid-template-columns: 24px minmax(100px, 1fr) 70px minmax(100px, 160px); gap: .6rem; }
+  .review-row.has-source small { grid-column: 2 / 4; }
+  .review-source { grid-column: 4; grid-row: 1 / 3; }
+}
+@media (max-width: 700px) {
+  .masthead { padding: 1.8rem 1rem; gap: .8rem; }
+  .brand-mark { width: 40px; height: 56px; }
+  main { padding: 0 1rem; }
+  .intro { align-items: flex-start; flex-direction: column; gap: .6rem; }
+  .summary { gap: .5rem; }
+  .stat { padding: .8rem .6rem; }
+  .stat strong { font-size: 1.5rem; }
+  .stat span { font-size: .75rem; }
+  .section-title { align-items: flex-start; flex-wrap: wrap; }
+  nav { margin-left: -1rem; margin-right: -1rem; padding-left: .5rem; padding-right: .5rem; }
+  nav button { font-size: .87rem; padding: .8rem .7rem; }
+  .card-grid { grid-template-columns: 1fr; }
+  .settings { gap: .8rem; }
+  .settings label { min-width: 100%; }
+  .goal { padding: .25rem .35rem; }
+  .goal-main { gap: .25rem; }
+  .goal .goal-name { gap: .35rem; }
+  .goal .goal-name small { display: none; }
+  .goal-name .icon-label { gap: .35rem; font-size: .87rem; }
+  .goal .goal-base { justify-content: center; }
+  .goal-base-extra { display: none; }
+  .review-row { grid-template-columns: 20px minmax(110px, 1fr) 65px; }
+  .recipe-review .review-row { grid-template-columns: 20px minmax(110px, 1fr); }
+  .review-row small { grid-column: 2 / -1; }
+  .panel { padding: 1rem; }
+  th, td { padding: .7rem .65rem; }
+  .review-row.has-source { grid-template-columns: 20px minmax(0, 1fr) 60px minmax(80px, 110px); gap: .5rem; }
+  .review-row.has-source input[type=number], .review-row.has-source select { width: 100%; min-width: 0; }
+  .review-row.has-source small { grid-column: 2 / 4; }
+  .checks { grid-template-columns: 1fr; }
+}
+@media (prefers-reduced-motion: no-preference) {
+  button, .button { transition: background .15s, border-color .15s; }
+}
+@media (forced-colors: active) {
+  select { -webkit-appearance: auto; appearance: auto; background-image: none; }
+  .panel, .card, .stat, .stock-row, .table-wrap, .craftability { border-color: CanvasText; }
+  nav button.active { outline: 2px solid Highlight; outline-offset: -4px; }
+  .kh-icon { filter: none; }
+}
 </style>
 </head>
 <body>
   <header class="masthead">
-    <div class="brand-mark" aria-hidden="true">◇</div>
-    <div><p class="eyebrow">KINGDOM HEARTS II · FINAL MIX</p><h1>Synthesis Journal</h1><p class="subtitle">A little less grinding. A little more adventure.</p></div>
+    <div class="brand-mark" aria-hidden="true">
+      <svg viewBox="0 0 80 88" xmlns="http://www.w3.org/2000/svg" aria-hidden="true" focusable="false">
+        <g stroke-linecap="round" stroke-linejoin="round">
+          <path class="brand-mark-wing" d="M27 54C17 43 9 44 3 39L6 58L14 56L17 66L29 64ZM53 54C63 43 71 44 77 39L74 58L66 56L63 66L51 64Z"/>
+          <path class="brand-mark-body" d="M29 56C21 65 23 73 27 77L23 82Q31 86 37 81L43 81Q49 86 57 82L53 77C57 73 59 65 51 56Z"/>
+          <path class="brand-mark-stem" d="M41 27Q35 15 46 12"/>
+          <circle class="brand-mark-pom" cx="49" cy="11" r="8"/>
+          <path class="brand-mark-body" d="M21 36L19 20Q30 20 34 29Q40 27 46 29Q50 20 61 20L59 36Q66 43 62 54Q57 65 40 65Q23 65 18 54Q14 43 21 36Z"/>
+          <path class="brand-mark-ear" d="M24 26L25 35L31 32ZM56 26L55 35L49 32Z"/>
+          <path class="brand-mark-face" d="M26 44L31 46M54 44L49 46M35 56Q40 60 45 56"/>
+          <ellipse class="brand-mark-nose" cx="40" cy="49" rx="6" ry="5"/>
+        </g>
+      </svg>
+    </div>
+    <div><p class="eyebrow">KINGDOM HEARTS II · FINAL MIX</p><h1>Synthesis Journal</h1></div>
     <div class="save-tools"><span id="save-status" role="status">Saved on this device</span><button id="export" class="quiet">Export save</button><label class="button quiet">Load save<input id="load-save" type="file" accept=".json,application/json" hidden></label></div>
   </header>
   <main>
-    <div class="intro"><span class="pill">LOCAL-FIRST · NO SERVER</span><p>Choose the next creations. Count the materials. Find the missing pieces.</p></div>
     <nav aria-label="Journal sections">
       <button data-tab="plan" class="active" aria-current="page">Farming plan <span id="plan-count"></span></button>
       <button data-tab="recipes">Recipes</button>
       <button data-tab="inventory">Materials</button>
       <button data-tab="progress">World progress</button>
-      <button data-tab="import">Photo &amp; video import</button>
+      <button data-tab="import">Import media</button>
     </nav>
     <div id="notice" role="status" hidden></div>
     <section id="tab-plan">
-      <div class="section-title"><div><p class="eyebrow">THE NEXT ADVENTURE</p><h2>Make a plan</h2></div><button data-go="recipes" class="primary">Add a recipe</button></div>
+      <div class="section-title"><div><p class="eyebrow">SYNTHESIS MENU</p><h2>Farming plan</h2></div><button data-go="recipes" class="primary">Add a recipe</button></div>
       <div class="settings panel">
         <label>Moogle level<select id="moogle"></select></label>
-        <label>Energy materials<select id="energy"><option value="owned">Use available stock</option><option value="none">Save energy materials</option><option value="farm">Plan to farm energy too</option></select></label>
-        <label>Missing craftable materials<select id="expand"><option value="true">Expand into ingredients</option><option value="false">Show material only</option></select></label>
+        <label>Energy materials<select id="energy"><option value="owned">Use owned stock</option><option value="none">Keep in reserve</option><option value="farm">Include in farming plan</option></select></label>
+        <label>Craftable materials<select id="expand"><option value="true">Plan missing ingredients</option><option value="false">Show missing material only</option></select></label>
+        <label>Lucky Lucky abilities<input id="lucky-lucky" type="number" min="0" step="1" value="0"></label>
         <p id="moogle-perks" class="muted"></p>
       </div>
       <div id="summary" class="summary"></div>
       <div id="goals" class="panel"></div>
       <div id="blockers"></div>
-      <div class="section-title"><div><h2>Materials to collect</h2><p class="muted">Shared stock is counted once across every creation and sub-recipe.</p></div><label class="check"><input id="show-owned" type="checkbox"> Include covered materials</label></div>
+      <div class="section-title"><div><h2>Materials to collect</h2><p class="muted">Shared stock is counted once across all crafts.</p></div><label class="check"><input id="show-owned" type="checkbox"> Show covered materials</label></div>
       <div id="requirements"></div>
-      <div class="section-title"><div><h2>Where to go</h2><p class="muted">Available routes first. Locked routes include their unlock requirement.</p></div></div>
+      <div class="section-title"><div><h2>Where to go</h2></div></div>
       <div id="routes"></div>
-      <details class="panel"><summary>Crafting order &amp; calculation notes</summary><div id="crafting"></div><p class="muted">This is a shopping plan, not an automatic game save editor. Update materials after crafting. Moogle level stays fixed for the calculation; gaining levels in-game can lower later costs. Energy allocation follows goal order, then sub-recipes. Chests are never counted as free stock.</p></details>
     </section>
     <section id="tab-recipes" hidden>
-      <div class="section-title"><div><p class="eyebrow">THE WISH LIST</p><h2>What to make</h2><p class="muted">Add quantities manually or import a photo of Recipes / Free Development.</p></div><button data-go="import" class="quiet">Import a photo</button></div>
+      <div class="section-title"><div><p class="eyebrow">RECIPE CATALOG</p><h2>Choose a craft</h2><p class="muted">Set quantities or import Recipes and Free Development photos.</p></div><button data-go="import" class="quiet">Import a photo</button></div>
       <div class="toolbar"><label class="search">Find a recipe<input id="recipe-search" type="search" placeholder="Ribbon, Mythril, Save the King…"></label><label>Category<select id="recipe-category"><option value="">All recipes</option><option>Recipes</option><option>Free Development</option><option>Materials</option></select></label></div>
-      <p class="muted">Selecting a recipe assumes its recipe document has been obtained. Each card lists its unlock. For an upgrade, the plan includes one base craft unless marked already made.</p>
       <div id="recipe-list" class="card-grid"></div>
     </section>
     <section id="tab-inventory" hidden>
-      <div class="section-title"><div><p class="eyebrow">IN THE MOOGLE'S CARE</p><h2>Material stock</h2><p class="muted">Enter the current total shown in the Materials menu, not lifetime collection totals.</p></div><button data-go="import" class="quiet">Import inventory video</button></div>
+      <div class="section-title"><div><p class="eyebrow">MATERIAL INVENTORY</p><h2>Current stock</h2><p class="muted">Use counts from the Materials menu, not lifetime totals.</p></div><button data-go="import" class="quiet">Import inventory</button></div>
       <div class="toolbar"><label class="search">Find a material<input id="material-search" type="search" placeholder="Search materials…"></label><label class="check"><input id="stock-only" type="checkbox"> In stock only</label></div>
       <div id="inventory-list" class="inventory-grid"></div>
     </section>
     <section id="tab-progress" hidden>
-      <div class="section-title"><div><p class="eyebrow">A WORLD AT A TIME</p><h2>Progress &amp; treasure</h2><p class="muted">Set the furthest area currently reachable. Chest completion is tracked separately and never changes stock.</p></div></div>
-      <div class="panel"><label class="check"><input id="all-chests" type="checkbox"> All chests in the game collected</label><p class="muted">This switches every world below on or off. No chest routes are planned.</p></div>
+      <div class="section-title"><div><p class="eyebrow">WORLD MAP</p><h2>Progress &amp; treasure</h2><p class="muted">Set the furthest area reached. Chest tracking never changes stock.</p></div><button id="endgame-worlds" class="quiet">End-game preset</button></div>
+      <div class="panel"><label class="check"><input id="all-chests" type="checkbox"> All chests collected</label><p class="muted">Toggle chest completion for every world.</p></div>
       <div class="panel optional"><h3>Optional areas</h3><div id="optional-unlocks" class="checks"></div></div>
       <div id="world-list" class="card-grid"></div>
-      <div class="panel"><h3>Free Development unlocks</h3><label>Different material types ever handed to the Moogle<input id="material-types" type="number" min="0" max="60" step="1"></label><p class="muted">This is a lifetime count from the synthesis collection list. An empty current stock does not remove a previously discovered material.</p></div>
-      <details class="panel"><summary>Orichalcum+ rewards</summary><p>Only seven exist. Track the four non-chest rewards here for reference; add current stock under Materials.</p><div id="orichalcum-rewards" class="checks"></div></details>
+      <div class="panel"><h3>Free Development unlocks</h3><label>Material types collected<input id="material-types" type="number" min="0" max="60" step="1"></label><p class="muted">Use the lifetime count from the synthesis collection list, even for materials with no stock left.</p></div>
+      <details class="panel"><summary>Orichalcum+ rewards</summary><p>Only seven exist. Track the four non-chest rewards here; enter remaining stock under Materials.</p><div id="orichalcum-rewards" class="checks"></div></details>
     </section>
     <section id="tab-import" hidden>
-      <div class="section-title"><div><p class="eyebrow">FROM THE SCREEN TO THE JOURNAL</p><h2>Import game media</h2><p class="muted">Recognition runs on this device. Nothing is uploaded. Review every result before applying.</p></div></div>
+      <div class="section-title"><div><p class="eyebrow">MEDIA SCAN</p><h2>Import from the game</h2><p class="muted">Recognition stays on this device. Review results before applying.</p></div></div>
       <div class="panel">
         <div class="toolbar">
-          <label>Read<select id="import-kind"><option value="recipes">Recipes + Free Development (left list only)</option><option value="inventory">Materials list stock (video or photo)</option></select></label>
-          <label class="button primary">Choose photo / video<input id="media-file" type="file" accept="image/*,video/*" hidden></label>
+          <label>Read<select id="import-kind"><option value="recipes">Recipes / Free Development</option><option value="inventory">Materials stock</option></select></label>
+          <label class="button primary">Choose photo or video<input id="media-file" type="file" accept="image/*,video/*" hidden></label>
           <span id="media-name" class="muted">No file selected</span>
         </div>
-        <p id="import-instructions" class="muted">Read the left-hand recipe names only, including dim names. Scan both Recipes and Free Development: their results combine below. The right-hand ingredients / stock panel is not used. Import stock separately from the Materials list.</p>
-        <div id="media-preview" hidden><canvas id="preview" aria-label="Media preview. Four corners are preselected; drag each corner to adjust."></canvas><video id="video" muted playsinline hidden></video></div>
+        <p id="import-instructions" class="muted">Scan the left-hand names, including dim entries, from both recipe menus. Results combine below. The right-hand ingredients panel is ignored; import stock from the Materials menu separately.</p>
+        <div id="media-preview" hidden><canvas id="preview" aria-label="Media preview. Drag the four corners to fit the list."></canvas><video id="video" muted playsinline hidden></video></div>
         <div class="toolbar">
           <button id="crop-reset" class="quiet">Reset corners</button>
-          <button id="align-screen" class="quiet">Realign four corners</button>
+          <button id="align-screen" class="quiet">Set four corners</button>
         </div>
-        <p id="alignment-status" class="muted">Four corners are preselected when media opens. Drag them to fit the recipe list or inventory table.</p>
+        <p id="alignment-status" class="muted">The list is detected automatically when possible. Check the four corners and drag them to fit, or set them manually.</p>
         <div class="toolbar">
-          <label class="check" hidden><input id="two-columns" type="checkbox" checked> Inventory has two columns</label>
+          <label class="check" hidden><input id="two-columns" type="checkbox" checked> Two-column inventory</label>
           <label hidden>First column width %<input id="column-split" type="number" min="35" max="65" value="52" step="0.5"></label>
-          <label hidden>Video sampling<select id="sampling"><option value="0.2">Every 0.2 seconds (fast scroll)</option><option value="0.5">Every 0.5 seconds</option><option value="1">Every 1 second</option></select></label>
+          <label hidden>Scan interval<select id="sampling"><option value="0.2">0.2 seconds (fast scroll)</option><option value="0.5">0.5 seconds</option><option value="1">1 second</option></select></label>
           <button id="recognize" class="primary" disabled>Read selected area</button><button id="cancel-ocr" class="quiet" hidden>Cancel</button>
         </div>
-        <p id="ocr-status" role="status">First use downloads the text recognition engine and English model. Manual entry works offline.</p>
+        <p id="ocr-status" role="status">Recognition needs an engine and English model download on first use. Manual entry works offline.</p>
         <progress id="ocr-progress" max="1" value="0" hidden></progress>
-        <p id="inventory-video-help" class="muted" hidden>Keep scrolling videos short and pause on each page when possible. MOV support depends on the browser and codec; export to H.264 MP4 if playback fails. Large imports can take several minutes.</p>
+        <p id="inventory-video-help" class="muted" hidden>Use short clips and pause on each page. If MOV playback fails, export H.264 MP4. Large imports can take several minutes.</p>
       </div>
-      <details class="panel"><summary>Paste or correct recognized text manually</summary><label><span id="paste-help">One recipe name per line, from either recipe list</span><textarea id="ocr-text" rows="8" placeholder="AP Boost&#10;Petite Ribbon&#10;Mythril Shard&#10;Acrisius"></textarea></label><button id="parse-text" class="quiet">Review this text</button></details>
+      <details class="panel"><summary>Paste or edit text</summary><label><span id="paste-help">One recipe per line, from either menu</span><textarea id="ocr-text" rows="8" placeholder="AP Boost&#10;Petite Ribbon&#10;Mythril Shard&#10;Acrisius"></textarea></label><button id="parse-text" class="quiet">Review text</button></details>
       <div id="import-review" class="panel" hidden>
-        <h3>Review recognition</h3><p id="review-instructions" class="muted">Recipe names from Recipes and Free Development are combined. Unchecked names are ignored. No inventory counts are read from recipe photos.</p>
+        <h3>Review results</h3><p id="review-instructions" class="muted">Both recipe menus combine here. Unchecked rows are ignored. Recipe photos do not provide stock counts.</p>
         <button id="check-all-import" class="quiet">Check all</button>
         <div id="review-rows"></div>
         <p id="review-message" class="muted"></p>
         <button id="apply-import" class="primary">Apply checked rows</button>
-        <p id="import-policy" class="muted">Recipe imports add missing goals with quantity 1 and preserve existing desired quantities. Applying a Materials import replaces all previous stock; omitted and unchecked materials become zero.</p>
+        <p id="import-policy" class="muted">Recipes add new goals at quantity 1 and keep existing quantities. Materials imports replace all stock: omitted or unchecked materials become zero.</p>
       </div>
     </section>
     <footer>
-      <p>Built for the English HD release of Kingdom Hearts II Final Mix. Unofficial fan tool; no game assets included.</p>
+      <p>For Kingdom Hearts II Final Mix, English HD release. Unofficial fan tool with original artwork; no game assets.</p>
       <details>
         <summary>Sources &amp; data notes</summary>
-        <p>Recipe quantities, ranks, Moogle perks and enemy drops are based on <a href="https://www.khwiki.com/Synthesis" target="_blank" rel="noreferrer">Kingdom Hearts Wiki</a>, its linked item/material pages, and <a href="https://www.destinyislands.com/kh2-fm/synthesis/materials/" target="_blank" rel="noreferrer">Destiny Islands' Final Mix guides</a>. Source links accompany recipes and routes. Numbers are base costs, before reductions; Mythril Crystal uses the rank-B Serenity Stone modifier. Final Mix Serenity drops differ from original KH2.</p>
-        <p>World stages are conservative farming gates, not a walkthrough. Some encounters change during story events; finish the current world episode to restore normal spawns. Chest completion is tracked only with global and per-world switches, including a separate Cavern switch. No chest routes are planned. Optional boss / reward sources are labeled separately from repeatable enemy drops. Drop rates are base rates, before Lucky Lucky.</p>
+        <p>Recipes, ranks, Moogle perks and drops follow <a href="https://www.khwiki.com/Synthesis" target="_blank" rel="noreferrer">Kingdom Hearts Wiki</a> and <a href="https://www.destinyislands.com/kh2-fm/synthesis/materials/" target="_blank" rel="noreferrer">Destiny Islands' Final Mix guides</a>. Recipes and routes link to their sources. Costs are before reductions; Mythril Crystal uses rank-B Serenity Stone. Serenity drops differ from original KH2.</p>
+        <p>World stages are conservative farming gates, not a walkthrough. Finish story episodes to restore normal spawns. Track chests globally or by world, with Cavern tracked separately; no chest routes are planned. Bosses and one-time rewards are separate from repeatable drops. Effective drop rates include the selected Lucky Lucky count; base rates are unchanged.</p>
       </details>
     </footer>
   </main>
-  <noscript>This guide requires JavaScript enabled. No server is needed.</noscript>
+  <noscript>Enable JavaScript to use the planner. No server required.</noscript>
   <script>globalThis.KH2Data = (() => {
   const wiki = (name) => `https://www.khwiki.com/${encodeURIComponent(name.replaceAll(" ", "_"))}`;
   const worlds = [
@@ -334,14 +600,14 @@ globalThis.KH2Planner = (() => {
   const count = (value, max = 9999) => Math.min(max, Math.max(0, Math.floor(Number(value) || 0)));
   const defaults = () => ({
     version: 1, goals: {}, inventory: {}, crafted: {}, worlds: {}, chests: {}, optional: {}, rewards: {},
-    moogle: 1, energy: "owned", expand: true, materialTypes: 0, methods: {},
+    moogle: 1, energy: "owned", expand: true, materialTypes: 0, methods: {}, luckyLuckyCount: 0,
   });
   function sanitize(raw) {
     if (!raw || typeof raw !== "object" || Array.isArray(raw) || raw.version !== 1) throw new Error("Not a supported Synthesis Journal save (version 1).");
     const state = defaults();
     for (const [field, names] of [["goals", D.recipes.map((r) => r.name)], ["inventory", D.materialNames]]) {
       const keys = field === "goals" ? Object.keys(raw[field] || {}).filter((name) => names.includes(name)) : names;
-      for (const name of keys) if (raw[field]?.[name] !== undefined) state[field][name] = count(raw[field][name], field === "goals" ? (name === "Ultima Weapon" ? 1 : 99) : 9999);
+      for (const name of keys) if (raw[field]?.[name] !== undefined) state[field][name] = count(raw[field][name], field === "goals" ? 1 : 9999);
     }
     for (const [field, names] of [["crafted", D.recipes.map((r) => r.name)], ["chests", D.worlds.map((w) => w.id)], ["optional", D.optional.map(([id]) => id)], ["rewards", D.rewards.map((r) => r.id)]]) {
       for (const name of names) state[field][name] = raw[field]?.[name] === true;
@@ -352,7 +618,13 @@ globalThis.KH2Planner = (() => {
     state.materialTypes = Math.max(count(raw.materialTypes, 60), Object.values(state.inventory).filter((n) => n > 0).length);
     state.energy = ["owned", "none", "farm"].includes(raw.energy) ? raw.energy : "owned";
     state.expand = raw.expand !== false;
+    state.luckyLuckyCount = count(raw.luckyLuckyCount, Number.MAX_SAFE_INTEGER);
     return state;
+  }
+  function effectiveDropRate(baseRate, abilities = 0) {
+    if (typeof baseRate !== "number" || !Number.isFinite(baseRate)) return null;
+    const rate = Math.min(100, Math.max(0, baseRate) * (1 + 0.5 * count(abilities, Number.MAX_SAFE_INTEGER)));
+    return Math.round((rate + Number.EPSILON) * 100) / 100;
   }
   const threshold = { C: 5, B: 6, A: 7, S: 9 };
   const energyName = (recipe) => `Energy ${D.tiers["CBAS".indexOf(recipe.rank)]}`;
@@ -385,7 +657,7 @@ globalThis.KH2Planner = (() => {
     const scheduled = new Set();
     const bonusStock = {};
     function addDemand(name, amount) { demand[name] = (demand[name] || 0) + amount; }
-    function craft(recipe, quantity, purpose, path = new Set()) {
+    function craft(recipe, quantity, purpose, path = new Set(), goal = null) {
       if (!quantity || path.has(recipe.name)) return false;
       if (!unlocked(recipe, state)) {
         warnings.push(`${recipe.name}: requires ${recipe.minLevel > state.moogle ? `Moogle level ${recipe.minLevel}` : `${recipe.types} discovered material types`}.`);
@@ -396,9 +668,9 @@ globalThis.KH2Planner = (() => {
         const base = D.byRecipe[recipe.base];
         if (requested[recipe.base] && !scheduled.has(recipe.base)) {
           scheduled.add(recipe.base);
-          if (!craft(base, count(requested[recipe.base], 99), "Goal", next)) return false;
+          if (!craft(base, count(requested[recipe.base], 99), "Goal", next, recipe.base)) return false;
         } else if (!scheduled.has(recipe.base)) {
-          if (!craft(base, 1, "First-time upgrade prerequisite", next)) return false;
+          if (!craft(base, 1, "First-time upgrade prerequisite", next, goal)) return false;
           if (D.materials[recipe.base]) bonusStock[recipe.base] = (bonusStock[recipe.base] || 0) + 1;
         }
       }
@@ -416,7 +688,7 @@ globalThis.KH2Planner = (() => {
       for (const [name, qty] of Object.entries(plain)) addDemand(name, qty * (quantity - powered));
       for (const [name, qty] of Object.entries(reduced)) addDemand(name, qty * powered);
       made.add(recipe.name);
-      steps.push({ name: recipe.name, quantity, powered, energy, purpose, ingredients: Object.fromEntries([...new Set([...Object.keys(plain), ...Object.keys(reduced)])].map((name) => [
+      steps.push({ name: recipe.name, quantity, powered, energy, purpose, goal, ingredients: Object.fromEntries([...new Set([...Object.keys(plain), ...Object.keys(reduced)])].map((name) => [
         name, (plain[name] || 0) * (quantity - powered) + (reduced[name] || 0) * powered,
       ])) });
       return true;
@@ -424,7 +696,7 @@ globalThis.KH2Planner = (() => {
     for (const [name, qty] of Object.entries(requested)) {
       if (scheduled.has(name)) continue;
       scheduled.add(name);
-      craft(D.byRecipe[name], count(qty, 99), "Goal");
+      craft(D.byRecipe[name], count(qty, 99), "Goal", new Set(), name);
       if (name === "Ultima Weapon" && qty > 1) warnings.push("Ultima Weapon can only be synthesized once per game. Set its quantity to 1.");
     }
     // Expand parents before children so shared sub-material demand is pooled before using stock.
@@ -458,13 +730,50 @@ globalThis.KH2Planner = (() => {
         for (const route of D.materials[row.name].sources) {
           const key = `${route.world}|${route.stage}|${route.enemy}|${route.room}|${route.unlock}`;
           if (!routes.has(key)) routes.set(key, { ...route, ...availability(route, state), materials: [] });
-          routes.get(key).materials.push({ name: row.name, missing: row.missing, rate: route.rate, note: route.note });
+          routes.get(key).materials.push({ name: row.name, missing: row.missing, rate: route.rate, effectiveRate: effectiveDropRate(route.rate, state.luckyLuckyCount), note: route.note });
         }
       }
     }
     return { requirements, needed, routes: [...routes.values()], steps, warnings: [...new Set(warnings)], goals: Object.values(requested).reduce((a, b) => a + b, 0) };
   }
-  return { count, defaults, sanitize, costs, unlocked, availability, energyName, plan };
+  function wishlistConflicts(state) {
+    const goals = Object.fromEntries(Object.entries(state.goals).filter(([name, qty]) => D.byRecipe[name] && count(qty)));
+    const conflicts = new Map();
+    const complete = plan({ ...state, goals });
+    if (!complete.needed.length) return conflicts;
+    for (const name of Object.keys(goals)) {
+      const individual = plan({ ...state, goals: { [name]: goals[name] } });
+      if (individual.warnings.length || individual.needed.length) continue;
+      const inventory = { ...state.inventory };
+      const crafted = { ...state.crafted };
+      // Include synthesized material outputs and first-time prerequisites, not just root costs.
+      for (const step of individual.steps) {
+        for (const [material, qty] of Object.entries(step.ingredients)) inventory[material] = (inventory[material] || 0) - qty;
+        if (D.materials[step.name]) inventory[step.name] = (inventory[step.name] || 0) + step.quantity;
+        crafted[step.name] = true;
+      }
+      const others = Object.fromEntries(Object.entries(goals).filter(([other]) => other !== name));
+      const before = plan({ ...state, goals: others });
+      const fulfilled = new Set(individual.steps.filter((step) => step.purpose === "First-time upgrade prerequisite").map((step) => step.name));
+      const remainingGoals = Object.fromEntries(Object.entries(others).filter(([other]) => !fulfilled.has(other)));
+      const remaining = { ...state, inventory, crafted, goals: remainingGoals };
+      const after = plan(remaining);
+      const previous = new Map(before.needed.map((row) => [row.name, row.missing]));
+      const materials = after.needed.filter((row) => row.missing > (previous.get(row.name) || 0)).map((row) => ({
+        name: row.name, before: previous.get(row.name) || 0, after: row.missing,
+      }));
+      if (!materials.length) continue;
+      const affected = new Set(materials.map((row) => row.name));
+      const items = Object.keys(remainingGoals).filter((other) => {
+        const otherGoals = { [other]: others[other] };
+        return [plan({ ...state, goals: otherGoals }), plan({ ...remaining, goals: otherGoals })]
+          .some((result) => result.requirements.some((row) => affected.has(row.name)));
+      });
+      conflicts.set(name, { materials, items });
+    }
+    return conflicts;
+  }
+  return { count, defaults, sanitize, costs, unlocked, availability, energyName, plan, wishlistConflicts, effectiveDropRate };
 })();
 
 
@@ -601,38 +910,303 @@ globalThis.KH2Recognition = (() => {
     canvas.getContext("2d").drawImage(column, 0, top, column.width, height, 0, 0, canvas.width, canvas.height);
     return canvas;
   }
+  function inventoryCanvas(column) {
+    const canvas = document.createElement("canvas");
+    const left = Math.round(column.width * 0.16);
+    canvas.width = Math.round(column.width * 0.65); canvas.height = column.height;
+    const ctx = canvas.getContext("2d");
+    ctx.drawImage(column, left, 0, canvas.width, canvas.height, 0, 0, canvas.width, canvas.height);
+    const image = ctx.getImageData(0, 0, canvas.width, canvas.height);
+    for (let i = 0; i < image.data.length; i += 4) {
+      const value = Math.min(image.data[i], image.data[i + 1], image.data[i + 2]) > 120 ? 0 : 255;
+      image.data[i] = image.data[i + 1] = image.data[i + 2] = value;
+    }
+    ctx.putImageData(image, 0, 0);
+    return canvas;
+  }
+  function detectCorners(media, kind, region = null) {
+    const canvas = document.createElement("canvas");
+    const width = media.videoWidth || media.naturalWidth || media.width;
+    const height = media.videoHeight || media.naturalHeight || media.height;
+    canvas.width = Math.min(640, width); canvas.height = Math.round(canvas.width * height / width);
+    const ctx = canvas.getContext("2d", { willReadFrequently: true });
+    ctx.drawImage(media, 0, 0, canvas.width, canvas.height);
+    const pixels = ctx.getImageData(0, 0, canvas.width, canvas.height).data;
+    const w = canvas.width, h = canvas.height;
+    let best = null;
+    const badges = [];
+    const cross = (a, b, c) => (b.x - a.x) * (c.y - a.y) - (b.y - a.y) * (c.x - a.x);
+    for (const theme of kind === "recipes" ? ["blue"] : ["badges"]) {
+      const mask = new Uint8Array(w * h);
+      for (let i = 0; i < mask.length; i++) {
+        const x = i % w, y = Math.floor(i / w);
+        if (region && (y < region.top || y > region.bottom || x < region.left(y) || x >= region.right(y))) continue;
+        const r = pixels[i * 4], g = pixels[i * 4 + 1], b = pixels[i * 4 + 2];
+        mask[i] = theme === "blue"
+          ? b > 25 && b > r * 1.35 && b > g * 1.25
+          : (g > 120 && g > r * 1.35 && g > b * 0.85) ||
+            (r > 150 && r > g * 1.3 && b > g * 1.2) ||
+            (r > 120 && g > 120 && b < Math.min(r, g) * 0.85);
+      }
+      for (let start = 0; start < mask.length; start++) {
+        if (!mask[start]) continue;
+        const component = [start];
+        mask[start] = 0;
+        let x0 = w, y0 = h, x1 = 0, y1 = 0;
+        const left = new Int32Array(h).fill(w), right = new Int32Array(h).fill(-1);
+        for (let i = 0; i < component.length; i++) {
+          const x = component[i] % w, y = Math.floor(component[i] / w);
+          x0 = Math.min(x0, x); x1 = Math.max(x1, x); y0 = Math.min(y0, y); y1 = Math.max(y1, y);
+          left[y] = Math.min(left[y], x); right[y] = Math.max(right[y], x);
+          for (const [nx, ny] of [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]]) {
+            if (nx < 0 || nx >= w || ny < 0 || ny >= h || !mask[ny * w + nx]) continue;
+            mask[ny * w + nx] = 0; component.push(ny * w + nx);
+          }
+        }
+        const cw = x1 - x0, ch = y1 - y0;
+        if (theme === "badges") {
+          if (cw > w * 0.015 && cw < w * 0.12 && ch > h * 0.012 && ch < h * 0.08 && cw / ch > 1.4 && cw / ch < 4.5 && component.length > cw * ch * 0.35) {
+            badges.push({ x: x0, y: (y0 + y1) / 2, width: cw, height: ch });
+          }
+          continue;
+        }
+        if (component.length < w * h * 0.035 || cw < w * 0.12 || ch < h * 0.2 || cw > w * 0.9 || ch > h * 0.9 || cw / ch > 3 || component.length < cw * ch * 0.4) continue;
+        const points = [];
+        for (let y = y0; y <= y1; y++) if (right[y] >= 0) points.push({ x: left[y], y }, { x: right[y], y });
+        points.sort((a, b) => a.x - b.x || a.y - b.y);
+        const half = (input) => {
+          const result = [];
+          for (const point of input) {
+            while (result.length > 1 && cross(result.at(-2), result.at(-1), point) <= 0) result.pop();
+            result.push(point);
+          }
+          return result.slice(0, -1);
+        };
+        const hull = [...half(points), ...half(points.toReversed())];
+        while (hull.length > 4) {
+          let index = 0, smallest = Infinity;
+          for (let i = 0; i < hull.length; i++) {
+            const area = Math.abs(cross(hull[(i + hull.length - 1) % hull.length], hull[i], hull[(i + 1) % hull.length]));
+            if (area < smallest) { smallest = area; index = i; }
+          }
+          hull.splice(index, 1);
+        }
+        if (hull.length !== 4) continue;
+        const area = Math.abs(hull.reduce((sum, p, i) => sum + p.x * hull[(i + 1) % 4].y - p.y * hull[(i + 1) % 4].x, 0)) / 2;
+        if (area < cw * ch * 0.7 || (best && component.length <= best.score)) continue;
+        const first = hull.reduce((index, p, i) => p.x + p.y < hull[index].x + hull[index].y ? i : index, 0);
+        best = { score: component.length, corners: [...hull.slice(first), ...hull.slice(0, first)] };
+      }
+    }
+    if (kind === "inventory") {
+      const median = (values) => values.toSorted((a, b) => a - b)[Math.floor(values.length / 2)];
+      const groups = [];
+      for (const badge of badges.toSorted((a, b) => a.x - b.x)) {
+        const group = groups.at(-1);
+        if (group && badge.x - group.reduce((sum, p) => sum + p.x / group.length, 0) < w * 0.05) group.push(badge);
+        else groups.push([badge]);
+      }
+      const columns = groups.map((group) => {
+        const height = median(group.map((p) => p.height)), width = median(group.map((p) => p.width));
+        return group.filter((p) => p.height > height * 0.7 && p.height < height * 1.4 && p.width > width * 0.7 && p.width < width * 1.4);
+      }).filter((group) => group.length >= 4)
+        .sort((a, b) => b.length - a.length).slice(0, 2).sort((a, b) => a[0].x - b[0].x);
+      if (columns.length !== 2 || columns[1][0].x - columns[0][0].x < w * 0.1) return null;
+      const fit = (group, y) => {
+        const cy = group.reduce((sum, p) => sum + p.y / group.length, 0);
+        const cx = group.reduce((sum, p) => sum + p.x / group.length, 0);
+        const slope = group.reduce((sum, p) => sum + (p.y - cy) * (p.x - cx), 0) / group.reduce((sum, p) => sum + (p.y - cy) ** 2, 0);
+        return cx + slope * (y - cy);
+      };
+      const rows = columns.map((group) => {
+        group.sort((a, b) => a.y - b.y);
+        const height = median(group.map((p) => p.height));
+        const gaps = group.slice(1).map((p, i) => p.y - group[i].y).filter((gap) => gap > height * 0.6);
+        const step = median(gaps.map((gap) => gap / Math.max(1, Math.round(gap / (height * 1.12)))));
+        return { height, step, first: group[0].y, last: group.at(-1).y };
+      });
+      if (rows.some((row) => !row.step || row.last - row.first < h * 0.2)) return null;
+      const top = Math.min(...rows.map((row) => row.first));
+      for (const row of rows) row.first -= Math.round((row.first - top) / row.step) * row.step;
+      const last = Math.max(...rows.map((row) => Math.round((row.last - row.first) / row.step)));
+      const ends = rows.map((row) => ({ top: row.first - row.height * 0.65, bottom: row.first + last * row.step + row.height * 0.65 }));
+      const edge = (key) => {
+        const y = ends[0][key], my = ends[1][key];
+        const x = fit(columns[0], y), mx = fit(columns[1], my);
+        return [{ x: x - (mx - x) * 0.01, y }, { x: mx + (mx - x) * 1.01, y: my * 2 - y }];
+      };
+      const [tl, tr] = edge("top"), [bl, br] = edge("bottom");
+      const first = Math.min(...columns.map((group) => group[0].y));
+      const bottom = Math.max(...columns.map((group) => group.at(-1).y));
+      const line = (y, fraction) => {
+        const left = fit(columns[0], y), middle = fit(columns[1], y);
+        return left + (middle - left) * fraction;
+      };
+      let boundary = 2;
+      for (let fraction = 1.75; fraction < 2.2; fraction += 0.005) {
+        let bright = 0;
+        for (let sample = 0; sample < 40; sample++) {
+          const y = Math.round(first + (bottom - first) * (0.15 + sample / 40 * 0.7));
+          const x = Math.round(line(y, fraction));
+          if (x < 0 || x >= w) continue;
+          const i = (y * w + x) * 4;
+          const r = pixels[i], g = pixels[i + 1], b = pixels[i + 2];
+          if ((g > 95 && b > g * 1.2 && r < g * 0.85) || (g > 65 && Math.max(r, g, b) - Math.min(r, g, b) < 25)) bright++;
+        }
+        if (bright / 40 > 0.65) { boundary = fraction; break; }
+      }
+      const refined = detectCorners(media, "recipes", {
+        top: first - rows[0].height,
+        bottom: bottom + rows[0].height * 1.8,
+        left: (y) => fit(columns[0], y) - median(columns[0].map((p) => p.width)) * 0.4,
+        right: (y) => line(y, boundary) - 1,
+      });
+      const selected = refined || [tl, tr, br, bl].map((p) => ({ x: Math.max(0, Math.min(100, p.x / w * 100)), y: Math.max(0, Math.min(100, p.y / h * 100)) }));
+      // Locate the second badge column after rectification; equal screen widths can clip counts.
+      const [p0, p1, p2, p3] = selected.map((p) => ({ x: p.x / 100 * w, y: p.y / 100 * h }));
+      const dx1 = p1.x - p2.x, dx2 = p3.x - p2.x, dx3 = p0.x - p1.x + p2.x - p3.x;
+      const dy1 = p1.y - p2.y, dy2 = p3.y - p2.y, dy3 = p0.y - p1.y + p2.y - p3.y;
+      const denominator = dx1 * dy2 - dx2 * dy1;
+      if (Math.abs(denominator) < 0.001) return null;
+      const g = (dx3 * dy2 - dx2 * dy3) / denominator, j = (dx1 * dy3 - dx3 * dy1) / denominator;
+      const a = p1.x - p0.x + g * p1.x, b = p3.x - p0.x + j * p3.x;
+      const d = p1.y - p0.y + g * p1.y, e = p3.y - p0.y + j * p3.y;
+      const dividers = columns[1].map(({ x, y }) => {
+        x -= 1;
+        const determinant = (a - x * g) * (e - y * j) - (b - x * j) * (d - y * g);
+        return ((x - p0.x) * (e - y * j) - (b - x * j) * (y - p0.y)) / determinant;
+      });
+      selected.columnSplit = Math.max(35, Math.min(65, Math.round(median(dividers) * 1000) / 10));
+      return selected;
+    }
+    if (!best) return null;
+    const center = best.corners.reduce((sum, p) => ({ x: sum.x + p.x / 4, y: sum.y + p.y / 4 }), { x: 0, y: 0 });
+    return best.corners.map((p) => ({
+      x: Math.max(0, Math.min(100, (center.x + (p.x - center.x) * 1.025) / w * 100)),
+      y: Math.max(0, Math.min(100, (center.y + (p.y - center.y) * 1.025) / h * 100)),
+    }));
+  }
   function quantityCanvas(column, bounds) {
     const canvas = document.createElement("canvas");
-    const top = Math.max(0, bounds.y0 - 4);
-    const height = Math.min(column.height - top, bounds.y1 - bounds.y0 + 8);
-    const left = column.width * 0.79;
-    const width = column.width * 0.185;
+    const lineHeight = bounds.y1 - bounds.y0;
+    const top = Math.max(0, bounds.y0 - Math.round(lineHeight * 0.75));
+    const height = Math.min(column.height - top, bounds.y1 + Math.round(lineHeight * 0.35) - top);
+    const left = Math.floor(column.width * 0.72);
+    const width = column.width - left;
     canvas.width = Math.ceil(width) + 32;
     canvas.height = Math.ceil(height) + 32;
     const ctx = canvas.getContext("2d");
     ctx.fillStyle = "#fff"; ctx.fillRect(0, 0, canvas.width, canvas.height);
     ctx.drawImage(column, left, top, width, height, 16, 16, width, height);
     const image = ctx.getImageData(16, 16, Math.ceil(width), Math.ceil(height));
+    const original = new Uint8ClampedArray(image.data);
+    const background = (i) => {
+      const r = original[i], g = original[i + 1], b = original[i + 2];
+      return Math.max(r, g, b) < 120 || (b > r * 1.35 && b > g * 1.5);
+    };
     let end = image.width;
     let badgeRun = 0;
-    // Counts sit on blue rows; stop at a neighboring grade badge's non-blue background.
+    // Both the blue camera view and dark screen-capture rows differ from bright grade badges.
     for (let x = 0; x < image.width; x++) {
       let blue = 0;
       for (let y = 0; y < image.height; y++) {
         const i = (y * image.width + x) * 4;
-        if (image.data[i + 2] > image.data[i] * 1.35 && image.data[i + 2] > image.data[i + 1] * 1.5) blue++;
+        if (background(i)) blue++;
       }
       badgeRun = blue / image.height < 0.04 ? badgeRun + 1 : 0;
       if (badgeRun >= Math.max(3, Math.round(height * 0.06))) { end = x - badgeRun + 1; break; }
     }
+    if (badgeRun) end = Math.min(end, image.width - badgeRun);
     for (let i = 0; i < image.data.length; i += 4) {
-      const value = (i / 4) % image.width < end && Math.min(image.data[i], image.data[i + 1], image.data[i + 2]) > 150 ? 0 : 255;
+      const value = (i / 4) % image.width < end && (image.data[i] + image.data[i + 1]) / 2 > 140 ? 0 : 255;
       image.data[i] = image.data[i + 1] = image.data[i + 2] = value;
     }
+    // Discard badge slivers and partial neighboring digits before normalizing the count.
+    const seen = new Uint8Array(image.width * image.height);
+    const glyphs = [];
+    for (let start = 0; start < seen.length; start++) {
+      if (seen[start] || image.data[start * 4] !== 0) continue;
+      const pixels = [start];
+      seen[start] = 1;
+      let x0 = image.width, x1 = 0, y0 = image.height, y1 = 0;
+      for (let cursor = 0; cursor < pixels.length; cursor++) {
+        const x = pixels[cursor] % image.width, y = Math.floor(pixels[cursor] / image.width);
+        x0 = Math.min(x0, x); x1 = Math.max(x1, x + 1); y0 = Math.min(y0, y); y1 = Math.max(y1, y + 1);
+        for (let dy = -1; dy <= 1; dy++) for (let dx = -1; dx <= 1; dx++) {
+          const nx = x + dx, ny = y + dy, next = ny * image.width + nx;
+          if (nx < 0 || nx >= image.width || ny < 0 || ny >= image.height || seen[next] || image.data[next * 4] !== 0) continue;
+          seen[next] = 1; pixels.push(next);
+        }
+      }
+      const h = y1 - y0, w = x1 - x0;
+      const offset = Math.abs((y0 + y1) / 2 - (bounds.y0 - top + lineHeight / 2));
+      let surrounding = 0, onRow = 0;
+      const margin = Math.max(3, Math.round(h * 0.12));
+      for (let y = y0; y < y1; y += Math.max(1, Math.floor(h / 20))) for (const x of [x0 - margin, x1 + margin]) {
+        if (x < 0 || x >= image.width) continue;
+        surrounding++; if (background((y * image.width + x) * 4)) onRow++;
+      }
+      if (h < lineHeight * 0.45 || w < h * 0.22 || w > h * 1.4 || offset > lineHeight * 0.8 || x1 >= end || y0 === 0 || y1 === image.height || (surrounding && onRow / surrounding < 0.5)) {
+        for (const pixel of pixels) image.data[pixel * 4] = image.data[pixel * 4 + 1] = image.data[pixel * 4 + 2] = 255;
+      } else glyphs.push({ x0, x1, y0, y1, pixels, offset });
+    }
+    const closest = Math.min(...glyphs.map((glyph) => glyph.offset));
+    for (let i = glyphs.length - 1; i >= 0; i--) {
+      if (glyphs[i].offset <= closest + lineHeight * 0.2) continue;
+      for (const pixel of glyphs[i].pixels) image.data[pixel * 4] = image.data[pixel * 4 + 1] = image.data[pixel * 4 + 2] = 255;
+      glyphs.splice(i, 1);
+    }
+    glyphs.sort((a, b) => a.x0 - b.x0);
+    for (let i = glyphs.length - 1; i > 0; i--) {
+      if (glyphs[i].x0 - glyphs[i - 1].x1 <= lineHeight * 0.65) continue;
+      for (const glyph of glyphs.slice(0, i)) for (const pixel of glyph.pixels) image.data[pixel * 4] = image.data[pixel * 4 + 1] = image.data[pixel * 4 + 2] = 255;
+      glyphs.splice(0, i);
+      break;
+    }
     ctx.putImageData(image, 16, 16);
-    return canvas;
+    let x0 = image.width, x1 = 0, y0 = image.height, y1 = 0;
+    for (let y = 0; y < image.height; y++) for (let x = 0; x < image.width; x++) if (image.data[(y * image.width + x) * 4] === 0) {
+      x0 = Math.min(x0, x); x1 = Math.max(x1, x + 1); y0 = Math.min(y0, y); y1 = Math.max(y1, y + 1);
+    }
+    if (y1 <= y0) return canvas;
+    const normalized = document.createElement("canvas");
+    const scale = 64 / (y1 - y0);
+    normalized.width = Math.ceil((x1 - x0) * scale) + 32; normalized.height = 96;
+    const target = normalized.getContext("2d");
+    target.fillStyle = "#fff"; target.fillRect(0, 0, normalized.width, normalized.height);
+    target.drawImage(canvas, x0 + 16, y0 + 16, x1 - x0, y1 - y0, 16, 16, (x1 - x0) * scale, 64);
+    normalized.lowerCounters = glyphs.map((glyph) => {
+      const width = glyph.x1 - glyph.x0, height = glyph.y1 - glyph.y0;
+      const visited = new Uint8Array(width * height), holes = [];
+      for (let start = 0; start < visited.length; start++) {
+        const white = (p) => image.data[((glyph.y0 + Math.floor(p / width)) * image.width + glyph.x0 + p % width) * 4] !== 0;
+        if (visited[start] || !white(start)) continue;
+        const area = [start];
+        visited[start] = 1;
+        let edge = false, cy = 0;
+        for (let i = 0; i < area.length; i++) {
+          const x = area[i] % width, y = Math.floor(area[i] / width);
+          cy += y;
+          if (!x || !y || x === width - 1 || y === height - 1) edge = true;
+          for (const [nx, ny] of [[x - 1, y], [x + 1, y], [x, y - 1], [x, y + 1]]) {
+            const p = ny * width + nx;
+            if (nx < 0 || nx >= width || ny < 0 || ny >= height || visited[p] || !white(p)) continue;
+            visited[p] = 1; area.push(p);
+          }
+        }
+        if (!edge && area.length > width * height * 0.015) holes.push(cy / area.length / height);
+      }
+      return holes.length === 1 && holes[0] > 0.6;
+    });
+    normalized.sourceBounds = { y0: top + y0, y1: top + y1 };
+    return normalized;
   }
-  function rectifyCanvas(media, corners) {
+  function quantityText(canvas, text) {
+    if (!/^\d{1,4}$/.test(text) || canvas.lowerCounters?.length !== text.length) return text;
+    // The game's square 6 is often read as 5, but only 6 has an enclosed lower counter.
+    return [...text].map((digit, i) => digit === "5" && canvas.lowerCounters[i] ? "6" : digit).join("");
+  }
+  function rectifyCanvas(media, corners, verticalPadding = 0) {
     const width = media.videoWidth || media.naturalWidth || media.width;
     const height = media.videoHeight || media.naturalHeight || media.height;
     const points = corners.map((p) => ({ x: p.x / 100 * width, y: p.y / 100 * height }));
@@ -640,7 +1214,7 @@ globalThis.KH2Recognition = (() => {
     const length = (a, b) => Math.hypot(a.x - b.x, a.y - b.y);
     const output = document.createElement("canvas");
     output.width = Math.max(1, Math.round((length(p0, p1) + length(p3, p2)) / 2));
-    output.height = Math.max(1, Math.round((length(p0, p3) + length(p1, p2)) / 2));
+    output.height = Math.max(1, Math.round((length(p0, p3) + length(p1, p2)) / 2 * (1 + verticalPadding * 2)));
     const input = document.createElement("canvas");
     input.width = width; input.height = height;
     const sourceContext = input.getContext("2d", { willReadFrequently: true });
@@ -658,7 +1232,7 @@ globalThis.KH2Recognition = (() => {
     const d = p1.y - p0.y + g * p1.y, e = p3.y - p0.y + h * p3.y;
     // Inverse mapping samples the camera image through a square-to-quadrilateral homography.
     for (let y = 0; y < output.height; y++) for (let x = 0; x < output.width; x++) {
-      const u = x / output.width, v = y / output.height, denominator = g * u + h * v + 1;
+      const u = x / output.width, v = y / output.height * (1 + verticalPadding * 2) - verticalPadding, denominator = g * u + h * v + 1;
       const sx = Math.max(0, Math.min(width - 1.001, (a * u + b * v + p0.x) / denominator));
       const sy = Math.max(0, Math.min(height - 1.001, (d * u + e * v + p0.y) / denominator));
       const ix = Math.floor(sx), iy = Math.floor(sy), fx = sx - ix, fy = sy - iy;
@@ -695,7 +1269,72 @@ globalThis.KH2Recognition = (() => {
       video.currentTime = time;
     });
   }
-  return { normalize, matchName, parseLines, merge, loadEngine, sourceCanvas, quantityCanvas, cropCanvas, rectifyCanvas, seek };
+  return { normalize, matchName, parseLines, merge, loadEngine, sourceCanvas, inventoryCanvas, quantityCanvas, quantityText, detectCorners, cropCanvas, rectifyCanvas, seek };
+})();
+
+
+globalThis.KH2Icons = (() => {
+  const colors = {
+    Blazing: "#ff9575", Frost: "#8ce2ff", Lightning: "#ffe27c",
+    Lucid: "#b9d1ff", Power: "#f49ac1", Dark: "#ba9aea",
+    Dense: "#a9b5ed", Twilight: "#e5a1dd", Mythril: "#8de1dd",
+    Bright: "#c5e799", Energy: "#a3f19e", Serenity: "#ffcb91",
+    Remembrance: "#91baff", Tranquility: "#e5d6ff",
+    Orichalcum: "#ffe6aa", Illusion: "#d0b1ff",
+  };
+  const svg = (body, color = "#a9d8ff") =>
+    `<svg class="kh-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32" width="32" height="32" fill="none" stroke="#edf6ff" stroke-width="1.25" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><g fill="${color}">${body}</g></svg>`;
+  const facets = {
+    Shard: '<path d="m18 3 6 9-4 14-9 3-4-10Z"/><path d="m18 3-4 15 6 8m-6-8 10-6M7 19l7-1-3 11" fill="none" stroke-opacity=".55"/>',
+    Stone: '<path d="m10 5 13 3 5 12-9 8-13-5-2-10Z"/><path d="m10 5 1 11 8 12m-8-12 12-8m-12 8 17 4M4 13l7 3" fill="none" stroke-opacity=".55"/>',
+    Gem: '<path d="m9 6 14 1 6 10-13 12L3 16Z"/><path d="m9 6 2 10 5 13 6-12 1-10M3 16l8 0 11 1 7 0" fill="none" stroke-opacity=".55"/>',
+    Crystal: '<path d="m16 2 7 9-1 14-6 5-7-6-1-13Z"/><path d="m8 17-5-5 1 12 6 3m13-11 5-6 1 13-7 4"/><path d="m16 2-2 12 2 16 3-16-3-12M8 11l6 3 5 0 4-3" fill="none" stroke-opacity=".55"/>',
+  };
+  const material = (name) => {
+    const text = typeof name === "string" ? name : "";
+    const family = text.split(" ")[0].replace("+", "");
+    if (/Illusion$/.test(text)) {
+      return svg('<path d="m16 3 4 8 9 5-9 4-4 9-5-9-8-4 8-5Z"/><path d="m16 8 5 8-5 7-6-7Z" fill="#6273ad"/><path d="m16 8 0 15m-6-7h11" fill="none"/>', colors.Illusion);
+    }
+    if (family === "Orichalcum") {
+      return svg('<path d="m4 12 7-7 13 3 5 12-8 8-14-4Z"/><path d="m11 5 2 10 11-7m-11 7 8 13m-8-13 16 5M4 12l9 3-6 9" fill="none" stroke-opacity=".6"/>' +
+        (text.endsWith("+") ? '<path d="M24 2v7m-3-3.5h6" fill="none" stroke="#fff4ba" stroke-width="2"/>' : ""), colors.Orichalcum);
+    }
+    const tier = text.split(" ").at(-1);
+    return svg(facets[tier] || facets.Gem, colors[family] || "#a9d8ff");
+  };
+  const shapes = {
+    ring: '<ellipse cx="16" cy="20" rx="9" ry="8" fill="none" stroke="#f3d48f" stroke-width="4"/><path d="m11 8 5-5 5 5-5 7Z"/><path d="m11 8 10 0m-5-5v12" fill="none" stroke-opacity=".6"/>',
+    earring: '<path d="M11 5a5 5 0 0 1 8 5l-3 5" fill="none" stroke="#f3d48f" stroke-width="3"/><path d="m16 13 7 8-7 9-7-9Z"/><path d="m16 13 0 17m-7-9h14" fill="none" stroke-opacity=".55"/>',
+    ribbon: '<path d="m13 13-9-7-1 13 10-2m6-4 9-7 1 13-10-2M13 18 7 29l8-3 2-8m2 0 6 11-8-3-2-8"/><path d="m13 11 6 0 2 6-5 4-5-4Z" fill="#ffe1a7"/>',
+    shield: '<path d="M16 3 28 8l-2 12-10 10L6 20 4 8Z"/><path d="m16 7 7 4-1 7-6 7-6-7-1-7Z" fill="#263e6a"/><path d="M16 9v14m-5-9h10" fill="none"/>',
+    staff: '<path d="m7 28 13-18" fill="none" stroke="#f3d48f" stroke-width="4"/><path d="m22 2 7 7-7 7-7-7Z"/><path d="m22 2 0 14m-7-7h14" fill="none" stroke-opacity=".6"/><path d="m4 26 5 3" fill="none"/>',
+    sword: '<path d="m24 2 5 1-2 6-14 14-4-4Z"/><path d="m23 7-12 14" fill="none" stroke-opacity=".6"/><path d="m6 18 8 8M4 29l6-6" fill="none" stroke="#f3d48f" stroke-width="4"/>',
+    bottle: '<path d="M12 4h8v8l6 6v8l-4 3H10l-4-3v-8l6-6Z"/><path d="M11 3h10v5H11Z" fill="#f3d48f"/><path d="M9 21h14m-7-4v8" fill="none" stroke="#253b68" stroke-width="2"/><path d="m9 16 3-2" fill="none"/>',
+    boost: '<path d="m16 3 11 6v14l-11 6-11-6V9Z"/><path d="m10 17 6-7 6 7m-6-6v12" fill="none" stroke="#253b68" stroke-width="3"/>',
+    book: '<path d="m6 5 20-2v23L6 29l-3-3V8Z" fill="#7c8bc5"/><path d="M7 6v20l19-3M3 8l4 2" fill="none"/><path d="m17 8 5 6-5 7-5-6Z" fill="#f3d48f"/>',
+    flower: '<path d="M16 12C4-1 0 15 12 17 0 25 14 33 16 21c7 13 18 1 5-4C34 13 23 0 16 12Z"/><path d="m16 12 5 5-5 5-5-5Z" fill="#ffe1a7"/>',
+    amulet: '<path d="M6 4c0 12 20 12 20 0" fill="none" stroke="#f3d48f" stroke-width="2"/><path d="m16 13 9 7-9 10-9-10Z"/><path d="m16 13 0 17m-9-10h18" fill="none" stroke-opacity=".6"/>',
+    armor: '<path d="m10 4 6 4 6-4 7 7-5 5-2 13H10L8 16l-5-5Z"/><path d="m10 4 6 9 6-9m-6 9v16m-7-9h14" fill="none" stroke-opacity=".6"/>',
+  };
+  const item = (recipeName) => {
+    const name = typeof recipeName === "string" ? recipeName : "";
+    if (/\b(Shard|Stone|Gem|Crystal|Illusion)$/.test(name) || /^Orichalcum/.test(name)) return material(name);
+    let shape = "armor";
+    if (/Ring|Band/.test(name)) shape = "ring";
+    else if (/Earring/.test(name)) shape = "earring";
+    else if (/Ribbon/.test(name)) shape = "ribbon";
+    else if (/Save the King|Frozen Pride/.test(name)) shape = "shield";
+    else if (/Save the Queen/.test(name)) shape = "staff";
+    else if (/Weapon|Centurion/.test(name)) shape = "sword";
+    else if (/Potion|Ether|Elixir|Megalixir|Recovery/.test(name)) shape = "bottle";
+    else if (/Boost/.test(name)) shape = "boost";
+    else if (/Archive/.test(name)) shape = "book";
+    else if (/Bloom/.test(name)) shape = "flower";
+    else if (/Amulet|Charm/.test(name)) shape = "amulet";
+    return svg(shapes[shape], { ribbon: "#ef9abd", bottle: "#94e5c4", boost: "#ffe298", flower: "#f4b1d6" }[shape] || "#a9c5ff");
+  };
+  return Object.freeze({ material, item });
 })();
 
 
@@ -712,7 +1351,11 @@ globalThis.KH2Recognition = (() => {
   let storageWarning = "";
   try {
     const saved = localStorage.getItem(storageKey);
-    if (saved) state = P.sanitize(JSON.parse(saved));
+    if (saved) {
+      const raw = JSON.parse(saved);
+      state = P.sanitize(raw);
+      if (JSON.stringify(raw.goals) !== JSON.stringify(state.goals)) localStorage.setItem(storageKey, JSON.stringify(state));
+    }
   } catch {
     storageWarning = "Browser storage is unavailable or the saved data could not be read. Export a save to keep changes.";
   }
@@ -732,36 +1375,92 @@ globalThis.KH2Recognition = (() => {
       $("save-status").classList.add("storage-error");
     }
   }
-  function tab(name) {
+  const tabFragments = { plan: "plan", recipes: "recipes", inventory: "materials", progress: "world-progress", import: "import" };
+  function tab(name, updateURL = true) {
+    if (!Object.hasOwn(tabFragments, name)) name = "plan";
     for (const section of document.querySelectorAll("main > section")) section.hidden = section.id !== `tab-${name}`;
     for (const button of document.querySelectorAll("[data-tab]")) {
       const active = button.dataset.tab === name;
       button.classList.toggle("active", active);
+      button.id = `nav-${button.dataset.tab}`;
+      button.setAttribute("aria-controls", `tab-${button.dataset.tab}`);
+      $(`tab-${button.dataset.tab}`).setAttribute("aria-labelledby", button.id);
       if (active) button.setAttribute("aria-current", "page");
       else button.removeAttribute("aria-current");
     }
+    if (updateURL && location.hash !== `#${tabFragments[name]}`) location.hash = `#${tabFragments[name]}`;
+  }
+  function restoreTab() {
+    const fragment = location.hash.slice(1).toLowerCase();
+    const name = Object.keys(tabFragments).find((key) => tabFragments[key] === fragment) || (Object.hasOwn(tabFragments, fragment) ? fragment : "plan");
+    tab(name, false);
+    if (location.hash !== `#${tabFragments[name]}`) history.replaceState(null, "", `#${tabFragments[name]}`);
   }
   const link = (url, text) => `<a href="${escape(url)}" target="_blank" rel="noreferrer">${escape(text)}</a>`;
-  const ingredientText = (ingredients) => Object.entries(ingredients).map(([name, qty]) => `${qty} ${escape(name)}`).join(" · ");
+  const icon = (kind, name) => globalThis.KH2Icons?.[kind]?.(name) || "";
+  const ingredientText = (ingredients) => Object.entries(ingredients).map(([name, qty]) => `<span class="ingredient icon-label">${icon("material", name)}<span>${qty} ${escape(name)}</span></span>`).join(" · ");
+  function wishlistAvailability(goals) {
+    const allocated = {};
+    return new Map(goals.map(([name]) => {
+      const first = P.plan({ ...state, goals: { ...allocated, [name]: 1 } });
+      const available = !first.warnings.length && !first.needed.length ? 1 : 0;
+      if (available) allocated[name] = 1;
+      const locks = [...first.warnings, ...first.requirements.filter((row) => row.locked).map((row) => `${row.name}: ${D.byRecipe[row.name].unlock}.`)];
+      const status = available ? "ready" : locks.length ? "locked" : "missing";
+      return [name, { available, status, reason: locks.join(" ") }];
+    }));
+  }
+  function wishlistIngredients(plan) {
+    const ingredients = new Map();
+    for (const step of plan.steps) {
+      if (!step.goal) continue;
+      if (!ingredients.has(step.goal)) ingredients.set(step.goal, {});
+      const costs = ingredients.get(step.goal);
+      for (const [name, required] of Object.entries(step.ingredients)) {
+        if (required) costs[name] = (costs[name] || 0) + required;
+      }
+    }
+    return ingredients;
+  }
+  function wishlistIngredient(name, required) {
+    const owned = P.count(state.inventory[name]);
+    return `<span class="wishlist-ingredient ${owned >= required ? "ingredient-covered" : "ingredient-short"}" data-material="${escape(name)}" data-owned="${owned}" data-required="${required}" role="img" aria-label="${escape(`${name}: ${owned} owned / ${required} required`)}">${icon("material", name)}<span aria-hidden="true">${escape(name)} <strong class="wishlist-ratio">${owned}/${required}</strong></span></span>`;
+  }
   function renderPlan() {
     const plan = P.plan(state);
     $("moogle").value = state.moogle;
     $("energy").value = state.energy;
     $("expand").value = String(state.expand);
+    $("lucky-lucky").value = state.luckyLuckyCount;
     const discounts = [["C", 5], ["B", 6], ["A", 7], ["S", 9]].filter(([, level]) => state.moogle >= level).map(([rank]) => rank);
     $("moogle-perks").textContent = [
       state.moogle >= 2 ? "Energy enabled" : "Energy unlocks at level 2",
       state.moogle >= 3 ? "Serenity upgrades enabled" : "Upgrades unlock at level 3",
-      state.moogle >= 4 ? "Energy + Serenity may be combined" : "Combining Energy + Serenity needs level 4",
+      state.moogle >= 4 ? "Energy + Serenity enabled" : "Energy + Serenity unlocks at level 4",
       discounts.length ? `Half-cost ranks: ${discounts.join(", ")} (Energy stacks; round up per craft)` : "No automatic rank discounts yet",
     ].join(" · ");
     $("plan-count").textContent = plan.goals ? `(${plan.goals})` : "";
-    $("summary").innerHTML = `<div class="stat"><strong>${plan.goals}</strong><span>creations on the wish list</span></div><div class="stat"><strong>${plan.needed.reduce((n, r) => n + r.missing, 0)}</strong><span>materials still to collect</span></div><div class="stat"><strong>${plan.routes.filter((r) => r.available).length}</strong><span>available farming / reward sources</span></div>`;
+    $("summary").innerHTML = `<div class="stat"><strong>${plan.goals}</strong><span>items on the wishlist</span></div><div class="stat"><strong>${plan.needed.reduce((n, r) => n + r.missing, 0)}</strong><span>materials to collect</span></div><div class="stat"><strong>${plan.routes.filter((r) => r.available).length}</strong><span>available sources</span></div>`;
     const goals = Object.entries(state.goals).filter(([, qty]) => qty);
-    $("goals").innerHTML = goals.length ? `<h3>Wish list</h3>${goals.map(([name, qty]) => {
+    const availability = wishlistAvailability(goals);
+    const conflicts = P.wishlistConflicts(state);
+    const goalIngredients = wishlistIngredients(plan);
+    $("goals").innerHTML = goals.length ? `<h3>Wishlist</h3>${goals.map(([name]) => {
       const recipe = D.byRecipe[name];
-      return `<div class="goal"><div class="goal-name">${escape(name)}<small>Rank ${recipe.rank} · ${escape(recipe.category)}</small></div><label>Quantity<input type="number" min="1" max="${name === "Ultima Weapon" ? 1 : 99}" value="${qty}" data-goal="${escape(name)}" aria-label="${escape(name)} desired quantity"></label><button class="quiet" data-remove="${escape(name)}" aria-label="Remove ${escape(name)}">Remove</button>${recipe.base ? `<label class="check"><input type="checkbox" data-crafted="${escape(recipe.base)}" ${state.crafted[recipe.base] ? "checked" : ""}> ${escape(recipe.base)} has already been made once</label>` : ""}</div>`;
-    }).join("")}` : `<div class="empty"><h3>Every creation starts with a wish.</h3><p>Add a recipe manually or read the list from a game photo.</p><button class="primary" data-go="recipes">Choose recipes</button> <button class="quiet" data-go="import">Import a photo</button></div>`;
+      const ready = availability.get(name);
+      const ingredients = goalIngredients.get(name);
+      const chips = Object.entries(ingredients || P.costs(recipe, state, recipe.name === "Ultima Weapon")).filter(([, required]) => required).map(([material, required]) => wishlistIngredient(material, required)).join("");
+      const ingredientRow = `<div class="goal-ingredients wishlist-ingredients" role="group" aria-label="${escape(`${name} ingredients${ingredients ? ", including prerequisites" : " — locked recipe preview, before prerequisites or Energy"}`)}">${ingredients ? "" : '<span class="ingredient-preview">Locked preview</span>'}${chips}</div>`;
+      const label = ready.status === "ready" ? "Ready to craft" : ready.status === "locked" ? "Locked" : "Needs materials";
+      const statusIcon = `<svg class="craftability-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${ready.status === "ready" ? 'role="img" aria-label="Ready to craft"' : 'aria-hidden="true"'} focusable="false">${ready.status === "ready" ? '<path d="m4 12 5 5L20 6"/><path d="m15 5 5 1-1 5" stroke-width="1"/>' : ready.status === "locked" ? '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>' : '<path d="m12 3 9 9-9 9-9-9Z"/><path d="M8 12h8"/>'}</svg>`;
+      const status = ready.reason
+        ? `<details class="craftability"><summary class="craftability-label" aria-label="${escape(`${label}: ${ready.reason}`)}" title="${escape(`${label}: ${ready.reason}`)}">${statusIcon}</summary><small class="craftability-detail">${escape(ready.reason)}</small></details>`
+        : `<span class="craftability craftability-label" ${ready.status === "ready" ? "" : `role="img" aria-label="${label}"`} title="${label}">${statusIcon}</span>`;
+      const conflict = ready.status === "ready" ? conflicts.get(name) : undefined;
+      const conflictText = conflict ? `Shared materials warning: crafting ${name} increases shortfalls for ${conflict.items.join(", ")}. ${conflict.materials.map((material) => `${material.name}: ${material.before} → ${material.after} missing`).join("; ")}.` : "";
+      const warning = conflict ? `<details class="craft-conflict"><summary aria-label="${escape(conflictText)}" title="${escape(conflictText)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5m0 3v.1"/></svg></summary><small class="craftability-detail">${escape(conflictText)}</small></details>` : "";
+      return `<div class="goal craftability-${ready.status}" data-goal="${escape(name)}" data-craftable="${ready.available}"><div class="goal-main"><div class="goal-name" title="${escape(name)} · Rank ${recipe.rank} · ${escape(recipe.category)}"><span class="icon-label">${icon("item", name)}<span class="goal-title">${escape(name)}</span></span><small>Rank ${recipe.rank} · ${escape(recipe.category)}</small></div>${recipe.base ? `<label class="check goal-base" title="${escape(recipe.base)} already made"><input type="checkbox" data-crafted="${escape(recipe.base)}" aria-label="${escape(recipe.base)} already made" ${state.crafted[recipe.base] ? "checked" : ""}><span>Base<span class="goal-base-extra"> made</span></span></label>` : ""}${warning}${status}<button class="quiet goal-remove" data-remove="${escape(name)}" aria-label="Remove ${escape(name)}" title="Remove ${escape(name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="m7 7 10 10M17 7 7 17"/></svg></button></div>${ingredientRow}</div>`;
+    }).join("")}` : `<div class="empty"><h3>No recipes yet</h3><p>Choose recipes or import a game photo.</p><button class="primary" data-go="recipes">Choose recipes</button> <button class="quiet" data-go="import">Import a photo</button></div>`;
     $("blockers").innerHTML = plan.warnings.map((w) => `<div class="alert">${escape(w)}</div>`).join("");
     const showOwned = $("show-owned").checked;
     const requirements = plan.requirements.filter((r) => showOwned || r.missing);
@@ -772,8 +1471,8 @@ globalThis.KH2Recognition = (() => {
       if (row.locked) note = `Synthesis locked: ${D.byRecipe[row.name].unlock}`;
       if (row.name.startsWith("Mythril") && row.missing) note += allChests ? " · All chests marked collected; synthesis is the remaining source." : " · No enemy drops. Chests may supply some; only entered stock is budgeted.";
       if (row.name === "Orichalcum+" && row.missing) note += " · Seven total in the game; chest completion is tracked under World progress.";
-      return `<tr><td>${link(D.materials[row.name].url, row.name)}${row.bonus ? `<small>Includes ${row.bonus} from a base-recipe prerequisite</small>` : ""}</td><td class="numeric">${row.required}</td><td class="numeric">${row.owned}</td><td class="numeric ${row.missing ? "warning" : "positive"}">${row.missing || "—"}</td><td>${escape(note)}${craftable && row.missing && state.expand ? `<label class="check"><input type="checkbox" data-method="${escape(row.name)}" ${(state.methods[row.name] ? state.methods[row.name] === "craft" : row.name.startsWith("Mythril")) ? "checked" : ""}> Plan synthesis for this material</label>${craftable.base ? `<label class="check"><input type="checkbox" data-crafted="${escape(craftable.base)}" ${state.crafted[craftable.base] ? "checked" : ""}> ${escape(craftable.base)} already made once</label>` : ""}` : ""}</td></tr>`;
-    }).join("")}</tbody></table></div>` : `<div class="empty">${plan.goals ? (plan.warnings.length ? "Resolve the locked recipes above to calculate their ingredients." : "The entered stock covers the plan. Open the crafting notes for the recipe breakdown.") : "Missing materials will appear here."}</div>`;
+      return `<tr><td><span class="icon-label">${icon("material", row.name)}${link(D.materials[row.name].url, row.name)}</span>${row.bonus ? `<small>Includes ${row.bonus} from a base-recipe prerequisite</small>` : ""}</td><td class="numeric">${row.required}</td><td class="numeric">${row.owned}</td><td class="numeric ${row.missing ? "warning" : "positive"}">${row.missing || "—"}</td><td>${escape(note)}${craftable && row.missing && state.expand ? `<label class="check"><input type="checkbox" data-method="${escape(row.name)}" ${(state.methods[row.name] ? state.methods[row.name] === "craft" : row.name.startsWith("Mythril")) ? "checked" : ""}> Plan synthesis for this material</label>${craftable.base ? `<label class="check"><input type="checkbox" data-crafted="${escape(craftable.base)}" ${state.crafted[craftable.base] ? "checked" : ""}> ${escape(craftable.base)} already made</label>` : ""}` : ""}</td></tr>`;
+    }).join("")}</tbody></table></div>` : `<div class="empty">${plan.goals ? (plan.warnings.length ? "Resolve the locked recipes above to calculate their ingredients." : "The entered stock covers the plan.") : "Missing materials will appear here."}</div>`;
     const groups = new Map();
     for (const route of plan.routes.toSorted((a, b) => Number(b.available) - Number(a.available))) {
       const key = `${route.world}|${route.available}`;
@@ -782,36 +1481,25 @@ globalThis.KH2Recognition = (() => {
     }
     $("routes").innerHTML = [...groups].map(([, routes]) => {
       const world = D.worlds.find((w) => w.id === routes[0].world);
-      return `<div class="panel route-world ${routes[0].available ? "" : "locked"}"><h3>${escape(world.name)} <span class="tag">${routes[0].available ? "AVAILABLE" : "LOCKED"}</span></h3>${routes.map((r) => `<div class="route-item"><strong>${link(r.url, r.enemy)}</strong> <span class="muted">· ${escape(r.room)}</span><p>${r.materials.map((m) => `<span>${escape(m.name)} ×${m.missing}${m.rate !== null ? ` <small>(${m.rate}% base drop)</small>` : ""}</span>`).join(" · ")}</p>${[...new Set(r.materials.map((m) => m.note).filter(Boolean))].map((note) => `<p class="muted">${escape(note)}</p>`).join("")}${r.available ? "" : `<p class="warning">Unlock: ${escape(r.reason)}</p>`}</div>`).join("")}</div>`;
+      return `<div class="panel route-world ${routes[0].available ? "" : "locked"}"><h3>${escape(world.name)} <span class="tag">${routes[0].available ? "AVAILABLE" : "LOCKED"}</span></h3>${routes.map((r) => `<div class="route-item"><strong>${link(r.url, r.enemy)}</strong> <span class="muted">· ${escape(r.room)}</span><p>${r.materials.map((m) => `<span class="drop-material icon-label">${icon("material", m.name)}<span>${escape(m.name)} ×${m.missing} <small>(${m.effectiveRate !== null ? `${m.effectiveRate}% effective · ${m.rate}% base` : "drop rate unknown"})</small></span></span>`).join(" · ")}</p>${[...new Set(r.materials.map((m) => m.note).filter(Boolean))].map((note) => `<p class="muted">${escape(note)}</p>`).join("")}${r.available ? "" : `<p class="warning">Unlock: ${escape(r.reason)}</p>`}</div>`).join("")}</div>`;
     }).join("") || `<div class="empty">${plan.goals ? "No enemy farming sources needed yet. Mythril is chest / synthesis only; resolve any locked recipes above." : "Farming locations will follow the wish list and world progress."}</div>`;
-    const ordered = [];
-    const visited = new Set();
-    function order(step) {
-      if (visited.has(step)) return;
-      visited.add(step);
-      const recipe = D.byRecipe[step.name];
-      for (const other of plan.steps) if (other !== step && (other.name === recipe.base || Object.hasOwn(step.ingredients, other.name))) order(other);
-      ordered.push(step);
-    }
-    plan.steps.forEach(order);
-    $("crafting").innerHTML = ordered.map((step, i) => `<div class="craft-step"><strong>${i + 1}. ${escape(step.name)} ×${step.quantity}</strong> · ${escape(step.purpose)}<span>${ingredientText(step.ingredients)}</span><span>${step.powered ? `${step.powered} craft(s) use ${escape(step.energy)}.` : "No Energy modifier used."}</span></div>`).join("") || "<p class='muted'>No crafts planned.</p>";
   }
   function renderRecipes() {
     const search = $("recipe-search").value.toLowerCase();
     const category = $("recipe-category").value;
     const recipes = D.recipes.filter((r) => (!category || category === r.category) && r.name.toLowerCase().includes(search));
-    $("recipe-list").innerHTML = recipes.map((r) => `<article class="card"><h3><span class="rank">${r.rank}</span>${escape(r.name)}</h3><p>${escape(r.category)} · ${link(r.url, "Source")}</p><div class="ingredients">${ingredientText(r.ingredients)}${r.modifier ? ` · 1 ${escape(r.modifier)}` : ""}</div><p>${escape(r.unlock)}${r.base ? ` · First make ${escape(r.base)}` : ""}</p><div class="card-actions"><span class="${P.unlocked(r, state) ? "positive" : "warning"}">${P.unlocked(r, state) ? "Level / collection unlocked" : `Needs ${r.minLevel > state.moogle ? `Moogle Lv ${r.minLevel}` : `${r.types} material types`}`}</span><button data-add="${escape(r.name)}" class="${state.goals[r.name] ? "quiet" : "primary"}">${state.goals[r.name] ? `Added (${state.goals[r.name]})` : "Add"}</button></div></article>`).join("") || "<p class='muted'>No matching recipes.</p>";
+    $("recipe-list").innerHTML = recipes.map((r) => `<article class="card"><h3><span class="rank">${r.rank}</span><span class="icon-label">${icon("item", r.name)}${escape(r.name)}</span></h3><p>${escape(r.category)} · ${link(r.url, "Source")}</p><div class="ingredients">${ingredientText(r.ingredients)}${r.modifier ? ` · ${ingredientText({ [r.modifier]: 1 })}` : ""}</div><p>${escape(r.unlock)}${r.base ? ` · First make ${escape(r.base)}` : ""}</p><div class="card-actions"><span class="${P.unlocked(r, state) ? "positive" : "warning"}">${P.unlocked(r, state) ? "Unlocked" : `Needs ${r.minLevel > state.moogle ? `Moogle Lv ${r.minLevel}` : `${r.types} material types`}`}</span><button data-add="${escape(r.name)}" class="${state.goals[r.name] ? "quiet" : "primary"}">${state.goals[r.name] ? "Added" : "Add"}</button></div></article>`).join("") || "<p class='muted'>No matching recipes.</p>";
   }
   function renderInventory() {
     const search = $("material-search").value.toLowerCase();
     const names = D.materialNames.filter((name) => name.toLowerCase().includes(search) && (!$("stock-only").checked || state.inventory[name]));
-    $("inventory-list").innerHTML = names.map((name) => `<div class="stock-row ${state.inventory[name] ? "has-stock" : ""}"><label>${escape(name)}<input type="number" min="0" max="9999" step="1" value="${state.inventory[name] || 0}" data-stock="${escape(name)}" aria-label="${escape(name)} current stock"></label></div>`).join("") || "<p class='muted'>No matching materials.</p>";
+    $("inventory-list").innerHTML = names.map((name) => `<div class="stock-row ${state.inventory[name] ? "has-stock" : ""}"><label><span class="icon-label">${icon("material", name)}${escape(name)}</span><input type="number" min="0" max="9999" step="1" value="${state.inventory[name] || 0}" data-stock="${escape(name)}" aria-label="${escape(name)} current stock"></label></div>`).join("") || "<p class='muted'>No matching materials.</p>";
   }
   function renderProgress() {
     $("all-chests").checked = chestWorlds.every((w) => state.chests[w.id]);
     $("all-chests").indeterminate = !$("all-chests").checked && chestWorlds.some((w) => state.chests[w.id]);
     $("optional-unlocks").innerHTML = D.optional.map(([id, name]) => `<label class="check"><input type="checkbox" data-optional="${id}" ${state.optional[id] ? "checked" : ""}>${escape(name)}</label>`).join("");
-    $("world-list").innerHTML = D.worlds.map((w) => `<article class="card world-card"><h3>${escape(w.name)}</h3><label>Furthest reachable stage<select data-world="${w.id}" aria-label="${escape(w.name)} progress">${w.stages.map((stage, i) => `<option value="${i}" ${Number(state.worlds[w.id] || 0) === i ? "selected" : ""}>${escape(stage)}</option>`).join("")}</select></label>${w.id !== "at" ? `<label class="check"><input type="checkbox" data-chests="${w.id}" ${state.chests[w.id] ? "checked" : ""}> All chests here collected</label>` : "<p>Atlantica has musical rewards, not treasure chests.</p>"}</article>`).join("");
+    $("world-list").innerHTML = D.worlds.map((w) => `<article class="card world-card"><h3>${escape(w.name)}</h3><label>World progress<select data-world="${w.id}" aria-label="${escape(w.name)} progress">${w.stages.map((stage, i) => `<option value="${i}" ${Number(state.worlds[w.id] || 0) === i ? "selected" : ""}>${escape(stage)}</option>`).join("")}</select></label>${w.id !== "at" ? `<label class="check"><input type="checkbox" data-chests="${w.id}" ${state.chests[w.id] ? "checked" : ""}> All chests collected</label>` : "<p>Musical rewards; no treasure chests.</p>"}</article>`).join("");
     $("material-types").value = state.materialTypes;
     $("orichalcum-rewards").innerHTML = D.rewards.slice(3).map((reward) => `<label class="check"><input type="checkbox" data-reward="${reward.id}" ${state.rewards[reward.id] ? "checked" : ""}>${escape(reward.label)}</label>`).join("");
   }
@@ -822,11 +1510,17 @@ globalThis.KH2Recognition = (() => {
     if (!button) return;
     if (button.dataset.tab) tab(button.dataset.tab);
     if (button.dataset.go) tab(button.dataset.go);
+    if (button.id === "endgame-worlds") {
+      for (const world of D.worlds) state.worlds[world.id] = world.stages.length - 1;
+      for (const [id] of D.optional) state.optional[id] = true;
+      save(); renderProgress(); renderPlan();
+      notice("All worlds and optional areas unlocked. Chests and inventory unchanged.");
+    }
     if (button.dataset.add) {
       const name = button.dataset.add;
-      state.goals[name] = Math.min(name === "Ultima Weapon" ? 1 : 99, (state.goals[name] || 0) + 1);
+      state.goals[name] = 1;
       save(); renderPlan(); renderRecipes();
-      notice(`${name} added to the wish list.`);
+      notice(`${name} added to the wishlist.`);
     }
     if (button.dataset.remove) {
       delete state.goals[button.dataset.remove];
@@ -836,10 +1530,7 @@ globalThis.KH2Recognition = (() => {
   document.addEventListener("change", (event) => {
     const el = event.target;
     let changed = true;
-    if (el.dataset.goal) {
-      state.goals[el.dataset.goal] = Math.max(1, P.count(el.value, el.dataset.goal === "Ultima Weapon" ? 1 : 99));
-      renderRecipes();
-    } else if (el.dataset.stock) {
+    if (el.dataset.stock) {
       state.inventory[el.dataset.stock] = P.count(el.value);
       el.value = state.inventory[el.dataset.stock];
       el.closest(".stock-row").classList.toggle("has-stock", el.value !== "0");
@@ -848,7 +1539,7 @@ globalThis.KH2Recognition = (() => {
       renderRecipes();
     } else if (el.dataset.crafted) state.crafted[el.dataset.crafted] = el.checked;
     else if (el.dataset.method) state.methods[el.dataset.method] = el.checked ? "craft" : "collect";
-    else if (el.dataset.world) state.worlds[el.dataset.world] = P.count(el.value, 3);
+    else if (el.dataset.world) state.worlds[el.dataset.world] = P.count(el.value, D.worlds.find((world) => world.id === el.dataset.world).stages.length - 1);
     else if (el.dataset.chests) { state.chests[el.dataset.chests] = el.checked; renderProgress(); }
     else if (el.dataset.optional) state.optional[el.dataset.optional] = el.checked;
     else if (el.dataset.reward) state.rewards[el.dataset.reward] = el.checked;
@@ -856,6 +1547,7 @@ globalThis.KH2Recognition = (() => {
     else if (el.id === "moogle") { state.moogle = Math.max(1, P.count(el.value, 9)); renderRecipes(); }
     else if (el.id === "energy") state.energy = el.value;
     else if (el.id === "expand") state.expand = el.value === "true";
+    else if (el.id === "lucky-lucky") { state.luckyLuckyCount = P.count(el.value, Number.MAX_SAFE_INTEGER); el.value = state.luckyLuckyCount; }
     else if (el.id === "material-types") { state.materialTypes = Math.max(P.count(el.value, 60), Object.values(state.inventory).filter((n) => n > 0).length); el.value = state.materialTypes; renderRecipes(); }
     else changed = false;
     if (changed) { save(); renderPlan(); }
@@ -877,16 +1569,19 @@ globalThis.KH2Recognition = (() => {
     try {
       if (file.size > 1000000) throw new Error("Save file is too large (maximum 1 MB).");
       const next = P.sanitize(JSON.parse(await file.text()));
-      if (!confirm("Replace this journal's current wish list, inventory and progress with the selected save?")) return;
+      if (!confirm("Replace this journal's current wish list, inventory and progress with the selected save? Each wishlist recipe will be included once.")) return;
       state = next; save(); renderAll(); notice("Save loaded.");
     } catch (error) { notice(`Could not load save: ${error.message}`); }
     finally { event.target.value = ""; }
   });
+  window.addEventListener("hashchange", restoreTab);
+  restoreTab();
 
   let media;
   let mediaURL;
   let mediaReady = false;
   let worker;
+  let numberWorker;
   let controller;
   let importing = false;
   let review = [];
@@ -907,9 +1602,14 @@ globalThis.KH2Recognition = (() => {
     aligning = false; cornerPoints = []; dragStart = null; cornerDrag = null;
     cropArea = $("import-kind").value === "recipes" ? { x: 25, y: 23, w: 26, h: 40 } : { x: 26, y: 28, w: 44, h: 49 };
     const { x, y, w, h } = cropArea;
-    alignment = [{ x, y }, { x: x + w, y }, { x: x + w, y: y + h }, { x, y: y + h }];
+    const candidate = mediaReady ? R.detectCorners(media, currentKind) : null;
+    const detected = candidate && validCorners(candidate) ? candidate : null;
+    alignment = detected || [{ x, y }, { x: x + w, y }, { x: x + w, y: y + h }, { x, y: y + h }];
+    if (detected && currentKind === "inventory") $("column-split").value = String(detected.columnSplit || 50);
     $("align-screen").textContent = "Realign four corners";
-    $("alignment-status").textContent = "Four corners preselected. Drag each corner to fit the table, or choose Realign four corners to select new ones.";
+    $("alignment-status").textContent = detected
+      ? "Table detected. Drag corners to adjust."
+      : "Table not detected. Drag the corners into place.";
     drawPreview();
   }
   function validCorners(points) {
@@ -994,7 +1694,7 @@ globalThis.KH2Recognition = (() => {
         } else {
           alignment = cornerPoints; aligning = false;
           $("align-screen").textContent = "Realign four corners";
-          $("alignment-status").textContent = "Perspective alignment set. Drag corners to adjust. Reset corners restores the default selection.";
+          $("alignment-status").textContent = "Corners set. Drag to adjust; Reset corners retries detection.";
         }
       } else $("alignment-status").textContent = `Click the ${["top-left", "top-right", "bottom-right", "bottom-left"][cornerPoints.length]} corner of the table.`;
       drawPreview();
@@ -1009,7 +1709,7 @@ globalThis.KH2Recognition = (() => {
       const next = alignment.map((point, i) => i === cornerDrag ? position(event) : point);
       if (validCorners(next)) {
         alignment = next;
-        $("alignment-status").textContent = "Perspective corners updated. Drag corners to adjust, then read.";
+        $("alignment-status").textContent = "Corners updated.";
         drawPreview();
       }
       return;
@@ -1035,13 +1735,13 @@ globalThis.KH2Recognition = (() => {
     for (const id of ["two-columns", "column-split", "sampling"]) $(id).closest("label").hidden = recipes;
     $("inventory-video-help").hidden = recipes;
     $("import-instructions").textContent = recipes
-      ? "Read the left-hand recipe names only, including dim names. Scan both Recipes and Free Development: their results combine below. The right-hand ingredients / stock panel is not used. Import stock separately from the Materials list."
-      : "Read stock from the game's Materials list, including names and quantities in both columns. Four corners are preselected: drag them to fit the table, or choose Realign four corners. Recipe photos are never used as inventory.";
+      ? "Scan the left-hand names in Recipes and Free Development. Both lists combine here; ingredients and stock are ignored."
+      : "Scan the Materials table. Check the corners and column divider before reading.";
     $("paste-help").textContent = recipes ? "One recipe name per line, from either recipe list" : "One material and current count per line";
     $("ocr-text").placeholder = recipes ? "AP Boost\nPetite Ribbon\nMythril Shard\nAcrisius" : "Dense Shard 4\nEnergy Crystal 3";
     $("import-policy").textContent = recipes
-      ? "Recipe imports add missing goals with quantity 1 and preserve existing desired quantities. Stock comes only from the Materials list import or manual Materials entry."
-      : "Applying a Materials import replaces all previous stock; omitted and unchecked materials become zero.";
+      ? "Adds recipes to the wishlist. Inventory stays unchanged."
+      : "Replaces inventory. Omitted or unchecked materials become zero.";
   }
   $("import-kind").addEventListener("change", () => {
     currentKind = $("import-kind").value;
@@ -1051,7 +1751,7 @@ globalThis.KH2Recognition = (() => {
     review = currentKind === "recipes" ? recipeReview : [];
     if (review.length) renderReview();
     else $("import-review").hidden = true;
-    $("ocr-status").textContent = "Choose media or paste text for this import type.";
+    $("ocr-status").textContent = "Choose a photo or video, or paste a list.";
   });
   $("media-file").addEventListener("change", async (event) => {
     const file = event.target.files[0];
@@ -1092,7 +1792,7 @@ globalThis.KH2Recognition = (() => {
       }
       mediaReady = true; $("media-preview").hidden = false; $("recognize").disabled = false;
       resetCrop();
-      $("ocr-status").textContent = "Four corners are preselected. Adjust them if needed, then read. All results remain editable.";
+      $("ocr-status").textContent = "Check the selected table corners, then read. All results remain editable.";
     } catch (error) { $("media-preview").hidden = true; $("ocr-status").textContent = error.message; }
   });
   function renderReview(unmatched = 0) {
@@ -1101,9 +1801,9 @@ globalThis.KH2Recognition = (() => {
     $("import-review").hidden = false;
     $("review-rows").classList.toggle("recipe-review", recipes);
     $("review-instructions").textContent = recipes
-      ? "Recipe names from Recipes and Free Development are combined. Unchecked names are ignored. No inventory counts are read from recipe photos."
-      : "Applying replaces all previous stock. Omitted and unchecked materials become zero. Repeated video rows are not added together. Conflicting readings stay unchecked until reviewed. Names without a readable count are left blank.";
-    $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row${!recipes && row.image ? " has-source" : ""}"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select>${recipes ? "" : `<input type="number" min="0" max="9999" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?">`}<small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small>${!recipes && row.image ? `<figure class="review-source"><img src="${escape(row.image)}" alt="Original game row for ${escape(row.name)}" title="${escape(row.source)}" loading="lazy"></figure>` : ""}</div>`).join("");
+      ? "Select the recipes to add."
+      : "Check counts against the images. Conflicts stay unchecked; unreadable counts are blank. Repeated rows are not added together.";
+    $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row${!recipes && row.image ? " has-source" : ""}"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><div class="review-name"><span class="review-icon" aria-hidden="true">${icon(recipes ? "item" : "material", row.name)}</span><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select></div>${recipes ? "" : `<input type="number" min="0" max="9999" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?">`}<small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small>${!recipes && row.image ? `<figure class="review-source"><img src="${escape(row.image)}" alt="Original game row for ${escape(row.name)}" title="${escape(row.source)}" loading="lazy"></figure>` : ""}</div>`).join("");
     $("review-message").textContent = `${review.length} ${recipes ? "combined recipe names from Recipes / Free Development" : "recognized materials"}. ${unmatched ? `${unmatched} unrecognized text line(s); inspect the raw text and add anything missing manually.` : ""}${!review.length ? " Adjust the crop or use pasted text / manual entry." : ""}`;
     $("apply-import").disabled = !review.length;
     $("check-all-import").disabled = !review.length;
@@ -1119,7 +1819,13 @@ globalThis.KH2Recognition = (() => {
   $("import-review").addEventListener("change", (event) => {
     const el = event.target;
     if (el.dataset.reviewCheck !== undefined) review[Number(el.dataset.reviewCheck)].checked = el.checked;
-    if (el.dataset.reviewName !== undefined) review[Number(el.dataset.reviewName)].name = el.value;
+    if (el.dataset.reviewName !== undefined) {
+      review[Number(el.dataset.reviewName)].name = el.value;
+      const row = el.closest(".review-row");
+      row.querySelector(".review-icon").innerHTML = icon(reviewKind === "recipes" ? "item" : "material", el.value);
+      row.querySelector("[data-review-check]").setAttribute("aria-label", `Import ${el.value}`);
+      row.querySelector("[data-review-qty]")?.setAttribute("aria-label", `${el.value} imported quantity`);
+    }
     if (el.dataset.reviewQty !== undefined) review[Number(el.dataset.reviewQty)].quantity = el.value === "" ? null : P.count(el.value, reviewKind === "recipes" ? 99 : 9999);
   });
   $("check-all-import").addEventListener("click", () => {
@@ -1134,18 +1840,18 @@ globalThis.KH2Recognition = (() => {
   $("apply-import").addEventListener("click", () => {
     const checked = review.filter((row) => row.checked);
     if (!checked.length) { notice("Check at least one row before applying."); return; }
-    if (checked.some((r) => r.quantity === null || (reviewKind === "recipes" && !r.quantity))) { notice("Enter a valid quantity for every checked row."); return; }
+    if (reviewKind === "inventory" && checked.some((r) => r.quantity === null)) { notice("Enter a valid quantity for every checked row."); return; }
     const names = checked.map((r) => r.name);
     if (new Set(names).size !== names.length) { notice("Duplicate names in review. Uncheck or rename duplicate rows before applying."); return; }
     if (reviewKind === "inventory") state.inventory = {};
     for (const row of checked) {
-      if (reviewKind === "recipes") state.goals[row.name] = state.goals[row.name] || 1;
+      if (reviewKind === "recipes") state.goals[row.name] = 1;
       else state.inventory[row.name] = P.count(row.quantity);
     }
     if (reviewKind === "recipes") recipeReview = [];
     else state.materialTypes = Math.max(state.materialTypes, Object.values(state.inventory).filter((n) => n > 0).length);
     save(); renderAll();
-    notice(reviewKind === "recipes" ? `${checked.length} recipe names combined with the wish list. Existing quantities and inventory were left unchanged.` : `Inventory replaced with ${checked.length} material totals. All previous stock was cleared.`);
+    notice(reviewKind === "recipes" ? `${checked.length} recipes added. Inventory unchanged.` : `Inventory replaced (${checked.length} materials).`);
   });
   function setImportBusy(busy) {
     importing = busy;
@@ -1157,7 +1863,9 @@ globalThis.KH2Recognition = (() => {
   $("cancel-ocr").addEventListener("click", () => {
     controller?.abort();
     void worker?.terminate();
+    void numberWorker?.terminate();
     worker = null;
+    numberWorker = null;
     $("ocr-status").textContent = "Cancelling; partial readings will be available for review.";
   });
   $("recognize").addEventListener("click", async () => {
@@ -1174,19 +1882,26 @@ globalThis.KH2Recognition = (() => {
     $("import-review").hidden = true;
     $("ocr-progress").value = 0;
     try {
-      $("ocr-status").textContent = "Loading local recognition engine / English model…";
+      $("ocr-status").textContent = "Loading text recognition…";
       const engine = await R.loadEngine();
       if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
-      worker = await engine.createWorker("eng", 1, {
+      const workerOptions = {
         workerPath: "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js",
         corePath: "https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1",
         langPath: "https://tessdata.projectnaptha.com/4.0.0",
         logger: (event) => {
           if (!done && !signal.aborted && event.status !== "recognizing text") $("ocr-status").textContent = `${event.status} ${Math.round((event.progress || 0) * 100)}%`;
         },
-      });
+      };
+      worker = await engine.createWorker("eng", 1, workerOptions);
       if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
       await worker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1", user_defined_dpi: "150" });
+      if (reviewKind === "inventory") {
+        numberWorker = await engine.createWorker("eng", 2, { ...workerOptions, legacyCore: true, legacyLang: true });
+        if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
+        // Keep misread digits from retraining the classifier across video frames.
+        await numberWorker.setParameters({ tessedit_pageseg_mode: "7", tessedit_char_whitelist: "0123456789", classify_enable_learning: "0", classify_enable_adaptive_matcher: "0", user_defined_dpi: "150" });
+      }
       const video = media === $("video");
       const interval = Number($("sampling").value);
       const frames = video ? Math.ceil(media.duration / interval) : 1;
@@ -1200,43 +1915,52 @@ globalThis.KH2Recognition = (() => {
         if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
         if (video) await R.seek(media, Math.min(frame * interval, media.duration - 0.01), signal);
         drawPreview();
-        const frameMedia = selectedAlignment ? R.rectifyCanvas(media, selectedAlignment) : media;
+        const frameMedia = selectedAlignment ? R.rectifyCanvas(media, selectedAlignment, reviewKind === "inventory" ? 0.08 : 0) : media;
         for (let column = 0; column < columns; column++) {
           if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
           $("ocr-status").textContent = `Reading ${video ? `frame ${frame + 1}/${frames}, ` : ""}column ${column + 1}/${columns}. ${Math.round(done / total * 100)}% complete.`;
-          const canvas = R.cropCanvas(frameMedia, selectedAlignment ? { x: 0, y: 0, w: 100, h: 100 } : selectedCrop, column, columns, Number($("column-split").value) || 52);
           const numberColumn = reviewKind === "inventory" ? R.cropCanvas(frameMedia, selectedAlignment ? { x: 0, y: 0, w: 100, h: 100 } : selectedCrop, column, columns, Number($("column-split").value) || 52, false) : null;
-          await worker.setParameters({ tessedit_pageseg_mode: "6", tessedit_char_whitelist: "" });
+          const canvas = numberColumn ? R.inventoryCanvas(numberColumn) : R.cropCanvas(frameMedia, selectedAlignment ? { x: 0, y: 0, w: 100, h: 100 } : selectedCrop, column, columns, Number($("column-split").value) || 52);
           const result = await worker.recognize(canvas);
           const lines = result.data.lines || result.data.text.split(/\r?\n/).map((text) => ({ text, confidence: result.data.confidence }));
           if (reviewKind === "inventory") {
-            await worker.setParameters({ tessedit_pageseg_mode: "7", tessedit_char_whitelist: "0123456789" });
+            const columnText = [];
             for (const line of lines) {
               const parsed = R.parseLines([line], reviewKind, `${video ? `Video ${media.currentTime.toFixed(2)}s` : "Photo"}, column ${column + 1}`);
               unmatched += parsed.unmatched.length;
-              if (!parsed.rows.length || !line.bbox) continue;
+              if (!parsed.rows.length || !line.bbox) { columnText.push(line.text); continue; }
               if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
-              const digits = await worker.recognize(R.quantityCanvas(numberColumn, line.bbox));
-              const text = digits.data.text.trim();
+              const countCanvas = R.quantityCanvas(numberColumn, line.bbox);
+              let digits = await numberWorker.recognize(countCanvas);
+              if (digits.data.confidence < 85) {
+                await numberWorker.setParameters({ tessedit_pageseg_mode: "8" });
+                const alternate = await numberWorker.recognize(countCanvas);
+                await numberWorker.setParameters({ tessedit_pageseg_mode: "7" });
+                if (/^\d{1,4}$/.test(alternate.data.text.trim()) && alternate.data.confidence > digits.data.confidence) digits = alternate;
+              }
+              const text = R.quantityText(countCanvas, digits.data.text.trim());
               for (const row of parsed.rows) {
-                row.quantity = /^\d{1,4}$/.test(text) ? Number(text) : null;
+                row.quantity = /^\d{1,4}$/.test(text) && digits.data.confidence >= 65 ? Number(text) : null;
+                columnText.push(`${row.name}${row.quantity === null ? "" : ` ${row.quantity}`}`);
                 row.confidence = Math.min(row.confidence, digits.data.confidence);
                 const key = `${row.name}:${row.quantity}`;
                 const previous = sourceReadings.get(key);
                 if (!previous || row.confidence * row.score > previous.confidence * previous.score) {
                   if (previous) delete previous.image;
-                  row.image = R.sourceCanvas(numberColumn, line.bbox).toDataURL("image/jpeg", 0.9);
+                  const sourceBounds = countCanvas.sourceBounds || line.bbox;
+                  row.image = R.sourceCanvas(numberColumn, { y0: Math.min(line.bbox.y0, sourceBounds.y0), y1: Math.max(line.bbox.y1, sourceBounds.y1) }).toDataURL("image/jpeg", 0.9);
                   sourceReadings.set(key, row);
                 }
                 observations.push(row);
               }
             }
+            raw.push(columnText.join("\n"));
           } else {
             const parsed = R.parseLines(lines, reviewKind, `Frame ${frame + 1}, column ${column + 1}`);
             observations.push(...parsed.rows);
             unmatched += parsed.unmatched.length;
+            raw.push(result.data.text);
           }
-          raw.push(result.data.text);
           done++; $("ocr-progress").value = done / total;
         }
       }
@@ -1245,6 +1969,7 @@ globalThis.KH2Recognition = (() => {
       $("ocr-status").textContent = signal.aborted ? "Cancelled. Partial results are available below." : `Recognition stopped: ${error.message}. Manual entry and pasted text remain available.`;
     } finally {
       if (worker) { await worker.terminate().catch(() => {}); worker = null; }
+      if (numberWorker) { await numberWorker.terminate().catch(() => {}); numberWorker = null; }
       $("ocr-text").value = raw.join("\n");
       combineReview(R.merge(observations, media === $("video") ? 2 : 1)); renderReview(unmatched);
       setImportBusy(false);

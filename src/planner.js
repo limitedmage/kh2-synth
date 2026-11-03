@@ -3,14 +3,14 @@ globalThis.KH2Planner = (() => {
   const count = (value, max = 9999) => Math.min(max, Math.max(0, Math.floor(Number(value) || 0)));
   const defaults = () => ({
     version: 1, goals: {}, inventory: {}, crafted: {}, worlds: {}, chests: {}, optional: {}, rewards: {},
-    moogle: 1, energy: "owned", expand: true, materialTypes: 0, methods: {},
+    moogle: 1, energy: "owned", expand: true, materialTypes: 0, methods: {}, luckyLuckyCount: 0,
   });
   function sanitize(raw) {
     if (!raw || typeof raw !== "object" || Array.isArray(raw) || raw.version !== 1) throw new Error("Not a supported Synthesis Journal save (version 1).");
     const state = defaults();
     for (const [field, names] of [["goals", D.recipes.map((r) => r.name)], ["inventory", D.materialNames]]) {
       const keys = field === "goals" ? Object.keys(raw[field] || {}).filter((name) => names.includes(name)) : names;
-      for (const name of keys) if (raw[field]?.[name] !== undefined) state[field][name] = count(raw[field][name], field === "goals" ? (name === "Ultima Weapon" ? 1 : 99) : 9999);
+      for (const name of keys) if (raw[field]?.[name] !== undefined) state[field][name] = count(raw[field][name], field === "goals" ? 1 : 9999);
     }
     for (const [field, names] of [["crafted", D.recipes.map((r) => r.name)], ["chests", D.worlds.map((w) => w.id)], ["optional", D.optional.map(([id]) => id)], ["rewards", D.rewards.map((r) => r.id)]]) {
       for (const name of names) state[field][name] = raw[field]?.[name] === true;
@@ -21,7 +21,13 @@ globalThis.KH2Planner = (() => {
     state.materialTypes = Math.max(count(raw.materialTypes, 60), Object.values(state.inventory).filter((n) => n > 0).length);
     state.energy = ["owned", "none", "farm"].includes(raw.energy) ? raw.energy : "owned";
     state.expand = raw.expand !== false;
+    state.luckyLuckyCount = count(raw.luckyLuckyCount, Number.MAX_SAFE_INTEGER);
     return state;
+  }
+  function effectiveDropRate(baseRate, abilities = 0) {
+    if (typeof baseRate !== "number" || !Number.isFinite(baseRate)) return null;
+    const rate = Math.min(100, Math.max(0, baseRate) * (1 + 0.5 * count(abilities, Number.MAX_SAFE_INTEGER)));
+    return Math.round((rate + Number.EPSILON) * 100) / 100;
   }
   const threshold = { C: 5, B: 6, A: 7, S: 9 };
   const energyName = (recipe) => `Energy ${D.tiers["CBAS".indexOf(recipe.rank)]}`;
@@ -54,7 +60,7 @@ globalThis.KH2Planner = (() => {
     const scheduled = new Set();
     const bonusStock = {};
     function addDemand(name, amount) { demand[name] = (demand[name] || 0) + amount; }
-    function craft(recipe, quantity, purpose, path = new Set()) {
+    function craft(recipe, quantity, purpose, path = new Set(), goal = null) {
       if (!quantity || path.has(recipe.name)) return false;
       if (!unlocked(recipe, state)) {
         warnings.push(`${recipe.name}: requires ${recipe.minLevel > state.moogle ? `Moogle level ${recipe.minLevel}` : `${recipe.types} discovered material types`}.`);
@@ -65,9 +71,9 @@ globalThis.KH2Planner = (() => {
         const base = D.byRecipe[recipe.base];
         if (requested[recipe.base] && !scheduled.has(recipe.base)) {
           scheduled.add(recipe.base);
-          if (!craft(base, count(requested[recipe.base], 99), "Goal", next)) return false;
+          if (!craft(base, count(requested[recipe.base], 99), "Goal", next, recipe.base)) return false;
         } else if (!scheduled.has(recipe.base)) {
-          if (!craft(base, 1, "First-time upgrade prerequisite", next)) return false;
+          if (!craft(base, 1, "First-time upgrade prerequisite", next, goal)) return false;
           if (D.materials[recipe.base]) bonusStock[recipe.base] = (bonusStock[recipe.base] || 0) + 1;
         }
       }
@@ -85,7 +91,7 @@ globalThis.KH2Planner = (() => {
       for (const [name, qty] of Object.entries(plain)) addDemand(name, qty * (quantity - powered));
       for (const [name, qty] of Object.entries(reduced)) addDemand(name, qty * powered);
       made.add(recipe.name);
-      steps.push({ name: recipe.name, quantity, powered, energy, purpose, ingredients: Object.fromEntries([...new Set([...Object.keys(plain), ...Object.keys(reduced)])].map((name) => [
+      steps.push({ name: recipe.name, quantity, powered, energy, purpose, goal, ingredients: Object.fromEntries([...new Set([...Object.keys(plain), ...Object.keys(reduced)])].map((name) => [
         name, (plain[name] || 0) * (quantity - powered) + (reduced[name] || 0) * powered,
       ])) });
       return true;
@@ -93,7 +99,7 @@ globalThis.KH2Planner = (() => {
     for (const [name, qty] of Object.entries(requested)) {
       if (scheduled.has(name)) continue;
       scheduled.add(name);
-      craft(D.byRecipe[name], count(qty, 99), "Goal");
+      craft(D.byRecipe[name], count(qty, 99), "Goal", new Set(), name);
       if (name === "Ultima Weapon" && qty > 1) warnings.push("Ultima Weapon can only be synthesized once per game. Set its quantity to 1.");
     }
     // Expand parents before children so shared sub-material demand is pooled before using stock.
@@ -127,11 +133,48 @@ globalThis.KH2Planner = (() => {
         for (const route of D.materials[row.name].sources) {
           const key = `${route.world}|${route.stage}|${route.enemy}|${route.room}|${route.unlock}`;
           if (!routes.has(key)) routes.set(key, { ...route, ...availability(route, state), materials: [] });
-          routes.get(key).materials.push({ name: row.name, missing: row.missing, rate: route.rate, note: route.note });
+          routes.get(key).materials.push({ name: row.name, missing: row.missing, rate: route.rate, effectiveRate: effectiveDropRate(route.rate, state.luckyLuckyCount), note: route.note });
         }
       }
     }
     return { requirements, needed, routes: [...routes.values()], steps, warnings: [...new Set(warnings)], goals: Object.values(requested).reduce((a, b) => a + b, 0) };
   }
-  return { count, defaults, sanitize, costs, unlocked, availability, energyName, plan };
+  function wishlistConflicts(state) {
+    const goals = Object.fromEntries(Object.entries(state.goals).filter(([name, qty]) => D.byRecipe[name] && count(qty)));
+    const conflicts = new Map();
+    const complete = plan({ ...state, goals });
+    if (!complete.needed.length) return conflicts;
+    for (const name of Object.keys(goals)) {
+      const individual = plan({ ...state, goals: { [name]: goals[name] } });
+      if (individual.warnings.length || individual.needed.length) continue;
+      const inventory = { ...state.inventory };
+      const crafted = { ...state.crafted };
+      // Include synthesized material outputs and first-time prerequisites, not just root costs.
+      for (const step of individual.steps) {
+        for (const [material, qty] of Object.entries(step.ingredients)) inventory[material] = (inventory[material] || 0) - qty;
+        if (D.materials[step.name]) inventory[step.name] = (inventory[step.name] || 0) + step.quantity;
+        crafted[step.name] = true;
+      }
+      const others = Object.fromEntries(Object.entries(goals).filter(([other]) => other !== name));
+      const before = plan({ ...state, goals: others });
+      const fulfilled = new Set(individual.steps.filter((step) => step.purpose === "First-time upgrade prerequisite").map((step) => step.name));
+      const remainingGoals = Object.fromEntries(Object.entries(others).filter(([other]) => !fulfilled.has(other)));
+      const remaining = { ...state, inventory, crafted, goals: remainingGoals };
+      const after = plan(remaining);
+      const previous = new Map(before.needed.map((row) => [row.name, row.missing]));
+      const materials = after.needed.filter((row) => row.missing > (previous.get(row.name) || 0)).map((row) => ({
+        name: row.name, before: previous.get(row.name) || 0, after: row.missing,
+      }));
+      if (!materials.length) continue;
+      const affected = new Set(materials.map((row) => row.name));
+      const items = Object.keys(remainingGoals).filter((other) => {
+        const otherGoals = { [other]: others[other] };
+        return [plan({ ...state, goals: otherGoals }), plan({ ...remaining, goals: otherGoals })]
+          .some((result) => result.requirements.some((row) => affected.has(row.name)));
+      });
+      conflicts.set(name, { materials, items });
+    }
+    return conflicts;
+  }
+  return { count, defaults, sanitize, costs, unlocked, availability, energyName, plan, wishlistConflicts, effectiveDropRate };
 })();

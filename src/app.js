@@ -11,7 +11,11 @@
   let storageWarning = "";
   try {
     const saved = localStorage.getItem(storageKey);
-    if (saved) state = P.sanitize(JSON.parse(saved));
+    if (saved) {
+      const raw = JSON.parse(saved);
+      state = P.sanitize(raw);
+      if (JSON.stringify(raw.goals) !== JSON.stringify(state.goals)) localStorage.setItem(storageKey, JSON.stringify(state));
+    }
   } catch {
     storageWarning = "Browser storage is unavailable or the saved data could not be read. Export a save to keep changes.";
   }
@@ -31,36 +35,92 @@
       $("save-status").classList.add("storage-error");
     }
   }
-  function tab(name) {
+  const tabFragments = { plan: "plan", recipes: "recipes", inventory: "materials", progress: "world-progress", import: "import" };
+  function tab(name, updateURL = true) {
+    if (!Object.hasOwn(tabFragments, name)) name = "plan";
     for (const section of document.querySelectorAll("main > section")) section.hidden = section.id !== `tab-${name}`;
     for (const button of document.querySelectorAll("[data-tab]")) {
       const active = button.dataset.tab === name;
       button.classList.toggle("active", active);
+      button.id = `nav-${button.dataset.tab}`;
+      button.setAttribute("aria-controls", `tab-${button.dataset.tab}`);
+      $(`tab-${button.dataset.tab}`).setAttribute("aria-labelledby", button.id);
       if (active) button.setAttribute("aria-current", "page");
       else button.removeAttribute("aria-current");
     }
+    if (updateURL && location.hash !== `#${tabFragments[name]}`) location.hash = `#${tabFragments[name]}`;
+  }
+  function restoreTab() {
+    const fragment = location.hash.slice(1).toLowerCase();
+    const name = Object.keys(tabFragments).find((key) => tabFragments[key] === fragment) || (Object.hasOwn(tabFragments, fragment) ? fragment : "plan");
+    tab(name, false);
+    if (location.hash !== `#${tabFragments[name]}`) history.replaceState(null, "", `#${tabFragments[name]}`);
   }
   const link = (url, text) => `<a href="${escape(url)}" target="_blank" rel="noreferrer">${escape(text)}</a>`;
-  const ingredientText = (ingredients) => Object.entries(ingredients).map(([name, qty]) => `${qty} ${escape(name)}`).join(" · ");
+  const icon = (kind, name) => globalThis.KH2Icons?.[kind]?.(name) || "";
+  const ingredientText = (ingredients) => Object.entries(ingredients).map(([name, qty]) => `<span class="ingredient icon-label">${icon("material", name)}<span>${qty} ${escape(name)}</span></span>`).join(" · ");
+  function wishlistAvailability(goals) {
+    const allocated = {};
+    return new Map(goals.map(([name]) => {
+      const first = P.plan({ ...state, goals: { ...allocated, [name]: 1 } });
+      const available = !first.warnings.length && !first.needed.length ? 1 : 0;
+      if (available) allocated[name] = 1;
+      const locks = [...first.warnings, ...first.requirements.filter((row) => row.locked).map((row) => `${row.name}: ${D.byRecipe[row.name].unlock}.`)];
+      const status = available ? "ready" : locks.length ? "locked" : "missing";
+      return [name, { available, status, reason: locks.join(" ") }];
+    }));
+  }
+  function wishlistIngredients(plan) {
+    const ingredients = new Map();
+    for (const step of plan.steps) {
+      if (!step.goal) continue;
+      if (!ingredients.has(step.goal)) ingredients.set(step.goal, {});
+      const costs = ingredients.get(step.goal);
+      for (const [name, required] of Object.entries(step.ingredients)) {
+        if (required) costs[name] = (costs[name] || 0) + required;
+      }
+    }
+    return ingredients;
+  }
+  function wishlistIngredient(name, required) {
+    const owned = P.count(state.inventory[name]);
+    return `<span class="wishlist-ingredient ${owned >= required ? "ingredient-covered" : "ingredient-short"}" data-material="${escape(name)}" data-owned="${owned}" data-required="${required}" role="img" aria-label="${escape(`${name}: ${owned} owned / ${required} required`)}">${icon("material", name)}<span aria-hidden="true">${escape(name)} <strong class="wishlist-ratio">${owned}/${required}</strong></span></span>`;
+  }
   function renderPlan() {
     const plan = P.plan(state);
     $("moogle").value = state.moogle;
     $("energy").value = state.energy;
     $("expand").value = String(state.expand);
+    $("lucky-lucky").value = state.luckyLuckyCount;
     const discounts = [["C", 5], ["B", 6], ["A", 7], ["S", 9]].filter(([, level]) => state.moogle >= level).map(([rank]) => rank);
     $("moogle-perks").textContent = [
       state.moogle >= 2 ? "Energy enabled" : "Energy unlocks at level 2",
       state.moogle >= 3 ? "Serenity upgrades enabled" : "Upgrades unlock at level 3",
-      state.moogle >= 4 ? "Energy + Serenity may be combined" : "Combining Energy + Serenity needs level 4",
+      state.moogle >= 4 ? "Energy + Serenity enabled" : "Energy + Serenity unlocks at level 4",
       discounts.length ? `Half-cost ranks: ${discounts.join(", ")} (Energy stacks; round up per craft)` : "No automatic rank discounts yet",
     ].join(" · ");
     $("plan-count").textContent = plan.goals ? `(${plan.goals})` : "";
-    $("summary").innerHTML = `<div class="stat"><strong>${plan.goals}</strong><span>creations on the wish list</span></div><div class="stat"><strong>${plan.needed.reduce((n, r) => n + r.missing, 0)}</strong><span>materials still to collect</span></div><div class="stat"><strong>${plan.routes.filter((r) => r.available).length}</strong><span>available farming / reward sources</span></div>`;
+    $("summary").innerHTML = `<div class="stat"><strong>${plan.goals}</strong><span>items on the wishlist</span></div><div class="stat"><strong>${plan.needed.reduce((n, r) => n + r.missing, 0)}</strong><span>materials to collect</span></div><div class="stat"><strong>${plan.routes.filter((r) => r.available).length}</strong><span>available sources</span></div>`;
     const goals = Object.entries(state.goals).filter(([, qty]) => qty);
-    $("goals").innerHTML = goals.length ? `<h3>Wish list</h3>${goals.map(([name, qty]) => {
+    const availability = wishlistAvailability(goals);
+    const conflicts = P.wishlistConflicts(state);
+    const goalIngredients = wishlistIngredients(plan);
+    $("goals").innerHTML = goals.length ? `<h3>Wishlist</h3>${goals.map(([name]) => {
       const recipe = D.byRecipe[name];
-      return `<div class="goal"><div class="goal-name">${escape(name)}<small>Rank ${recipe.rank} · ${escape(recipe.category)}</small></div><label>Quantity<input type="number" min="1" max="${name === "Ultima Weapon" ? 1 : 99}" value="${qty}" data-goal="${escape(name)}" aria-label="${escape(name)} desired quantity"></label><button class="quiet" data-remove="${escape(name)}" aria-label="Remove ${escape(name)}">Remove</button>${recipe.base ? `<label class="check"><input type="checkbox" data-crafted="${escape(recipe.base)}" ${state.crafted[recipe.base] ? "checked" : ""}> ${escape(recipe.base)} has already been made once</label>` : ""}</div>`;
-    }).join("")}` : `<div class="empty"><h3>Every creation starts with a wish.</h3><p>Add a recipe manually or read the list from a game photo.</p><button class="primary" data-go="recipes">Choose recipes</button> <button class="quiet" data-go="import">Import a photo</button></div>`;
+      const ready = availability.get(name);
+      const ingredients = goalIngredients.get(name);
+      const chips = Object.entries(ingredients || P.costs(recipe, state, recipe.name === "Ultima Weapon")).filter(([, required]) => required).map(([material, required]) => wishlistIngredient(material, required)).join("");
+      const ingredientRow = `<div class="goal-ingredients wishlist-ingredients" role="group" aria-label="${escape(`${name} ingredients${ingredients ? ", including prerequisites" : " — locked recipe preview, before prerequisites or Energy"}`)}">${ingredients ? "" : '<span class="ingredient-preview">Locked preview</span>'}${chips}</div>`;
+      const label = ready.status === "ready" ? "Ready to craft" : ready.status === "locked" ? "Locked" : "Needs materials";
+      const statusIcon = `<svg class="craftability-icon" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" ${ready.status === "ready" ? 'role="img" aria-label="Ready to craft"' : 'aria-hidden="true"'} focusable="false">${ready.status === "ready" ? '<path d="m4 12 5 5L20 6"/><path d="m15 5 5 1-1 5" stroke-width="1"/>' : ready.status === "locked" ? '<rect x="5" y="10" width="14" height="11" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3m-4 5v2"/>' : '<path d="m12 3 9 9-9 9-9-9Z"/><path d="M8 12h8"/>'}</svg>`;
+      const status = ready.reason
+        ? `<details class="craftability"><summary class="craftability-label" aria-label="${escape(`${label}: ${ready.reason}`)}" title="${escape(`${label}: ${ready.reason}`)}">${statusIcon}</summary><small class="craftability-detail">${escape(ready.reason)}</small></details>`
+        : `<span class="craftability craftability-label" ${ready.status === "ready" ? "" : `role="img" aria-label="${label}"`} title="${label}">${statusIcon}</span>`;
+      const conflict = ready.status === "ready" ? conflicts.get(name) : undefined;
+      const conflictText = conflict ? `Shared materials warning: crafting ${name} increases shortfalls for ${conflict.items.join(", ")}. ${conflict.materials.map((material) => `${material.name}: ${material.before} → ${material.after} missing`).join("; ")}.` : "";
+      const warning = conflict ? `<details class="craft-conflict"><summary aria-label="${escape(conflictText)}" title="${escape(conflictText)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" focusable="false"><path d="M12 3 2 21h20L12 3Z"/><path d="M12 9v5m0 3v.1"/></svg></summary><small class="craftability-detail">${escape(conflictText)}</small></details>` : "";
+      return `<div class="goal craftability-${ready.status}" data-goal="${escape(name)}" data-craftable="${ready.available}"><div class="goal-main"><div class="goal-name" title="${escape(name)} · Rank ${recipe.rank} · ${escape(recipe.category)}"><span class="icon-label">${icon("item", name)}<span class="goal-title">${escape(name)}</span></span><small>Rank ${recipe.rank} · ${escape(recipe.category)}</small></div>${recipe.base ? `<label class="check goal-base" title="${escape(recipe.base)} already made"><input type="checkbox" data-crafted="${escape(recipe.base)}" aria-label="${escape(recipe.base)} already made" ${state.crafted[recipe.base] ? "checked" : ""}><span>Base<span class="goal-base-extra"> made</span></span></label>` : ""}${warning}${status}<button class="quiet goal-remove" data-remove="${escape(name)}" aria-label="Remove ${escape(name)}" title="Remove ${escape(name)}"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true" focusable="false"><path d="m7 7 10 10M17 7 7 17"/></svg></button></div>${ingredientRow}</div>`;
+    }).join("")}` : `<div class="empty"><h3>No recipes yet</h3><p>Choose recipes or import a game photo.</p><button class="primary" data-go="recipes">Choose recipes</button> <button class="quiet" data-go="import">Import a photo</button></div>`;
     $("blockers").innerHTML = plan.warnings.map((w) => `<div class="alert">${escape(w)}</div>`).join("");
     const showOwned = $("show-owned").checked;
     const requirements = plan.requirements.filter((r) => showOwned || r.missing);
@@ -71,8 +131,8 @@
       if (row.locked) note = `Synthesis locked: ${D.byRecipe[row.name].unlock}`;
       if (row.name.startsWith("Mythril") && row.missing) note += allChests ? " · All chests marked collected; synthesis is the remaining source." : " · No enemy drops. Chests may supply some; only entered stock is budgeted.";
       if (row.name === "Orichalcum+" && row.missing) note += " · Seven total in the game; chest completion is tracked under World progress.";
-      return `<tr><td>${link(D.materials[row.name].url, row.name)}${row.bonus ? `<small>Includes ${row.bonus} from a base-recipe prerequisite</small>` : ""}</td><td class="numeric">${row.required}</td><td class="numeric">${row.owned}</td><td class="numeric ${row.missing ? "warning" : "positive"}">${row.missing || "—"}</td><td>${escape(note)}${craftable && row.missing && state.expand ? `<label class="check"><input type="checkbox" data-method="${escape(row.name)}" ${(state.methods[row.name] ? state.methods[row.name] === "craft" : row.name.startsWith("Mythril")) ? "checked" : ""}> Plan synthesis for this material</label>${craftable.base ? `<label class="check"><input type="checkbox" data-crafted="${escape(craftable.base)}" ${state.crafted[craftable.base] ? "checked" : ""}> ${escape(craftable.base)} already made once</label>` : ""}` : ""}</td></tr>`;
-    }).join("")}</tbody></table></div>` : `<div class="empty">${plan.goals ? (plan.warnings.length ? "Resolve the locked recipes above to calculate their ingredients." : "The entered stock covers the plan. Open the crafting notes for the recipe breakdown.") : "Missing materials will appear here."}</div>`;
+      return `<tr><td><span class="icon-label">${icon("material", row.name)}${link(D.materials[row.name].url, row.name)}</span>${row.bonus ? `<small>Includes ${row.bonus} from a base-recipe prerequisite</small>` : ""}</td><td class="numeric">${row.required}</td><td class="numeric">${row.owned}</td><td class="numeric ${row.missing ? "warning" : "positive"}">${row.missing || "—"}</td><td>${escape(note)}${craftable && row.missing && state.expand ? `<label class="check"><input type="checkbox" data-method="${escape(row.name)}" ${(state.methods[row.name] ? state.methods[row.name] === "craft" : row.name.startsWith("Mythril")) ? "checked" : ""}> Plan synthesis for this material</label>${craftable.base ? `<label class="check"><input type="checkbox" data-crafted="${escape(craftable.base)}" ${state.crafted[craftable.base] ? "checked" : ""}> ${escape(craftable.base)} already made</label>` : ""}` : ""}</td></tr>`;
+    }).join("")}</tbody></table></div>` : `<div class="empty">${plan.goals ? (plan.warnings.length ? "Resolve the locked recipes above to calculate their ingredients." : "The entered stock covers the plan.") : "Missing materials will appear here."}</div>`;
     const groups = new Map();
     for (const route of plan.routes.toSorted((a, b) => Number(b.available) - Number(a.available))) {
       const key = `${route.world}|${route.available}`;
@@ -81,36 +141,25 @@
     }
     $("routes").innerHTML = [...groups].map(([, routes]) => {
       const world = D.worlds.find((w) => w.id === routes[0].world);
-      return `<div class="panel route-world ${routes[0].available ? "" : "locked"}"><h3>${escape(world.name)} <span class="tag">${routes[0].available ? "AVAILABLE" : "LOCKED"}</span></h3>${routes.map((r) => `<div class="route-item"><strong>${link(r.url, r.enemy)}</strong> <span class="muted">· ${escape(r.room)}</span><p>${r.materials.map((m) => `<span>${escape(m.name)} ×${m.missing}${m.rate !== null ? ` <small>(${m.rate}% base drop)</small>` : ""}</span>`).join(" · ")}</p>${[...new Set(r.materials.map((m) => m.note).filter(Boolean))].map((note) => `<p class="muted">${escape(note)}</p>`).join("")}${r.available ? "" : `<p class="warning">Unlock: ${escape(r.reason)}</p>`}</div>`).join("")}</div>`;
+      return `<div class="panel route-world ${routes[0].available ? "" : "locked"}"><h3>${escape(world.name)} <span class="tag">${routes[0].available ? "AVAILABLE" : "LOCKED"}</span></h3>${routes.map((r) => `<div class="route-item"><strong>${link(r.url, r.enemy)}</strong> <span class="muted">· ${escape(r.room)}</span><p>${r.materials.map((m) => `<span class="drop-material icon-label">${icon("material", m.name)}<span>${escape(m.name)} ×${m.missing} <small>(${m.effectiveRate !== null ? `${m.effectiveRate}% effective · ${m.rate}% base` : "drop rate unknown"})</small></span></span>`).join(" · ")}</p>${[...new Set(r.materials.map((m) => m.note).filter(Boolean))].map((note) => `<p class="muted">${escape(note)}</p>`).join("")}${r.available ? "" : `<p class="warning">Unlock: ${escape(r.reason)}</p>`}</div>`).join("")}</div>`;
     }).join("") || `<div class="empty">${plan.goals ? "No enemy farming sources needed yet. Mythril is chest / synthesis only; resolve any locked recipes above." : "Farming locations will follow the wish list and world progress."}</div>`;
-    const ordered = [];
-    const visited = new Set();
-    function order(step) {
-      if (visited.has(step)) return;
-      visited.add(step);
-      const recipe = D.byRecipe[step.name];
-      for (const other of plan.steps) if (other !== step && (other.name === recipe.base || Object.hasOwn(step.ingredients, other.name))) order(other);
-      ordered.push(step);
-    }
-    plan.steps.forEach(order);
-    $("crafting").innerHTML = ordered.map((step, i) => `<div class="craft-step"><strong>${i + 1}. ${escape(step.name)} ×${step.quantity}</strong> · ${escape(step.purpose)}<span>${ingredientText(step.ingredients)}</span><span>${step.powered ? `${step.powered} craft(s) use ${escape(step.energy)}.` : "No Energy modifier used."}</span></div>`).join("") || "<p class='muted'>No crafts planned.</p>";
   }
   function renderRecipes() {
     const search = $("recipe-search").value.toLowerCase();
     const category = $("recipe-category").value;
     const recipes = D.recipes.filter((r) => (!category || category === r.category) && r.name.toLowerCase().includes(search));
-    $("recipe-list").innerHTML = recipes.map((r) => `<article class="card"><h3><span class="rank">${r.rank}</span>${escape(r.name)}</h3><p>${escape(r.category)} · ${link(r.url, "Source")}</p><div class="ingredients">${ingredientText(r.ingredients)}${r.modifier ? ` · 1 ${escape(r.modifier)}` : ""}</div><p>${escape(r.unlock)}${r.base ? ` · First make ${escape(r.base)}` : ""}</p><div class="card-actions"><span class="${P.unlocked(r, state) ? "positive" : "warning"}">${P.unlocked(r, state) ? "Level / collection unlocked" : `Needs ${r.minLevel > state.moogle ? `Moogle Lv ${r.minLevel}` : `${r.types} material types`}`}</span><button data-add="${escape(r.name)}" class="${state.goals[r.name] ? "quiet" : "primary"}">${state.goals[r.name] ? `Added (${state.goals[r.name]})` : "Add"}</button></div></article>`).join("") || "<p class='muted'>No matching recipes.</p>";
+    $("recipe-list").innerHTML = recipes.map((r) => `<article class="card"><h3><span class="rank">${r.rank}</span><span class="icon-label">${icon("item", r.name)}${escape(r.name)}</span></h3><p>${escape(r.category)} · ${link(r.url, "Source")}</p><div class="ingredients">${ingredientText(r.ingredients)}${r.modifier ? ` · ${ingredientText({ [r.modifier]: 1 })}` : ""}</div><p>${escape(r.unlock)}${r.base ? ` · First make ${escape(r.base)}` : ""}</p><div class="card-actions"><span class="${P.unlocked(r, state) ? "positive" : "warning"}">${P.unlocked(r, state) ? "Unlocked" : `Needs ${r.minLevel > state.moogle ? `Moogle Lv ${r.minLevel}` : `${r.types} material types`}`}</span><button data-add="${escape(r.name)}" class="${state.goals[r.name] ? "quiet" : "primary"}">${state.goals[r.name] ? "Added" : "Add"}</button></div></article>`).join("") || "<p class='muted'>No matching recipes.</p>";
   }
   function renderInventory() {
     const search = $("material-search").value.toLowerCase();
     const names = D.materialNames.filter((name) => name.toLowerCase().includes(search) && (!$("stock-only").checked || state.inventory[name]));
-    $("inventory-list").innerHTML = names.map((name) => `<div class="stock-row ${state.inventory[name] ? "has-stock" : ""}"><label>${escape(name)}<input type="number" min="0" max="9999" step="1" value="${state.inventory[name] || 0}" data-stock="${escape(name)}" aria-label="${escape(name)} current stock"></label></div>`).join("") || "<p class='muted'>No matching materials.</p>";
+    $("inventory-list").innerHTML = names.map((name) => `<div class="stock-row ${state.inventory[name] ? "has-stock" : ""}"><label><span class="icon-label">${icon("material", name)}${escape(name)}</span><input type="number" min="0" max="9999" step="1" value="${state.inventory[name] || 0}" data-stock="${escape(name)}" aria-label="${escape(name)} current stock"></label></div>`).join("") || "<p class='muted'>No matching materials.</p>";
   }
   function renderProgress() {
     $("all-chests").checked = chestWorlds.every((w) => state.chests[w.id]);
     $("all-chests").indeterminate = !$("all-chests").checked && chestWorlds.some((w) => state.chests[w.id]);
     $("optional-unlocks").innerHTML = D.optional.map(([id, name]) => `<label class="check"><input type="checkbox" data-optional="${id}" ${state.optional[id] ? "checked" : ""}>${escape(name)}</label>`).join("");
-    $("world-list").innerHTML = D.worlds.map((w) => `<article class="card world-card"><h3>${escape(w.name)}</h3><label>Furthest reachable stage<select data-world="${w.id}" aria-label="${escape(w.name)} progress">${w.stages.map((stage, i) => `<option value="${i}" ${Number(state.worlds[w.id] || 0) === i ? "selected" : ""}>${escape(stage)}</option>`).join("")}</select></label>${w.id !== "at" ? `<label class="check"><input type="checkbox" data-chests="${w.id}" ${state.chests[w.id] ? "checked" : ""}> All chests here collected</label>` : "<p>Atlantica has musical rewards, not treasure chests.</p>"}</article>`).join("");
+    $("world-list").innerHTML = D.worlds.map((w) => `<article class="card world-card"><h3>${escape(w.name)}</h3><label>World progress<select data-world="${w.id}" aria-label="${escape(w.name)} progress">${w.stages.map((stage, i) => `<option value="${i}" ${Number(state.worlds[w.id] || 0) === i ? "selected" : ""}>${escape(stage)}</option>`).join("")}</select></label>${w.id !== "at" ? `<label class="check"><input type="checkbox" data-chests="${w.id}" ${state.chests[w.id] ? "checked" : ""}> All chests collected</label>` : "<p>Musical rewards; no treasure chests.</p>"}</article>`).join("");
     $("material-types").value = state.materialTypes;
     $("orichalcum-rewards").innerHTML = D.rewards.slice(3).map((reward) => `<label class="check"><input type="checkbox" data-reward="${reward.id}" ${state.rewards[reward.id] ? "checked" : ""}>${escape(reward.label)}</label>`).join("");
   }
@@ -121,11 +170,17 @@
     if (!button) return;
     if (button.dataset.tab) tab(button.dataset.tab);
     if (button.dataset.go) tab(button.dataset.go);
+    if (button.id === "endgame-worlds") {
+      for (const world of D.worlds) state.worlds[world.id] = world.stages.length - 1;
+      for (const [id] of D.optional) state.optional[id] = true;
+      save(); renderProgress(); renderPlan();
+      notice("All worlds and optional areas unlocked. Chests and inventory unchanged.");
+    }
     if (button.dataset.add) {
       const name = button.dataset.add;
-      state.goals[name] = Math.min(name === "Ultima Weapon" ? 1 : 99, (state.goals[name] || 0) + 1);
+      state.goals[name] = 1;
       save(); renderPlan(); renderRecipes();
-      notice(`${name} added to the wish list.`);
+      notice(`${name} added to the wishlist.`);
     }
     if (button.dataset.remove) {
       delete state.goals[button.dataset.remove];
@@ -135,10 +190,7 @@
   document.addEventListener("change", (event) => {
     const el = event.target;
     let changed = true;
-    if (el.dataset.goal) {
-      state.goals[el.dataset.goal] = Math.max(1, P.count(el.value, el.dataset.goal === "Ultima Weapon" ? 1 : 99));
-      renderRecipes();
-    } else if (el.dataset.stock) {
+    if (el.dataset.stock) {
       state.inventory[el.dataset.stock] = P.count(el.value);
       el.value = state.inventory[el.dataset.stock];
       el.closest(".stock-row").classList.toggle("has-stock", el.value !== "0");
@@ -147,7 +199,7 @@
       renderRecipes();
     } else if (el.dataset.crafted) state.crafted[el.dataset.crafted] = el.checked;
     else if (el.dataset.method) state.methods[el.dataset.method] = el.checked ? "craft" : "collect";
-    else if (el.dataset.world) state.worlds[el.dataset.world] = P.count(el.value, 3);
+    else if (el.dataset.world) state.worlds[el.dataset.world] = P.count(el.value, D.worlds.find((world) => world.id === el.dataset.world).stages.length - 1);
     else if (el.dataset.chests) { state.chests[el.dataset.chests] = el.checked; renderProgress(); }
     else if (el.dataset.optional) state.optional[el.dataset.optional] = el.checked;
     else if (el.dataset.reward) state.rewards[el.dataset.reward] = el.checked;
@@ -155,6 +207,7 @@
     else if (el.id === "moogle") { state.moogle = Math.max(1, P.count(el.value, 9)); renderRecipes(); }
     else if (el.id === "energy") state.energy = el.value;
     else if (el.id === "expand") state.expand = el.value === "true";
+    else if (el.id === "lucky-lucky") { state.luckyLuckyCount = P.count(el.value, Number.MAX_SAFE_INTEGER); el.value = state.luckyLuckyCount; }
     else if (el.id === "material-types") { state.materialTypes = Math.max(P.count(el.value, 60), Object.values(state.inventory).filter((n) => n > 0).length); el.value = state.materialTypes; renderRecipes(); }
     else changed = false;
     if (changed) { save(); renderPlan(); }
@@ -176,16 +229,19 @@
     try {
       if (file.size > 1000000) throw new Error("Save file is too large (maximum 1 MB).");
       const next = P.sanitize(JSON.parse(await file.text()));
-      if (!confirm("Replace this journal's current wish list, inventory and progress with the selected save?")) return;
+      if (!confirm("Replace this journal's current wish list, inventory and progress with the selected save? Each wishlist recipe will be included once.")) return;
       state = next; save(); renderAll(); notice("Save loaded.");
     } catch (error) { notice(`Could not load save: ${error.message}`); }
     finally { event.target.value = ""; }
   });
+  window.addEventListener("hashchange", restoreTab);
+  restoreTab();
 
   let media;
   let mediaURL;
   let mediaReady = false;
   let worker;
+  let numberWorker;
   let controller;
   let importing = false;
   let review = [];
@@ -206,9 +262,14 @@
     aligning = false; cornerPoints = []; dragStart = null; cornerDrag = null;
     cropArea = $("import-kind").value === "recipes" ? { x: 25, y: 23, w: 26, h: 40 } : { x: 26, y: 28, w: 44, h: 49 };
     const { x, y, w, h } = cropArea;
-    alignment = [{ x, y }, { x: x + w, y }, { x: x + w, y: y + h }, { x, y: y + h }];
+    const candidate = mediaReady ? R.detectCorners(media, currentKind) : null;
+    const detected = candidate && validCorners(candidate) ? candidate : null;
+    alignment = detected || [{ x, y }, { x: x + w, y }, { x: x + w, y: y + h }, { x, y: y + h }];
+    if (detected && currentKind === "inventory") $("column-split").value = String(detected.columnSplit || 50);
     $("align-screen").textContent = "Realign four corners";
-    $("alignment-status").textContent = "Four corners preselected. Drag each corner to fit the table, or choose Realign four corners to select new ones.";
+    $("alignment-status").textContent = detected
+      ? "Table detected. Drag corners to adjust."
+      : "Table not detected. Drag the corners into place.";
     drawPreview();
   }
   function validCorners(points) {
@@ -293,7 +354,7 @@
         } else {
           alignment = cornerPoints; aligning = false;
           $("align-screen").textContent = "Realign four corners";
-          $("alignment-status").textContent = "Perspective alignment set. Drag corners to adjust. Reset corners restores the default selection.";
+          $("alignment-status").textContent = "Corners set. Drag to adjust; Reset corners retries detection.";
         }
       } else $("alignment-status").textContent = `Click the ${["top-left", "top-right", "bottom-right", "bottom-left"][cornerPoints.length]} corner of the table.`;
       drawPreview();
@@ -308,7 +369,7 @@
       const next = alignment.map((point, i) => i === cornerDrag ? position(event) : point);
       if (validCorners(next)) {
         alignment = next;
-        $("alignment-status").textContent = "Perspective corners updated. Drag corners to adjust, then read.";
+        $("alignment-status").textContent = "Corners updated.";
         drawPreview();
       }
       return;
@@ -334,13 +395,13 @@
     for (const id of ["two-columns", "column-split", "sampling"]) $(id).closest("label").hidden = recipes;
     $("inventory-video-help").hidden = recipes;
     $("import-instructions").textContent = recipes
-      ? "Read the left-hand recipe names only, including dim names. Scan both Recipes and Free Development: their results combine below. The right-hand ingredients / stock panel is not used. Import stock separately from the Materials list."
-      : "Read stock from the game's Materials list, including names and quantities in both columns. Four corners are preselected: drag them to fit the table, or choose Realign four corners. Recipe photos are never used as inventory.";
+      ? "Scan the left-hand names in Recipes and Free Development. Both lists combine here; ingredients and stock are ignored."
+      : "Scan the Materials table. Check the corners and column divider before reading.";
     $("paste-help").textContent = recipes ? "One recipe name per line, from either recipe list" : "One material and current count per line";
     $("ocr-text").placeholder = recipes ? "AP Boost\nPetite Ribbon\nMythril Shard\nAcrisius" : "Dense Shard 4\nEnergy Crystal 3";
     $("import-policy").textContent = recipes
-      ? "Recipe imports add missing goals with quantity 1 and preserve existing desired quantities. Stock comes only from the Materials list import or manual Materials entry."
-      : "Applying a Materials import replaces all previous stock; omitted and unchecked materials become zero.";
+      ? "Adds recipes to the wishlist. Inventory stays unchanged."
+      : "Replaces inventory. Omitted or unchecked materials become zero.";
   }
   $("import-kind").addEventListener("change", () => {
     currentKind = $("import-kind").value;
@@ -350,7 +411,7 @@
     review = currentKind === "recipes" ? recipeReview : [];
     if (review.length) renderReview();
     else $("import-review").hidden = true;
-    $("ocr-status").textContent = "Choose media or paste text for this import type.";
+    $("ocr-status").textContent = "Choose a photo or video, or paste a list.";
   });
   $("media-file").addEventListener("change", async (event) => {
     const file = event.target.files[0];
@@ -391,7 +452,7 @@
       }
       mediaReady = true; $("media-preview").hidden = false; $("recognize").disabled = false;
       resetCrop();
-      $("ocr-status").textContent = "Four corners are preselected. Adjust them if needed, then read. All results remain editable.";
+      $("ocr-status").textContent = "Check the selected table corners, then read. All results remain editable.";
     } catch (error) { $("media-preview").hidden = true; $("ocr-status").textContent = error.message; }
   });
   function renderReview(unmatched = 0) {
@@ -400,9 +461,9 @@
     $("import-review").hidden = false;
     $("review-rows").classList.toggle("recipe-review", recipes);
     $("review-instructions").textContent = recipes
-      ? "Recipe names from Recipes and Free Development are combined. Unchecked names are ignored. No inventory counts are read from recipe photos."
-      : "Applying replaces all previous stock. Omitted and unchecked materials become zero. Repeated video rows are not added together. Conflicting readings stay unchecked until reviewed. Names without a readable count are left blank.";
-    $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row${!recipes && row.image ? " has-source" : ""}"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select>${recipes ? "" : `<input type="number" min="0" max="9999" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?">`}<small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small>${!recipes && row.image ? `<figure class="review-source"><img src="${escape(row.image)}" alt="Original game row for ${escape(row.name)}" title="${escape(row.source)}" loading="lazy"></figure>` : ""}</div>`).join("");
+      ? "Select the recipes to add."
+      : "Check counts against the images. Conflicts stay unchecked; unreadable counts are blank. Repeated rows are not added together.";
+    $("review-rows").innerHTML = review.map((row, i) => `<div class="review-row${!recipes && row.image ? " has-source" : ""}"><input type="checkbox" data-review-check="${i}" aria-label="Import ${escape(row.name)}" ${row.checked ? "checked" : ""}><div class="review-name"><span class="review-icon" aria-hidden="true">${icon(recipes ? "item" : "material", row.name)}</span><select data-review-name="${i}" aria-label="Recognized name ${i + 1}">${names.map((name) => `<option ${name === row.name ? "selected" : ""}>${escape(name)}</option>`).join("")}</select></div>${recipes ? "" : `<input type="number" min="0" max="9999" step="1" value="${row.quantity === null ? "" : row.quantity}" data-review-qty="${i}" aria-label="${escape(row.name)} imported quantity" placeholder="?">`}<small>${row.conflict ? `Conflicting counts: ${row.alternatives.join(", ")}. Choose the correct count.` : row.quantity === null ? "Count unreadable; enter it manually." : `${row.readings} reading(s) · confidence ${row.confidence}%`}</small>${!recipes && row.image ? `<figure class="review-source"><img src="${escape(row.image)}" alt="Original game row for ${escape(row.name)}" title="${escape(row.source)}" loading="lazy"></figure>` : ""}</div>`).join("");
     $("review-message").textContent = `${review.length} ${recipes ? "combined recipe names from Recipes / Free Development" : "recognized materials"}. ${unmatched ? `${unmatched} unrecognized text line(s); inspect the raw text and add anything missing manually.` : ""}${!review.length ? " Adjust the crop or use pasted text / manual entry." : ""}`;
     $("apply-import").disabled = !review.length;
     $("check-all-import").disabled = !review.length;
@@ -418,7 +479,13 @@
   $("import-review").addEventListener("change", (event) => {
     const el = event.target;
     if (el.dataset.reviewCheck !== undefined) review[Number(el.dataset.reviewCheck)].checked = el.checked;
-    if (el.dataset.reviewName !== undefined) review[Number(el.dataset.reviewName)].name = el.value;
+    if (el.dataset.reviewName !== undefined) {
+      review[Number(el.dataset.reviewName)].name = el.value;
+      const row = el.closest(".review-row");
+      row.querySelector(".review-icon").innerHTML = icon(reviewKind === "recipes" ? "item" : "material", el.value);
+      row.querySelector("[data-review-check]").setAttribute("aria-label", `Import ${el.value}`);
+      row.querySelector("[data-review-qty]")?.setAttribute("aria-label", `${el.value} imported quantity`);
+    }
     if (el.dataset.reviewQty !== undefined) review[Number(el.dataset.reviewQty)].quantity = el.value === "" ? null : P.count(el.value, reviewKind === "recipes" ? 99 : 9999);
   });
   $("check-all-import").addEventListener("click", () => {
@@ -433,18 +500,18 @@
   $("apply-import").addEventListener("click", () => {
     const checked = review.filter((row) => row.checked);
     if (!checked.length) { notice("Check at least one row before applying."); return; }
-    if (checked.some((r) => r.quantity === null || (reviewKind === "recipes" && !r.quantity))) { notice("Enter a valid quantity for every checked row."); return; }
+    if (reviewKind === "inventory" && checked.some((r) => r.quantity === null)) { notice("Enter a valid quantity for every checked row."); return; }
     const names = checked.map((r) => r.name);
     if (new Set(names).size !== names.length) { notice("Duplicate names in review. Uncheck or rename duplicate rows before applying."); return; }
     if (reviewKind === "inventory") state.inventory = {};
     for (const row of checked) {
-      if (reviewKind === "recipes") state.goals[row.name] = state.goals[row.name] || 1;
+      if (reviewKind === "recipes") state.goals[row.name] = 1;
       else state.inventory[row.name] = P.count(row.quantity);
     }
     if (reviewKind === "recipes") recipeReview = [];
     else state.materialTypes = Math.max(state.materialTypes, Object.values(state.inventory).filter((n) => n > 0).length);
     save(); renderAll();
-    notice(reviewKind === "recipes" ? `${checked.length} recipe names combined with the wish list. Existing quantities and inventory were left unchanged.` : `Inventory replaced with ${checked.length} material totals. All previous stock was cleared.`);
+    notice(reviewKind === "recipes" ? `${checked.length} recipes added. Inventory unchanged.` : `Inventory replaced (${checked.length} materials).`);
   });
   function setImportBusy(busy) {
     importing = busy;
@@ -456,7 +523,9 @@
   $("cancel-ocr").addEventListener("click", () => {
     controller?.abort();
     void worker?.terminate();
+    void numberWorker?.terminate();
     worker = null;
+    numberWorker = null;
     $("ocr-status").textContent = "Cancelling; partial readings will be available for review.";
   });
   $("recognize").addEventListener("click", async () => {
@@ -473,19 +542,26 @@
     $("import-review").hidden = true;
     $("ocr-progress").value = 0;
     try {
-      $("ocr-status").textContent = "Loading local recognition engine / English model…";
+      $("ocr-status").textContent = "Loading text recognition…";
       const engine = await R.loadEngine();
       if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
-      worker = await engine.createWorker("eng", 1, {
+      const workerOptions = {
         workerPath: "https://cdn.jsdelivr.net/npm/tesseract.js@5.1.1/dist/worker.min.js",
         corePath: "https://cdn.jsdelivr.net/npm/tesseract.js-core@5.1.1",
         langPath: "https://tessdata.projectnaptha.com/4.0.0",
         logger: (event) => {
           if (!done && !signal.aborted && event.status !== "recognizing text") $("ocr-status").textContent = `${event.status} ${Math.round((event.progress || 0) * 100)}%`;
         },
-      });
+      };
+      worker = await engine.createWorker("eng", 1, workerOptions);
       if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
       await worker.setParameters({ tessedit_pageseg_mode: "6", preserve_interword_spaces: "1", user_defined_dpi: "150" });
+      if (reviewKind === "inventory") {
+        numberWorker = await engine.createWorker("eng", 2, { ...workerOptions, legacyCore: true, legacyLang: true });
+        if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
+        // Keep misread digits from retraining the classifier across video frames.
+        await numberWorker.setParameters({ tessedit_pageseg_mode: "7", tessedit_char_whitelist: "0123456789", classify_enable_learning: "0", classify_enable_adaptive_matcher: "0", user_defined_dpi: "150" });
+      }
       const video = media === $("video");
       const interval = Number($("sampling").value);
       const frames = video ? Math.ceil(media.duration / interval) : 1;
@@ -499,43 +575,52 @@
         if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
         if (video) await R.seek(media, Math.min(frame * interval, media.duration - 0.01), signal);
         drawPreview();
-        const frameMedia = selectedAlignment ? R.rectifyCanvas(media, selectedAlignment) : media;
+        const frameMedia = selectedAlignment ? R.rectifyCanvas(media, selectedAlignment, reviewKind === "inventory" ? 0.08 : 0) : media;
         for (let column = 0; column < columns; column++) {
           if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
           $("ocr-status").textContent = `Reading ${video ? `frame ${frame + 1}/${frames}, ` : ""}column ${column + 1}/${columns}. ${Math.round(done / total * 100)}% complete.`;
-          const canvas = R.cropCanvas(frameMedia, selectedAlignment ? { x: 0, y: 0, w: 100, h: 100 } : selectedCrop, column, columns, Number($("column-split").value) || 52);
           const numberColumn = reviewKind === "inventory" ? R.cropCanvas(frameMedia, selectedAlignment ? { x: 0, y: 0, w: 100, h: 100 } : selectedCrop, column, columns, Number($("column-split").value) || 52, false) : null;
-          await worker.setParameters({ tessedit_pageseg_mode: "6", tessedit_char_whitelist: "" });
+          const canvas = numberColumn ? R.inventoryCanvas(numberColumn) : R.cropCanvas(frameMedia, selectedAlignment ? { x: 0, y: 0, w: 100, h: 100 } : selectedCrop, column, columns, Number($("column-split").value) || 52);
           const result = await worker.recognize(canvas);
           const lines = result.data.lines || result.data.text.split(/\r?\n/).map((text) => ({ text, confidence: result.data.confidence }));
           if (reviewKind === "inventory") {
-            await worker.setParameters({ tessedit_pageseg_mode: "7", tessedit_char_whitelist: "0123456789" });
+            const columnText = [];
             for (const line of lines) {
               const parsed = R.parseLines([line], reviewKind, `${video ? `Video ${media.currentTime.toFixed(2)}s` : "Photo"}, column ${column + 1}`);
               unmatched += parsed.unmatched.length;
-              if (!parsed.rows.length || !line.bbox) continue;
+              if (!parsed.rows.length || !line.bbox) { columnText.push(line.text); continue; }
               if (signal.aborted) throw new DOMException("Cancelled", "AbortError");
-              const digits = await worker.recognize(R.quantityCanvas(numberColumn, line.bbox));
-              const text = digits.data.text.trim();
+              const countCanvas = R.quantityCanvas(numberColumn, line.bbox);
+              let digits = await numberWorker.recognize(countCanvas);
+              if (digits.data.confidence < 85) {
+                await numberWorker.setParameters({ tessedit_pageseg_mode: "8" });
+                const alternate = await numberWorker.recognize(countCanvas);
+                await numberWorker.setParameters({ tessedit_pageseg_mode: "7" });
+                if (/^\d{1,4}$/.test(alternate.data.text.trim()) && alternate.data.confidence > digits.data.confidence) digits = alternate;
+              }
+              const text = R.quantityText(countCanvas, digits.data.text.trim());
               for (const row of parsed.rows) {
-                row.quantity = /^\d{1,4}$/.test(text) ? Number(text) : null;
+                row.quantity = /^\d{1,4}$/.test(text) && digits.data.confidence >= 65 ? Number(text) : null;
+                columnText.push(`${row.name}${row.quantity === null ? "" : ` ${row.quantity}`}`);
                 row.confidence = Math.min(row.confidence, digits.data.confidence);
                 const key = `${row.name}:${row.quantity}`;
                 const previous = sourceReadings.get(key);
                 if (!previous || row.confidence * row.score > previous.confidence * previous.score) {
                   if (previous) delete previous.image;
-                  row.image = R.sourceCanvas(numberColumn, line.bbox).toDataURL("image/jpeg", 0.9);
+                  const sourceBounds = countCanvas.sourceBounds || line.bbox;
+                  row.image = R.sourceCanvas(numberColumn, { y0: Math.min(line.bbox.y0, sourceBounds.y0), y1: Math.max(line.bbox.y1, sourceBounds.y1) }).toDataURL("image/jpeg", 0.9);
                   sourceReadings.set(key, row);
                 }
                 observations.push(row);
               }
             }
+            raw.push(columnText.join("\n"));
           } else {
             const parsed = R.parseLines(lines, reviewKind, `Frame ${frame + 1}, column ${column + 1}`);
             observations.push(...parsed.rows);
             unmatched += parsed.unmatched.length;
+            raw.push(result.data.text);
           }
-          raw.push(result.data.text);
           done++; $("ocr-progress").value = done / total;
         }
       }
@@ -544,6 +629,7 @@
       $("ocr-status").textContent = signal.aborted ? "Cancelled. Partial results are available below." : `Recognition stopped: ${error.message}. Manual entry and pasted text remain available.`;
     } finally {
       if (worker) { await worker.terminate().catch(() => {}); worker = null; }
+      if (numberWorker) { await numberWorker.terminate().catch(() => {}); numberWorker = null; }
       $("ocr-text").value = raw.join("\n");
       combineReview(R.merge(observations, media === $("video") ? 2 : 1)); renderReview(unmatched);
       setImportBusy(false);
